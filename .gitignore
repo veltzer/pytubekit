@@ -1,0 +1,12 @@
+/out/
+/tools.stamp
+# python related
+__pycache__
+/dist/
+/*.egg-info/
+/.venv/
+__pycache__/
+*.py[cod]
+/.pydmt/
+/build/
+/node_modules
