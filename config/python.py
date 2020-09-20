@@ -19,7 +19,7 @@ run_requires = [
 
 test_requires = [
     "pylint",  # for linting
-    "pyflakes",  # for linting 
+    "pyflakes",  # for linting
     "flake8",  # for linting
     "pytest",  # for testing
 ]
