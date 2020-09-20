@@ -1,16 +1,30 @@
 """
 The default group of operations that pytubekit has
 """
+import logging
+import os
+
+import pyapikey
 from pytconf import register_endpoint, register_function_group
 
 import pytubekit
 import pytubekit.version
+
+import googleapiclient.discovery
+import googleapiclient.errors
+
+
+API_SERVICE_NAME = "youtube"
+API_VERSION = "v3"
 
 GROUP_NAME_DEFAULT = "default"
 GROUP_DESCRIPTION_DEFAULT = "all pytubekit commands"
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = [
+    "https://www.googleapis.com/auth/youtube",
+    "https://www.googleapis.com/auth/youtube.force-ssl",
+    "https://www.googleapis.com/auth/youtube.readonly",
 ]
 APP_NAME = "pytubekit"
 
@@ -38,7 +52,22 @@ def playlists() -> None:
     """
     Show all playlists in your youtube account
     """
-    print("TBD")
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+    logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
+    developer_key = pyapikey.get_key("youtube")
+    youtube = googleapiclient.discovery.build(
+        serviceName=API_SERVICE_NAME,
+        version=API_VERSION,
+        developerKey=developer_key,
+    )
+    request = youtube.playlists().list(
+        part="snippet,contentDetails",
+        maxResults=25,
+        channelId="UCMDFdn89vQjpGAVbewtszYg",
+    )
+    response = request.execute()
+    for x in response["items"]:
+        print(x["snippet"]["title"])
 
 
 @register_endpoint(group=GROUP_NAME_DEFAULT, )
