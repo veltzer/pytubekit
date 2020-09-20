@@ -15,6 +15,7 @@ run_requires = [
     "pytconf",  # for command line parsing
     "pylogconf",  # for logging configuration
     "pyvardump",  # for dumping variables recursively
+    "pyapikey",  # for getting api keys
 ]
 
 test_requires = [
