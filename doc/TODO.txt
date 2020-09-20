@@ -1,12 +1,3 @@
-- move to the new python API as per the
-	https://stackoverflow.com/questions/9969204/different-python-google-apis
-	document.
-	also document these issues somewhere.
-
-- check to implement: check that everyone who is really a contact
-	is a member of some group.
-- check to implement: check that every contact is either has a name
-	or a company with either a job description or department.
-- add a google map link to where every company is ?!?
-- find out why do I sometimes get an exception when calling the update method?
-	How can I avoid that?
+- implement the following commands:
+	playlists - show names of all playlists you have in youtube
+	clean_deleted_or_private - clean deleted or private videos from a specific playlist
