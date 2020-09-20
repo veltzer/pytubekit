@@ -31,3 +31,19 @@ def version() -> None:
     Print version
     """
     print(pytubekit.version.VERSION_STR)
+
+
+@register_endpoint(group=GROUP_NAME_DEFAULT, )
+def playlists() -> None:
+    """
+    Show all playlists in your youtube account
+    """
+    print("TBD")
+
+
+@register_endpoint(group=GROUP_NAME_DEFAULT, )
+def cleanup() -> None:
+    """
+    Cleanup a specific playlist from deleted or privatized entries
+    """
+    print("TBD")
