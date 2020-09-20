@@ -19,7 +19,7 @@ def register_all_groups():
 @register_main()
 def main():
     """
-    pytubekit is a collection of utilities to help interact with google contacts
+    Pytubekit will allow you to perform operations in your youtube account en masse
     """
     pylogconf.core.setup()
     register_all_groups()
