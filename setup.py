@@ -9,7 +9,7 @@ def get_readme():
 setuptools.setup(
     # the first three fields are a must according to the documentation
     name="pytubekit",
-    version="0.0.10",
+    version="0.0.1",
     packages=[
         'pytubekit',
         'pytubekit.endpoints',
@@ -40,6 +40,7 @@ setuptools.setup(
         'google-auth-oauthlib',
         'pytconf',
         'pylogconf',
+        'pyvardump',
     ],
     extras_require={
     },
