@@ -1,4 +1,5 @@
 - fix error in pytconf when running without argument.
 - share the auth code with pycontacts (it has similar code).
+	How do we do that? Some other module?
 - implement the cleanup command
 	clean_deleted_or_private - clean deleted or private videos from a specific playlist
