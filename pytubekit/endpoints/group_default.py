@@ -52,8 +52,6 @@ def playlists() -> None:
     Show all playlists in your youtube account
     """
     logger = logging.getLogger(pytubekit.LOGGER_NAME)
-    # this is only needed if you don't pass cache_discovery=False below...
-    # logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
     credentials = get_credentials(
         logger=logger,
         scopes=SCOPES,
