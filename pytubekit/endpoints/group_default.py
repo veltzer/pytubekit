@@ -65,6 +65,7 @@ def playlists() -> None:
         credentials=credentials,
         cache_discovery=False,
     )
+    # pylint: disable=no-member
     request = youtube.playlists().list(
         part="snippet,contentDetails",
         maxResults=25,

@@ -2,4 +2,3 @@
 - share the auth code with pycontacts (it has similar code).
 - implement the cleanup command
 	clean_deleted_or_private - clean deleted or private videos from a specific playlist
-- building on github does not work, fix it.
