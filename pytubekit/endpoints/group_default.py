@@ -66,7 +66,7 @@ def playlists() -> None:
     request = youtube.playlists().list(
         part="snippet,contentDetails",
         maxResults=25,
-        channelId="UCMDFdn89vQjpGAVbewtszYg",
+        mine=True,
     )
     response = request.execute()
     for x in response["items"]:
