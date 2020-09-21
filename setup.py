@@ -9,7 +9,7 @@ def get_readme():
 setuptools.setup(
     # the first three fields are a must according to the documentation
     name="pytubekit",
-    version="0.0.6",
+    version="0.0.7",
     packages=[
         'pytubekit',
         'pytubekit.endpoints',

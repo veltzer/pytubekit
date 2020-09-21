@@ -7,11 +7,11 @@ from pytconf import register_endpoint, register_function_group
 
 import pytubekit
 import pytubekit.version
+from pytubekit.auth import get_credentials
 
 import googleapiclient.discovery
 import googleapiclient.errors
 
-from pytubekit.auth import get_credentials
 
 API_SERVICE_NAME = "youtube"
 API_VERSION = "v3"
