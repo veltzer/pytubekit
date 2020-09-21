@@ -12,6 +12,6 @@ project website: https://veltzer.github.io/pytubekit
 
 author: Mark Veltzer
 
-version: 0.0.8
+version: 0.0.9
 
 
