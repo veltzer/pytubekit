@@ -13,6 +13,7 @@ import pytubekit.version
 import googleapiclient.discovery
 import googleapiclient.errors
 
+from pytubekit.auth import get_credentials
 
 API_SERVICE_NAME = "youtube"
 API_VERSION = "v3"
@@ -52,13 +53,19 @@ def playlists() -> None:
     """
     Show all playlists in your youtube account
     """
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-    logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
-    developer_key = pyapikey.get_key("youtube")
+    logger = logging.getLogger(pytubekit.LOGGER_NAME)
+    # this is only needed if you don't pass cache_discovery=False below...
+    # logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
+    credentials = get_credentials(
+        logger=logger,
+        scopes=SCOPES,
+        app_name=APP_NAME,
+    )
     youtube = googleapiclient.discovery.build(
         serviceName=API_SERVICE_NAME,
         version=API_VERSION,
-        developerKey=developer_key,
+        credentials=credentials,
+        cache_discovery=False,
     )
     request = youtube.playlists().list(
         part="snippet,contentDetails",
