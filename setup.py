@@ -41,7 +41,6 @@ setuptools.setup(
         'pytconf',
         'pylogconf',
         'pyvardump',
-        'pyapikey',
     ],
     extras_require={
     },
