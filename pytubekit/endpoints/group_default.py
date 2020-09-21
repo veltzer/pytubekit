@@ -2,9 +2,7 @@
 The default group of operations that pytubekit has
 """
 import logging
-import os
 
-import pyapikey
 from pytconf import register_endpoint, register_function_group
 
 import pytubekit
