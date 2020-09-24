@@ -3,3 +3,4 @@
 	How do we do that? Some other module?
 - implement the cleanup command
 	clean_deleted_or_private - clean deleted or private videos from a specific playlist
+- check for duplicates in a list of playlists.
