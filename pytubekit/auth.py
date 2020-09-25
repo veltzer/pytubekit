@@ -20,8 +20,8 @@ def get_credentials(
     # created automatically when the authorization flow completes for the first
     # time.
     if os.access(token, os.R_OK):
-        with open(token, "rb") as token:
-            credentials = pickle.load(token)
+        with open(token, "rb") as token_stream:
+            credentials = pickle.load(token_stream)
     # If there are no (valid) credentials available, let the user log in.
     if not credentials or not credentials.valid:
         if credentials and credentials.expired and credentials.refresh_token:
@@ -32,7 +32,7 @@ def get_credentials(
             )
             credentials = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        logger.info("creating a new token file")
+        logger.debug("creating a new token file")
         if os.access(token, os.R_OK):
             os.unlink(token)
         with open(token, "wb") as token_stream:
