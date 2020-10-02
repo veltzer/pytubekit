@@ -16,6 +16,8 @@
 ![Downloads](https://pepy.tech/badge/pytubekit/month)
 ![Downloads](https://pepy.tech/badge/pytubekit/week)
 
+[![Known Vulnerabilities](https://snyk.io/test/github/veltzer/pytubekit/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/veltzer/pytubekit?targetFile=requirements.txt)
+
 
 Actions
 
