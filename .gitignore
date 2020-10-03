@@ -10,3 +10,4 @@ __pycache__/
 /.pydmt/
 /build/
 /node_modules
+/htmlcov
