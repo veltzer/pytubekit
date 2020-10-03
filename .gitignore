@@ -11,3 +11,5 @@ __pycache__/
 /build/
 /node_modules
 /htmlcov
+/.coverage
+/coverage.xml
