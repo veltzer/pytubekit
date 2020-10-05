@@ -3,7 +3,7 @@ import config.project
 package_name = config.project.project_name
 
 console_scripts = [
-    "pytubekit=pytubekit.endpoints.main:main",
+    "pytubekit=pytubekit.main:main",
 ]
 
 setup_requires = []
@@ -17,10 +17,11 @@ run_requires = [
 ]
 
 test_requires = [
-    "pylint",  # for linting
-    "pyflakes",  # for linting
-    "flake8",  # for linting
     "pytest",  # for testing
+    "pytest-cov",  # for testing
+    "pylint",  # for linting
+    "flake8",  # for linting
+    "pymakehelper",  # for make
 ]
 
 dev_requires = [
