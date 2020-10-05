@@ -12,7 +12,6 @@ setuptools.setup(
     version="0.0.10",
     packages=[
         'pytubekit',
-        'pytubekit.endpoints',
     ],
     # from here all is optional
     description="Pytubekit will allow you to perform operations in your youtube account en masse",
@@ -59,7 +58,7 @@ setuptools.setup(
     data_files=[
     ],
     entry_points={"console_scripts": [
-        'pytubekit=pytubekit.endpoints.main:main',
+        'pytubekit=pytubekit.main:main',
     ]},
     python_requires=">=3.6",
 )
