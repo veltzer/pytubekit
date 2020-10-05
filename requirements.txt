@@ -12,7 +12,8 @@ pydmt
 Sphinx
 black
 # test requirements
-pylint
-pyflakes
-flake8
 pytest
+pytest-cov
+pylint
+flake8
+pymakehelper

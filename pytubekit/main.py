@@ -9,7 +9,7 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 
 from pytubekit import LOGGER_NAME
 from pytubekit.auth import get_credentials
-from pytubekit.version import VERSION_STR
+from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 
 API_SERVICE_NAME = "youtube"
 API_VERSION = "v3"
@@ -20,22 +20,12 @@ SCOPES = [
     "https://www.googleapis.com/auth/youtube.force-ssl",
     "https://www.googleapis.com/auth/youtube.readonly",
 ]
-APP_NAME = "pytubekit"
 
 
-@register_endpoint()
-def version() -> None:
-    """
-    Print version
-    """
-    print(VERSION_STR)
-
-
-@register_endpoint()
+@register_endpoint(
+    description="Show all playlists in your youtube account",
+)
 def playlists() -> None:
-    """
-    Show all playlists in your youtube account
-    """
     logger = logging.getLogger(LOGGER_NAME)
     credentials = get_credentials(
         logger=logger,
@@ -59,19 +49,19 @@ def playlists() -> None:
         print(x["snippet"]["title"])
 
 
-@register_endpoint()
+@register_endpoint(
+    description="Cleanup a specific playlist from deleted or privatized entries",
+)
 def cleanup() -> None:
-    """
-    Cleanup a specific playlist from deleted or privatized entries
-    """
     print("TBD")
 
 
-@register_main()
+@register_main(
+    main_description=DESCRIPTION,
+    app_name=APP_NAME,
+    version=VERSION_STR,
+)
 def main():
-    """
-    Pytubekit will allow you to perform operations in your youtube account en masse
-    """
     pylogconf.core.setup()
     config_arg_parse_and_launch()
 
