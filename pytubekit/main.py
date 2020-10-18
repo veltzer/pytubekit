@@ -2,6 +2,7 @@
 main entry point to the program
 """
 import logging
+import os
 
 import googleapiclient.discovery
 import pylogconf.core
@@ -11,10 +12,10 @@ from pytubekit import LOGGER_NAME
 from pytubekit.auth import get_credentials
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 
+
+# all of the following you get from the YouTube API documentation
 API_SERVICE_NAME = "youtube"
 API_VERSION = "v3"
-
-# If modifying these scopes, delete the file token.pickle.
 SCOPES = [
     "https://www.googleapis.com/auth/youtube",
     "https://www.googleapis.com/auth/youtube.force-ssl",
@@ -54,6 +55,15 @@ def playlists() -> None:
 )
 def cleanup() -> None:
     print("TBD")
+
+
+@register_endpoint(
+    description="collect you tube video ids from files",
+)
+def collect_ids() -> None:
+    for filename in os.listdir():
+        _, extension = os.path.splitext(filename)
+        print(extension)
 
 
 @register_main(
