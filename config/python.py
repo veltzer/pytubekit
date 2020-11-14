@@ -14,6 +14,7 @@ run_requires = [
     "google-auth-oauthlib",  # for google API
     "pytconf",  # for command line parsing
     "pylogconf",  # for logging configuration
+    "pyvardump",  # for dumping data
 ]
 
 test_requires = [
