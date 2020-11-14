@@ -5,6 +5,7 @@ google-auth-httplib2
 google-auth-oauthlib
 pytconf
 pylogconf
+pyvardump
 # dev requirements
 pyclassifiers
 pypitools

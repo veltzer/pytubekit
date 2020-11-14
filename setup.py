@@ -39,6 +39,7 @@ setuptools.setup(
         'google-auth-oauthlib',
         'pytconf',
         'pylogconf',
+        'pyvardump',
     ],
     extras_require={
     },
