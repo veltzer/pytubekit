@@ -7,11 +7,11 @@ import os
 import googleapiclient.discovery
 import pylogconf.core
 # import pyvardump
+from pygooglehelper import register_functions, get_credentials, ConfigAuth
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
 from pytubekit import LOGGER_NAME
-from pytubekit.auth import get_credentials
-from pytubekit.configs import ConfigAuth, ConfigPlaylist
+from pytubekit.configs import ConfigPlaylist
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 
 
@@ -47,7 +47,6 @@ def get_youtube():
 
 
 def create_list_request(youtube, next_page_token):
-    # pylint: disable=no-member
     kwargs = {
         # part="snippet,contentDetails",
         # part="contentDetails",
@@ -112,24 +111,6 @@ def collect_ids() -> None:
         print(extension)
 
 
-@register_endpoint(
-    description="Do the authentication procedure and get token for your app",
-    configs=[ConfigAuth],
-)
-def auth() -> None:
-    logger = logging.getLogger(LOGGER_NAME)
-    logger.setLevel(logging.DEBUG)
-    get_credentials(
-        logger=logger,
-        scopes=SCOPES,
-        app_name=APP_NAME,
-        host=ConfigAuth.host,
-        port=ConfigAuth.port,
-        authorization_prompt_message=ConfigAuth.authorization_prompt_message,
-        force=ConfigAuth.force,
-    )
-
-
 @register_main(
     main_description=DESCRIPTION,
     app_name=APP_NAME,
@@ -137,6 +118,7 @@ def auth() -> None:
 )
 def main():
     pylogconf.core.setup()
+    register_functions(scopes=SCOPES, app_name=APP_NAME)
     config_arg_parse_and_launch()
 
 

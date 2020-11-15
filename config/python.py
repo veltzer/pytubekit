@@ -12,6 +12,7 @@ run_requires = [
     "google-api-python-client",  # for google API
     "google-auth-httplib2",  # for google API
     "google-auth-oauthlib",  # for google API
+    "pygooglehelper",  # for google helper functions
     "pytconf",  # for command line parsing
     "pylogconf",  # for logging configuration
     "pyvardump",  # for dumping data
