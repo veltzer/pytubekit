@@ -9,29 +9,29 @@ console_scripts = [
 setup_requires = []
 
 run_requires = [
-    "google-api-python-client",  # for google API
-    "google-auth-httplib2",  # for google API
-    "google-auth-oauthlib",  # for google API
-    "pygooglehelper",  # for google helper functions
-    "pytconf",  # for command line parsing
-    "pylogconf",  # for logging configuration
-    "pyvardump",  # for dumping data
+    "google-api-python-client",
+    "google-auth-httplib2",
+    "google-auth-oauthlib",
+    "pygooglehelper",
+    "pytconf",
+    "pylogconf",
+    "pyvardump",
 ]
 
 test_requires = [
-    "pytest",  # for testing
-    "pytest-cov",  # for testing
-    "pylint",  # for linting
-    "flake8",  # for linting
-    "pymakehelper",  # for make
+    "pytest",
+    "pytest-cov",
+    "pylint",
+    "flake8",
+    "pymakehelper",
 ]
 
 dev_requires = [
-    "pyclassifiers",  # for programmatic classifiers
-    "pypitools",  # for upload etc
-    "pydmt",  # for building
-    "Sphinx",  # for the sphinx builder
-    "black",  # for code style
+    "pyclassifiers",
+    "pypitools",
+    "pydmt",
+    "Sphinx",
+    "black",
 ]
 
 install_requires = list(setup_requires)
@@ -40,5 +40,4 @@ install_requires.extend(run_requires)
 python_requires = ">=3.6"
 
 extras_require = {
-    # ':python_version == "2.7"': ['futures'],  # for python2.7 backport of concurrent.futures
 }
