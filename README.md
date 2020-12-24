@@ -12,11 +12,6 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/pytubekit)
 
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
-![Downloads](https://pepy.tech/badge/pytubekit)
-![Downloads](https://pepy.tech/badge/pytubekit/month)
-![Downloads](https://pepy.tech/badge/pytubekit/week)
-
-[![Known Vulnerabilities](https://snyk.io/test/github/veltzer/pytubekit/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/veltzer/pytubekit?targetFile=requirements.txt)
 
 
 Actions
