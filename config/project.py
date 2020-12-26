@@ -86,3 +86,5 @@ alt="PayPal - The safer, easier way to pay online!">
 </form>""".format(
     project_paypal_donate_button_id
 )
+
+codacy_id = None
