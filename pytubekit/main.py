@@ -90,14 +90,6 @@ def dedup() -> None:
 
 
 @register_endpoint(
-    description="Mark all entries in playlist as seen",
-    configs=[ConfigPagination, ConfigPlaylist],
-)
-def mark_seen() -> None:
-    print("TBD")
-
-
-@register_endpoint(
     description="Cleanup a specific playlist from deleted or privatized entries",
 )
 def cleanup() -> None:
