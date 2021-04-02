@@ -9,10 +9,11 @@ import pylogconf.core
 from pygooglehelper import register_functions
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
-from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigDelete
+from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigDelete, ConfigPlaylists
 from pytubekit.scopes import SCOPES
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
-from pytubekit.util import create_playlists, get_youtube, create_playlist, get_all_items, delete_playlist_item_by_id
+from pytubekit.util import create_playlists, get_youtube, create_playlist, get_all_items, delete_playlist_item_by_id, \
+    get_playlist_ids_from_names, get_all_items_from_playlist_ids
 
 
 @register_endpoint(
@@ -66,15 +67,18 @@ def dump() -> None:
 
 @register_endpoint(
     description="Remove duplicates from a playlist",
-    configs=[ConfigPagination, ConfigPlaylist],
+    configs=[ConfigPagination, ConfigPlaylists],
 )
 def dedup() -> None:
     youtube = get_youtube()
-    items = get_all_items(youtube)
+    playlist_ids = get_playlist_ids_from_names(youtube, ConfigPlaylists.names)
+    items = get_all_items_from_playlist_ids(youtube, playlist_ids)
     seen = set()
     wanted_to_delete = 0
     deleted = 0
+    saw = 0
     for item in items:
+        saw += 1
         f_video_id = item["snippet"]["resourceId"]["videoId"]
         if f_video_id in seen:
             wanted_to_delete += 1
@@ -85,6 +89,7 @@ def dedup() -> None:
         else:
             seen.add(f_video_id)
     logger = logging.getLogger()
+    logger.info(f"saw {saw} items")
     logger.info(f"wanted_to_delete {wanted_to_delete} items")
     logger.info(f"deleted {deleted} items")
 

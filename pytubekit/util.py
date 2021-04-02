@@ -1,4 +1,5 @@
 import logging
+from typing import List
 
 import googleapiclient.discovery
 from pygooglehelper import get_credentials, ConfigAuth
@@ -64,21 +65,27 @@ def create_playlist(youtube, playlist_id: str) -> PagedRequest:
     return PagedRequest(f=youtube.playlistItems().list, kwargs=kwargs)
 
 
-def get_playlist_id_from_name(youtube, playlist_name: str) -> str:
-    d = {}
+def get_playlist_ids_from_names(youtube, playlist_names: List[str]) -> List[str]:
     r = create_playlists(youtube)
     items = r.get_all_items()
-    for item in items:
-        f_id = item["id"]
-        f_title = item["snippet"]["title"]
-        d[f_title] = f_id
-    return d[playlist_name]
+    d = {item["snippet"]["title"]: item["id"] for item in items}
+    return [d[playlist_name] for playlist_name in playlist_names]
 
 
 def get_all_items(youtube):
-    playlist_id = get_playlist_id_from_name(youtube, ConfigPlaylist.name)
-    r = create_playlist(youtube, playlist_id=playlist_id)
-    return r.get_all_items()
+    playlist_id = get_playlist_ids_from_names(youtube, [ConfigPlaylist.name])[0]
+    return get_all_items_from_playlist_id(youtube, playlist_id)
+
+
+def get_all_items_from_playlist_id(youtube, playlist_id: str):
+    return create_playlist(youtube, playlist_id=playlist_id).get_all_items()
+
+
+def get_all_items_from_playlist_ids(youtube, playlist_ids: List[str]):
+    items = []
+    for playlist_id in playlist_ids:
+        items.extend(get_all_items_from_playlist_id(youtube, playlist_id))
+    return items
 
 
 def delete_playlist_item_by_id(youtube, playlist_item_id: str):

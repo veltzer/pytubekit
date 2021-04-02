@@ -18,6 +18,12 @@ class ConfigPlaylist(Config):
     )
 
 
+class ConfigPlaylists(Config):
+    names = ParamCreator.create_list_str(
+        help_string="What playlists to use",
+    )
+
+
 class ConfigDelete(Config):
     doit = ParamCreator.create_bool(
         help_string="Really delete?",
