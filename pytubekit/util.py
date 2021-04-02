@@ -4,7 +4,7 @@ import googleapiclient.discovery
 from pygooglehelper import get_credentials, ConfigAuth
 
 from pytubekit import LOGGER_NAME
-from pytubekit.configs import ConfigPagination
+from pytubekit.configs import ConfigPagination, ConfigPlaylist
 from pytubekit.scopes import SCOPES
 from pytubekit.static import APP_NAME
 
@@ -73,6 +73,21 @@ def get_playlist_id_from_name(youtube, playlist_name: str) -> str:
         f_title = item["snippet"]["title"]
         d[f_title] = f_id
     return d[playlist_name]
+
+
+def get_all_items(youtube):
+    playlist_id = get_playlist_id_from_name(youtube, ConfigPlaylist.name)
+    r = create_playlist(youtube, playlist_id=playlist_id)
+    return r.get_all_items()
+
+
+def delete_playlist_item_by_id(youtube, playlist_item_id: str):
+    logger = logging.getLogger()
+    logger.info(f"deleting playlist item {playlist_item_id}")
+    request = youtube.playlistItems().delete(
+        id=playlist_item_id,
+    )
+    request.execute()
 
 
 def get_youtube():
