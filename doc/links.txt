@@ -1,0 +1,2 @@
+code examples are in:
+	https://developers.google.com/youtube/v3/quickstart/python

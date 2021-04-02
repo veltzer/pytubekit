@@ -1,89 +1,69 @@
 """
 main entry point to the program
 """
-import logging
 import os
 
-import googleapiclient.discovery
 import pylogconf.core
 # import pyvardump
-from pygooglehelper import register_functions, get_credentials, ConfigAuth
+from pygooglehelper import register_functions
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
-from pytubekit import LOGGER_NAME
-from pytubekit.configs import ConfigPlaylist
+from pytubekit.configs import ConfigPlaylist, ConfigPagination
+from pytubekit.scopes import SCOPES
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 
-
-# all of the following you get from the YouTube API documentation
-API_SERVICE_NAME = "youtube"
-API_VERSION = "v3"
-SCOPES = [
-    "https://www.googleapis.com/auth/youtube",
-    "https://www.googleapis.com/auth/youtube.force-ssl",
-    "https://www.googleapis.com/auth/youtube.readonly",
-]
-NEXT_PAGE_TOKEN = "nextPageToken"
-PAGE_TOKEN = "pageToken"
-
-
-def get_youtube():
-    logger = logging.getLogger(LOGGER_NAME)
-    credentials = get_credentials(
-        logger=logger,
-        scopes=SCOPES,
-        app_name=APP_NAME,
-        host=ConfigAuth.host,
-        port=ConfigAuth.port,
-        authorization_prompt_message=ConfigAuth.authorization_prompt_message,
-    )
-    youtube = googleapiclient.discovery.build(
-        serviceName=API_SERVICE_NAME,
-        version=API_VERSION,
-        credentials=credentials,
-        cache_discovery=False,
-    )
-    return youtube
-
-
-def create_list_request(youtube, next_page_token):
-    kwargs = {
-        # part="snippet,contentDetails",
-        # part="contentDetails",
-        # part="status",
-        "part": "snippet",
-        "maxResults": 25,
-        "mine": True,
-    }
-    if next_page_token:
-        kwargs[PAGE_TOKEN] = next_page_token
-    return youtube.playlists().list(**kwargs)
+from pytubekit.util import create_playlists, get_youtube, get_playlist_id_from_name, create_playlist
 
 
 @register_endpoint(
     description="Show all playlists in your youtube account",
+    configs=[ConfigPagination],
 )
 def playlists() -> None:
     youtube = get_youtube()
+    r = create_playlists(youtube)
+    items = r.get_all_items()
+    for item in items:
+        f_title = item["snippet"]["title"]
+        print(f"{f_title}")
 
-    next_page_token = None
-    while True:
-        request = create_list_request(youtube, next_page_token)
-        response = request.execute()
-        # pyvardump.dump_pprint(response)
-        # import sys
-        # sys.exit(1)
 
-        for x in response["items"]:
-            # pyvardump.dump_pprint(x["snippet"])
-            # import sys
-            # sys.exit(1)
-            print(x["snippet"]["title"])
-            # print(x["snippet"]["description"])
-        if NEXT_PAGE_TOKEN in response:
-            next_page_token = response[NEXT_PAGE_TOKEN]
-        else:
-            break
+@register_endpoint(
+    description="List all entries in a playlist",
+    configs=[ConfigPagination, ConfigPlaylist],
+)
+def playlist() -> None:
+    youtube = get_youtube()
+    playlist_id = get_playlist_id_from_name(youtube, ConfigPlaylist.name)
+    r = create_playlist(youtube, playlist_id=playlist_id)
+    items = r.get_all_items()
+    for item in items:
+        f_video_id = item["snippet"]["resourceId"]["videoId"]
+        print(f"{f_video_id}")
+
+
+@register_endpoint(
+    description="Dump all playlists",
+    configs=[ConfigPagination],
+)
+def dump() -> None:
+    youtube = get_youtube()
+    r = create_playlists(youtube)
+    items = r.get_all_items()
+    id_to_title = {}
+    for item in items:
+        f_id = item["id"]
+        f_title = item["snippet"]["title"]
+        id_to_title[f_id] = f_title
+    print("got lists data")
+    for f_id, f_title in id_to_title.items():
+        print(f"dumping [{f_title}]")
+        with open(f_title, "w") as f:
+            r = create_playlist(youtube, playlist_id=f_id)
+            items = r.get_all_items()
+            for item in items:
+                f_video_id = item["snippet"]["resourceId"]["videoId"]
+                print(f"{f_video_id}", file=f)
 
 
 @register_endpoint(
@@ -91,8 +71,7 @@ def playlists() -> None:
     configs=[ConfigPlaylist],
 )
 def mark_seen() -> None:
-    # youtube = get_youtube()
-    pass
+    print("TBD")
 
 
 @register_endpoint(
