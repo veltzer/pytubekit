@@ -1,6 +1,7 @@
 """
 main entry point to the program
 """
+import logging
 import os
 
 import pylogconf.core
@@ -8,11 +9,10 @@ import pylogconf.core
 from pygooglehelper import register_functions
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
-from pytubekit.configs import ConfigPlaylist, ConfigPagination
+from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigDelete
 from pytubekit.scopes import SCOPES
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
-
-from pytubekit.util import create_playlists, get_youtube, get_playlist_id_from_name, create_playlist
+from pytubekit.util import create_playlists, get_youtube, create_playlist, get_all_items, delete_playlist_item_by_id
 
 
 @register_endpoint(
@@ -34,9 +34,7 @@ def playlists() -> None:
 )
 def playlist() -> None:
     youtube = get_youtube()
-    playlist_id = get_playlist_id_from_name(youtube, ConfigPlaylist.name)
-    r = create_playlist(youtube, playlist_id=playlist_id)
-    items = r.get_all_items()
+    items = get_all_items(youtube)
     for item in items:
         f_video_id = item["snippet"]["resourceId"]["videoId"]
         print(f"{f_video_id}")
@@ -67,8 +65,33 @@ def dump() -> None:
 
 
 @register_endpoint(
+    description="Remove duplicates from a playlist",
+    configs=[ConfigPagination, ConfigPlaylist],
+)
+def dedup() -> None:
+    youtube = get_youtube()
+    items = get_all_items(youtube)
+    seen = set()
+    wanted_to_delete = 0
+    deleted = 0
+    for item in items:
+        f_video_id = item["snippet"]["resourceId"]["videoId"]
+        if f_video_id in seen:
+            wanted_to_delete += 1
+            if ConfigDelete.doit:
+                f_id = item["id"]
+                delete_playlist_item_by_id(youtube, f_id)
+                deleted += 1
+        else:
+            seen.add(f_video_id)
+    logger = logging.getLogger()
+    logger.info(f"wanted_to_delete {wanted_to_delete} items")
+    logger.info(f"deleted {deleted} items")
+
+
+@register_endpoint(
     description="Mark all entries in playlist as seen",
-    configs=[ConfigPlaylist],
+    configs=[ConfigPagination, ConfigPlaylist],
 )
 def mark_seen() -> None:
     print("TBD")

@@ -1,2 +1,9 @@
 code examples are in:
-	https://developers.google.com/youtube/v3/quickstart/python
+	home:
+		https://developers.google.com/youtube/v3
+	python:
+		https://developers.google.com/youtube/v3/quickstart/python
+	reference:
+		https://developers.google.com/youtube/v3/docs
+	guides:
+		https://developers.google.com/youtube/v3/getting-started
