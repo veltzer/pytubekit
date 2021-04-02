@@ -1,0 +1,2 @@
+features:
+	marking all elements of a list as seen -> it seems that this is impossible to do via the youtube api.
