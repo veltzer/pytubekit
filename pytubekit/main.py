@@ -1,6 +1,7 @@
 """
 main entry point to the program
 """
+import json
 import logging
 import os
 
@@ -9,7 +10,7 @@ import pylogconf.core
 from pygooglehelper import register_functions
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
-from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigDelete, ConfigPlaylists
+from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, ConfigDump
 from pytubekit.scopes import SCOPES
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists, get_youtube, create_playlist, get_all_items, delete_playlist_item_by_id, \
@@ -43,7 +44,7 @@ def playlist() -> None:
 
 @register_endpoint(
     description="Dump all playlists",
-    configs=[ConfigPagination],
+    configs=[ConfigPagination, ConfigDump],
 )
 def dump() -> None:
     youtube = get_youtube()
@@ -62,12 +63,15 @@ def dump() -> None:
             items = r.get_all_items()
             for item in items:
                 f_video_id = item["snippet"]["resourceId"]["videoId"]
-                print(f"{f_video_id}", file=f)
+                if ConfigDump.full:
+                    json.dump(item, fp=f)
+                else:
+                    print(f"{f_video_id}", file=f)
 
 
 @register_endpoint(
-    description="Remove duplicates from a playlist",
-    configs=[ConfigPagination, ConfigPlaylists],
+    description="Clean up a set of playlists (dedup, remove deleted, remove privatized)",
+    configs=[ConfigPagination, ConfigPlaylists, ConfigCleanup],
 )
 def dedup() -> None:
     youtube = get_youtube()
@@ -82,7 +86,7 @@ def dedup() -> None:
         f_video_id = item["snippet"]["resourceId"]["videoId"]
         if f_video_id in seen:
             wanted_to_delete += 1
-            if ConfigDelete.doit:
+            if ConfigCleanup.dedup:
                 f_id = item["id"]
                 delete_playlist_item_by_id(youtube, f_id)
                 deleted += 1
@@ -95,10 +99,21 @@ def dedup() -> None:
 
 
 @register_endpoint(
-    description="Cleanup a specific playlist from deleted or privatized entries",
+    description="get info about a video",
+    configs=[ConfigVideo],
 )
-def cleanup() -> None:
-    print("TBD")
+def video_info() -> None:
+    """
+
+    :return: 
+    """
+    youtube = get_youtube()
+    request = youtube.videos().list(
+        part="snippet,status,snippet,contentDetails",
+        id=ConfigVideo.id,
+    )
+    response = request.execute()
+    print(response)
 
 
 @register_endpoint(
