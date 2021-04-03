@@ -14,7 +14,7 @@ from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, C
 from pytubekit.scopes import SCOPES
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists, get_youtube, create_playlist, get_all_items, delete_playlist_item_by_id, \
-    get_playlist_ids_from_names, get_all_items_from_playlist_ids
+    get_playlist_ids_from_names, get_all_items_from_playlist_ids, get_video_info
 
 
 @register_endpoint(
@@ -103,17 +103,9 @@ def dedup() -> None:
     configs=[ConfigVideo],
 )
 def video_info() -> None:
-    """
-
-    :return: 
-    """
     youtube = get_youtube()
-    request = youtube.videos().list(
-        part="snippet,status,snippet,contentDetails",
-        id=ConfigVideo.id,
-    )
-    response = request.execute()
-    print(response)
+    info = get_video_info(youtube, ConfigVideo.id)
+    print(info)
 
 
 @register_endpoint(

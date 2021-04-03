@@ -114,3 +114,11 @@ def get_youtube():
         cache_discovery=False,
     )
     return youtube
+
+
+def get_video_info(youtube, youtube_id):
+    request = youtube.videos().list(
+        part="snippet,status,snippet,contentDetails",
+        id=youtube_id,
+    )
+    return request.execute()
