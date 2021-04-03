@@ -18,14 +18,35 @@ class ConfigPlaylist(Config):
     )
 
 
+class ConfigVideo(Config):
+    id = ParamCreator.create_str(
+        help_string="Video id to use",
+    )
+
+
 class ConfigPlaylists(Config):
     names = ParamCreator.create_list_str(
         help_string="What playlists to use",
     )
 
 
-class ConfigDelete(Config):
-    doit = ParamCreator.create_bool(
-        help_string="Really delete?",
+class ConfigCleanup(Config):
+    dedup = ParamCreator.create_bool(
+        help_string="Really delete duplicates?",
         default=True,
+    )
+    deleted = ParamCreator.create_bool(
+        help_string="Really delete deleted?",
+        default=True,
+    )
+    privatized = ParamCreator.create_bool(
+        help_string="Really delete privatized?",
+        default=True,
+    )
+
+
+class ConfigDump(Config):
+    full = ParamCreator.create_bool(
+        help_string="full dumps or just id?",
+        default=False,
     )
