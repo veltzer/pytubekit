@@ -1,0 +1,5 @@
+It seems that you tube has 10,000 api calls/day quote limit.
+If you hit it then just wait a day to continute working.
+
+References:
+- https://developers.google.com/youtube/v3/getting-started
