@@ -6,16 +6,8 @@ from pygooglehelper import get_credentials, ConfigAuth
 
 from pytubekit import LOGGER_NAME
 from pytubekit.configs import ConfigPagination, ConfigPlaylist
-from pytubekit.scopes import SCOPES
+from pytubekit.constants import SCOPES, API_SERVICE_NAME, API_VERSION, NEXT_PAGE_TOKEN, PAGE_TOKEN, ITEMS_TOKEN
 from pytubekit.static import APP_NAME
-
-# all of the following you get from the YouTube API documentation
-API_SERVICE_NAME = "youtube"
-API_VERSION = "v3"
-
-NEXT_PAGE_TOKEN = "nextPageToken"
-PAGE_TOKEN = "pageToken"
-ITEMS_TOKEN = "items"
 
 
 class PagedRequest:
