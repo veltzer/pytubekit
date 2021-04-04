@@ -31,8 +31,12 @@ class ConfigPlaylists(Config):
 
 
 class ConfigCleanup(Config):
+    do_delete = ParamCreator.create_bool(
+        help_string="Really delete?",
+        default=True,
+    )
     dedup = ParamCreator.create_bool(
-        help_string="Really delete duplicates?",
+        help_string="detect duplicates?",
         default=True,
     )
     deleted = ParamCreator.create_bool(
@@ -45,7 +49,7 @@ class ConfigCleanup(Config):
     )
 
 
-class ConfigDump(Config):
+class ConfigPrint(Config):
     full = ParamCreator.create_bool(
         help_string="full dumps or just id?",
         default=False,

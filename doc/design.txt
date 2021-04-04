@@ -1,2 +1,6 @@
 features:
 	marking all elements of a list as seen -> it seems that this is impossible to do via the youtube api.
+
+What is a deleted element?
+    One with the title "Deleted element"
+    One, when getting the details of, has en empty items array.
