@@ -1,2 +1,3 @@
-To test use "6k2nFwVqQFw" as the id (a deleted video)
-To test use "xL_sMXfzzyA" as a regular non deleted video
+To test use "xL_sMXfzzyA" as a regular video
+To test use "6k2nFwVqQFw" as a deleted video
+To test use "MZnlL8uCCU0" as a private video
