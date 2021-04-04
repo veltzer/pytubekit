@@ -12,7 +12,7 @@ from pygooglehelper import register_functions
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, ConfigPrint
-from pytubekit.constants import SCOPES, DELETED_TITLE
+from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists, get_youtube, create_playlist, get_all_items, delete_playlist_item_by_id, \
     get_playlist_ids_from_names, get_all_items_from_playlist_ids, get_video_info
@@ -90,6 +90,7 @@ def cleanup() -> None:
     saw = 0
     found_duplicates = 0
     found_deleted = 0
+    found_private = 0
     for item in items:
         to_delete = False
         saw += 1
@@ -105,6 +106,11 @@ def cleanup() -> None:
             if f_title == DELETED_TITLE:
                 found_deleted += 1
                 to_delete = True
+        if ConfigCleanup.privatized:
+            f_title = item["snippet"]["title"]
+            if f_title == PRIVATE_TITLE:
+                found_private += 1
+                to_delete = True
         if to_delete:
             wanted_to_delete += 1
             if ConfigCleanup.do_delete:
@@ -115,6 +121,7 @@ def cleanup() -> None:
     logger.info(f"saw {saw} items")
     logger.info(f"found_duplicates {found_duplicates} items")
     logger.info(f"found_deleted {found_deleted} items")
+    logger.info(f"found_private {found_private} items")
     logger.info(f"wanted_to_delete {wanted_to_delete} items")
     logger.info(f"deleted {deleted} items")
 
