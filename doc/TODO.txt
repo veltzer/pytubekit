@@ -1,2 +1,3 @@
-- implement the cleanup command
-	clean_deleted_or_private - clean deleted or private videos from a specific playlist
+- remove private vidoes.
+- implement argument free dump.
+- finish implementing the "read ids from folder" functionality and configure it properly.
