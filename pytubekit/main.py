@@ -1,10 +1,8 @@
 """
 main entry point to the program
 """
-import json
 import logging
 import os
-import sys
 
 import pylogconf.core
 # import pyvardump
@@ -15,7 +13,7 @@ from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, C
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists, get_youtube, create_playlist, get_all_items, delete_playlist_item_by_id, \
-    get_playlist_ids_from_names, get_all_items_from_playlist_ids, get_video_info
+    get_playlist_ids_from_names, get_all_items_from_playlist_ids, get_video_info, pretty_print
 
 
 @register_endpoint(
@@ -28,7 +26,7 @@ def playlists() -> None:
     items = r.get_all_items()
     for item in items:
         if ConfigPrint.full:
-            json.dump(item, indent=4, fp=sys.stdout)
+            pretty_print(item)
         else:
             f_title = item["snippet"]["title"]
             print(f"{f_title}")
@@ -43,7 +41,7 @@ def playlist() -> None:
     items = get_all_items(youtube)
     for item in items:
         if ConfigPrint.full:
-            json.dump(item, indent=4, fp=sys.stdout)
+            pretty_print(item)
         else:
             f_video_id = item["snippet"]["resourceId"]["videoId"]
             print(f"{f_video_id}")
@@ -71,7 +69,7 @@ def dump() -> None:
             for item in items:
                 f_video_id = item["snippet"]["resourceId"]["videoId"]
                 if ConfigPrint.full:
-                    json.dump(item, indent=4, fp=f)
+                    pretty_print(item, fp=f)
                 else:
                     print(f"{f_video_id}", file=f)
 
@@ -133,7 +131,7 @@ def cleanup() -> None:
 def video_info() -> None:
     youtube = get_youtube()
     info = get_video_info(youtube, ConfigVideo.id)
-    json.dump(info, fp=sys.stdout, indent=4)
+    pretty_print(info)
 
 
 @register_endpoint(
@@ -143,6 +141,28 @@ def collect_ids() -> None:
     for filename in os.listdir():
         _, extension = os.path.splitext(filename)
         print(extension)
+
+
+@register_endpoint(
+    description="List channels",
+)
+def channels() -> None:
+    youtube = get_youtube()
+    request = youtube.channels().list(
+        part="snippet,contentDetails,statistics",
+        mine=True
+    )
+    response = request.execute()
+    pretty_print(response)
+    for item in response["items"]:
+        f_channel_id = item["id"]
+        request = youtube.playlists().list(
+            part="snippet,contentDetails",
+            channelId=f_channel_id,
+            maxResults=25
+        )
+        res = request.execute()
+        pretty_print(res)
 
 
 @register_main(
