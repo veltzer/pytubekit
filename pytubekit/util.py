@@ -1,4 +1,6 @@
+import json
 import logging
+import sys
 from typing import List
 
 import googleapiclient.discovery
@@ -114,3 +116,7 @@ def get_video_info(youtube, youtube_id):
         id=youtube_id,
     )
     return request.execute()
+
+
+def pretty_print(data, fp=sys.stdout):
+    json.dump(data, fp, indent=4)
