@@ -3,13 +3,17 @@ main entry point to the program
 """
 import logging
 import os
+import pathlib
+import string
+import time
 
 import pylogconf.core
 # import pyvardump
 from pygooglehelper import register_functions
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
-from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, ConfigPrint
+from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
+    ConfigPrint, ConfigDump
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists, get_youtube, create_playlist, get_all_items, delete_playlist_item_by_id, \
@@ -49,9 +53,16 @@ def playlist() -> None:
 
 @register_endpoint(
     description="Dump all playlists",
-    configs=[ConfigPagination, ConfigPrint],
+    configs=[ConfigPagination, ConfigPrint, ConfigDump],
 )
 def dump() -> None:
+    sub_dict = {
+        "date": int(time.time()),
+        "home": os.path.expanduser("~"),
+    }
+    dump_folder = string.Template(ConfigDump.dump_folder).substitute(sub_dict)
+    pathlib.Path(dump_folder).mkdir(parents=True, exist_ok=True)
+
     youtube = get_youtube()
     r = create_playlists(youtube)
     items = r.get_all_items()
@@ -62,8 +73,9 @@ def dump() -> None:
         id_to_title[f_id] = f_title
     print("got lists data")
     for f_id, f_title in id_to_title.items():
-        print(f"dumping [{f_title}]")
-        with open(f_title, "w") as f:
+        filename = os.path.join(dump_folder, f_title)
+        print(f"dumping [{f_title}] to [{filename}")
+        with open(filename, "w") as f:
             r = create_playlist(youtube, playlist_id=f_id)
             items = r.get_all_items()
             for item in items:
