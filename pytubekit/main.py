@@ -17,7 +17,8 @@ from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, C
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists, get_youtube, create_playlist, get_all_items, delete_playlist_item_by_id, \
-    get_playlist_ids_from_names, get_all_items_from_playlist_ids, get_video_info, pretty_print
+    get_playlist_ids_from_names, get_all_items_from_playlist_ids, get_video_info, pretty_print, get_youtube_channels, \
+    get_youtube_playlists
 
 
 @register_endpoint(
@@ -160,7 +161,8 @@ def collect_ids() -> None:
 )
 def channels() -> None:
     youtube = get_youtube()
-    request = youtube.channels().list(
+    channels_obj = get_youtube_channels(youtube)
+    request = channels_obj.list(
         part="snippet,contentDetails,statistics",
         mine=True
     )
@@ -168,7 +170,8 @@ def channels() -> None:
     pretty_print(response)
     for item in response["items"]:
         f_channel_id = item["id"]
-        request = youtube.playlists().list(
+        playlists_obj = get_youtube_playlists(youtube)
+        request = playlists_obj.list(
             part="snippet,contentDetails",
             channelId=f_channel_id,
             maxResults=25

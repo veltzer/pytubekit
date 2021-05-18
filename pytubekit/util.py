@@ -120,3 +120,11 @@ def get_video_info(youtube, youtube_id):
 
 def pretty_print(data, fp=sys.stdout):
     json.dump(data, fp, indent=4)
+
+
+def get_youtube_channels(youtube):
+    return youtube.channels()
+
+
+def get_youtube_playlists(youtube):
+    return youtube.playlists()
