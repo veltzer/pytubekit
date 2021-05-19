@@ -16,6 +16,8 @@ run_requires = [
     "pytconf",
     "pylogconf",
     "pyvardump",
+    "youtube-dl",
+    "browsercookie",
 ]
 
 test_requires = [
