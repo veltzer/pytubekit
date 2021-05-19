@@ -41,6 +41,8 @@ setuptools.setup(
         'pytconf',
         'pylogconf',
         'pyvardump',
+        'youtube-dl',
+        'browsercookie',
     ],
     extras_require={
     },

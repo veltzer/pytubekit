@@ -19,6 +19,7 @@ from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists, get_youtube, create_playlist, get_all_items, delete_playlist_item_by_id, \
     get_playlist_ids_from_names, get_all_items_from_playlist_ids, get_video_info, pretty_print, get_youtube_channels, \
     get_youtube_playlists
+from pytubekit.youtube import youtube_dl_download_urls
 
 
 @register_endpoint(
@@ -178,6 +179,13 @@ def channels() -> None:
         )
         res = request.execute()
         pretty_print(res)
+
+
+@register_endpoint(
+    description="Download Watch Later playlist",
+)
+def watch_later() -> None:
+    youtube_dl_download_urls(["https://www.youtube.com/playlist?list=WL"])
 
 
 @register_main(
