@@ -23,7 +23,7 @@ def youtube_dl_download_urls(urls: List[str]) -> None:
         'extract_flat': True,
         'usenetrc': True,
         # 'username': "mark.veltzer@gmail.com",
-        # 'password': "XXXXX",
+        # 'password': "",
     }
     logger.debug(f"passing options {ydl_opts}")
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
