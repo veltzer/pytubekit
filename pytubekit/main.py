@@ -76,7 +76,7 @@ def dump() -> None:
     print("got lists data")
     for f_id, f_title in id_to_title.items():
         filename = os.path.join(dump_folder, f_title)
-        print(f"dumping [{f_title}] to [{filename}")
+        print(f"dumping [{f_title}] to [{filename}]")
         with open(filename, "w") as f:
             r = create_playlist(youtube, playlist_id=f_id)
             items = r.get_all_items()
