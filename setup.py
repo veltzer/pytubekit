@@ -14,7 +14,7 @@ setuptools.setup(
         'pytubekit',
     ],
     # from here all is optional
-    description="Pytubekit will allow you to perform operations in your youtube account en masse",
+    description="Extra youtube operatinos",
     long_description=get_readme(),
     long_description_content_type="text/x-rst",
     author="Mark Veltzer",
