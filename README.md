@@ -14,7 +14,7 @@
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
 ![build](https://github.com/veltzer/pytubekit/workflows/build/badge.svg)
-Pytubekit will allow you to perform operations in your youtube account en masse
+Extra youtube operatinos
 
 project website: https://veltzer.github.io/pytubekit
 
