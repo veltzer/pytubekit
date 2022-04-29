@@ -1,5 +1,5 @@
 - since we cant download watch later from the api do that using regular
     scraping ideas.
+	https://github.com/longpdo/youtube-dl-watch-later-playlist
 - implement argument free dump.
-- finish implementing the "read ids from folder" functionality and configure it properly.
 - find how to list the "builtin" lists like "Watch later" and so how to clean them up.
