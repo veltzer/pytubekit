@@ -6,8 +6,6 @@ console_scripts = [
     "pytubekit=pytubekit.main:main",
 ]
 
-setup_requires = []
-
 run_requires = [
     "google-api-python-client",
     "google-auth-httplib2",
@@ -35,12 +33,6 @@ dev_requires = [
     "Sphinx",
     "black",
 ]
-
-install_requires = list(setup_requires)
-install_requires.extend(run_requires)
-
-extras_require = {
-}
 
 python_requires = ">=3.9"
 test_os = ["ubuntu-20.04"]
