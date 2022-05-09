@@ -33,6 +33,17 @@ setuptools.setup(
     platforms=[
         'python3',
     ],
+    install_requires=[
+        'google-api-python-client',
+        'google-auth-httplib2',
+        'google-auth-oauthlib',
+        'pygooglehelper',
+        'pytconf',
+        'pylogconf',
+        'pyvardump',
+        'youtube-dl',
+        'browsercookie',
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
@@ -49,5 +60,5 @@ setuptools.setup(
     entry_points={"console_scripts": [
         'pytubekit=pytubekit.main:main',
     ]},
-    python_requires=">=3.9",
+    python_requires=">=3.10",
 )
