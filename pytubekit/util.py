@@ -6,7 +6,6 @@ from typing import List
 import googleapiclient.discovery
 from pygooglehelper import get_credentials, ConfigAuth
 
-from pytubekit import LOGGER_NAME
 from pytubekit.configs import ConfigPagination, ConfigPlaylist
 from pytubekit.constants import SCOPES, API_SERVICE_NAME, API_VERSION, NEXT_PAGE_TOKEN, PAGE_TOKEN, ITEMS_TOKEN
 from pytubekit.static import APP_NAME
@@ -92,9 +91,7 @@ def delete_playlist_item_by_id(youtube, playlist_item_id: str):
 
 
 def get_youtube():
-    logger = logging.getLogger(LOGGER_NAME)
     credentials = get_credentials(
-        logger=logger,
         scopes=SCOPES,
         app_name=APP_NAME,
         host=ConfigAuth.host,
