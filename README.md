@@ -1,6 +1,6 @@
 # *pytubekit* project by Mark Veltzer
 
-description: Extra youtube operatinos
+description: Extra youtube operations
 
 project website: https://veltzer.github.io/pytubekit
 

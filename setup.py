@@ -14,7 +14,7 @@ setuptools.setup(
         'pytubekit',
     ],
     # from here all is optional
-    description="Extra youtube operatinos",
+    description="Extra youtube operations",
     long_description=get_readme(),
     long_description_content_type="text/x-rst",
     author="Mark Veltzer",
