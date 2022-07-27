@@ -1,4 +1,4 @@
-description_short = "Extra youtube operatinos"
+description_short = "Extra youtube operations"
 keywords = [
     "google",
     "youtube",
