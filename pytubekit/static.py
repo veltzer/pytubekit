@@ -1,5 +1,5 @@
 """ version which can be consumed from within the module """
-VERSION_STR = "0.0.19"
+VERSION_STR = "0.0.20"
 DESCRIPTION = "Extra youtube operations"
 APP_NAME = "pytubekit"
 LOGGER_NAME = "pytubekit"
