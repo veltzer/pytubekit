@@ -93,6 +93,8 @@ def dump() -> None:
     configs=[ConfigPagination, ConfigPlaylists, ConfigCleanup],
 )
 def cleanup() -> None:
+    logger = logging.getLogger()
+    logger.info(f"cleaning up [{ConfigPlaylists.names}]...")
     youtube = get_youtube()
     playlist_ids = get_playlist_ids_from_names(youtube, ConfigPlaylists.names)
     items = get_all_items_from_playlist_ids(youtube, playlist_ids)
@@ -129,7 +131,6 @@ def cleanup() -> None:
                 f_id = item["id"]
                 delete_playlist_item_by_id(youtube, f_id)
                 deleted += 1
-    logger = logging.getLogger()
     logger.info(f"saw {saw} items")
     logger.info(f"found_duplicates {found_duplicates} items")
     logger.info(f"found_deleted {found_deleted} items")
