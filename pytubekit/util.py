@@ -1,7 +1,7 @@
 import json
 import logging
 import sys
-from typing import List
+from typing import List, Set
 
 import googleapiclient.discovery
 from pygooglehelper import get_credentials, ConfigAuth
@@ -127,10 +127,16 @@ def get_youtube_playlists(youtube):
     return youtube.playlists()
 
 
-def get_my_playlists_ids(youtube):
+def get_my_playlists_ids(youtube) -> List[str]:
     r = create_playlists_request(youtube)
     items = r.get_all_items()
     ids = []
     for item in items:
         ids.append(item["id"])
     return ids
+
+
+def get_playlist_item_ids_from_names(youtube, playlist_names) -> Set[str]:
+    playlist_ids = get_playlist_ids_from_names(youtube, playlist_names)
+    items = get_all_items_from_playlist_ids(youtube, playlist_ids)
+    return {item["id"] for item in items}
