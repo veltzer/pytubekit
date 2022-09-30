@@ -21,6 +21,16 @@ class ConfigDump(Config):
     )
 
 
+class ConfigSubtract(Config):
+    """ Subtract parameters """
+    subtract_what = ParamCreator.create_list_str(
+        help_string="What playlists to subtract",
+    )
+    subtract_from = ParamCreator.create_str(
+        help_string="What playlist to use",
+    )
+
+
 class ConfigPlaylist(Config):
     """ Playlist parameters """
     name = ParamCreator.create_str(
@@ -42,12 +52,16 @@ class ConfigPlaylists(Config):
     )
 
 
-class ConfigCleanup(Config):
-    """ Parameters for cleanup """
+class ConfigDelete(Config):
+    """ Configs for doing delete """
     do_delete = ParamCreator.create_bool(
         help_string="Really delete?",
         default=True,
     )
+
+
+class ConfigCleanup(Config):
+    """ Parameters for cleanup """
     dedup = ParamCreator.create_bool(
         help_string="detect duplicates?",
         default=True,

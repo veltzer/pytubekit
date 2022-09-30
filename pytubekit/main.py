@@ -13,12 +13,13 @@ from pygooglehelper import register_functions
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
-    ConfigPrint, ConfigDump
+    ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
     delete_playlist_item_by_id, get_playlist_ids_from_names, get_all_items_from_playlist_ids, \
-    get_video_info, pretty_print, get_youtube_channels, get_youtube_playlists, get_my_playlists_ids
+    get_video_info, pretty_print, get_youtube_channels, get_youtube_playlists, get_my_playlists_ids, \
+    get_playlist_item_ids_from_names
 from pytubekit.youtube import youtube_dl_download_urls
 
 
@@ -90,7 +91,7 @@ def dump() -> None:
 
 @register_endpoint(
     description="Clean up a set of playlists (dedup, remove deleted, remove privatized)",
-    configs=[ConfigPagination, ConfigPlaylists, ConfigCleanup],
+    configs=[ConfigPagination, ConfigPlaylists, ConfigCleanup, ConfigDelete],
 )
 def cleanup() -> None:
     logger = logging.getLogger()
@@ -127,7 +128,7 @@ def cleanup() -> None:
                 to_delete = True
         if to_delete:
             wanted_to_delete += 1
-            if ConfigCleanup.do_delete:
+            if ConfigDelete.do_delete:
                 f_id = item["id"]
                 delete_playlist_item_by_id(youtube, f_id)
                 deleted += 1
@@ -141,7 +142,7 @@ def cleanup() -> None:
 
 @register_endpoint(
     description="Remove unavialable or privatized from all playlists",
-    configs=[ConfigPagination, ConfigPlaylists, ConfigCleanup],
+    configs=[ConfigPagination, ConfigPlaylists, ConfigCleanup, ConfigDelete],
 )
 def remove_unavailable_from_all_playlists() -> None:
     logger = logging.getLogger()
@@ -169,7 +170,7 @@ def remove_unavailable_from_all_playlists() -> None:
                 to_delete = True
         if to_delete:
             wanted_to_delete += 1
-            if ConfigCleanup.do_delete:
+            if ConfigDelete.do_delete:
                 f_id = item["id"]
                 delete_playlist_item_by_id(youtube, f_id)
                 deleted += 1
@@ -181,7 +182,29 @@ def remove_unavailable_from_all_playlists() -> None:
 
 
 @register_endpoint(
-    description="get info about a video",
+    description="Subtracts a list of playlists from a playlist",
+    configs=[ConfigPagination, ConfigSubtract, ConfigDelete],
+)
+def subtract() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    logger.info(f"subtracting [{ConfigSubtract.subtract_what}] from [{ConfigSubtract.subtract_from}]...")
+    what_ids = get_playlist_item_ids_from_names(youtube, ConfigSubtract.subtract_what)
+    from_ids = get_playlist_item_ids_from_names(youtube, [ConfigSubtract.subtract_from])
+    f_ids = from_ids.intersection(what_ids)
+    deleted = 0
+    wanted_to_delete = 0
+    for f_id in f_ids:
+        wanted_to_delete += 1
+        if ConfigDelete.do_delete:
+            delete_playlist_item_by_id(youtube, f_id)
+            deleted += 1
+    logger.info(f"wanted_to_delete {wanted_to_delete} items")
+    logger.info(f"deleted {deleted} items")
+
+
+@register_endpoint(
+    description="Get info about a video",
     configs=[ConfigVideo],
 )
 def video_info() -> None:
