@@ -16,9 +16,9 @@ from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, C
     ConfigPrint, ConfigDump
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
-from pytubekit.util import create_playlists, get_youtube, create_playlist, get_all_items, delete_playlist_item_by_id, \
-    get_playlist_ids_from_names, get_all_items_from_playlist_ids, get_video_info, pretty_print, get_youtube_channels, \
-    get_youtube_playlists
+from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
+    delete_playlist_item_by_id, get_playlist_ids_from_names, get_all_items_from_playlist_ids, \
+    get_video_info, pretty_print, get_youtube_channels, get_youtube_playlists, get_my_playlists_ids
 from pytubekit.youtube import youtube_dl_download_urls
 
 
@@ -28,7 +28,7 @@ from pytubekit.youtube import youtube_dl_download_urls
 )
 def playlists() -> None:
     youtube = get_youtube()
-    r = create_playlists(youtube)
+    r = create_playlists_request(youtube)
     items = r.get_all_items()
     for item in items:
         if ConfigPrint.full:
@@ -66,7 +66,7 @@ def dump() -> None:
     pathlib.Path(dump_folder).mkdir(parents=True, exist_ok=True)
 
     youtube = get_youtube()
-    r = create_playlists(youtube)
+    r = create_playlists_request(youtube)
     items = r.get_all_items()
     id_to_title = {}
     for item in items:
@@ -78,7 +78,7 @@ def dump() -> None:
         filename = os.path.join(dump_folder, f_title)
         print(f"dumping [{f_title}] to [{filename}]")
         with open(filename, "w") as f:
-            r = create_playlist(youtube, playlist_id=f_id)
+            r = create_playlist_request(youtube, playlist_id=f_id)
             items = r.get_all_items()
             for item in items:
                 f_video_id = item["snippet"]["resourceId"]["videoId"]
@@ -133,6 +133,47 @@ def cleanup() -> None:
                 deleted += 1
     logger.info(f"saw {saw} items")
     logger.info(f"found_duplicates {found_duplicates} items")
+    logger.info(f"found_deleted {found_deleted} items")
+    logger.info(f"found_private {found_private} items")
+    logger.info(f"wanted_to_delete {wanted_to_delete} items")
+    logger.info(f"deleted {deleted} items")
+
+
+@register_endpoint(
+    description="Remove unavialable or privatized from all playlists",
+    configs=[ConfigPagination, ConfigPlaylists, ConfigCleanup],
+)
+def remove_unavailable_from_all_playlists() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    playlists_ids = get_my_playlists_ids(youtube)
+    logger.info(f"working on playlist ids[{playlists_ids}]...")
+    items = get_all_items_from_playlist_ids(youtube, playlists_ids)
+    wanted_to_delete = 0
+    deleted = 0
+    saw = 0
+    found_deleted = 0
+    found_private = 0
+    for item in items:
+        to_delete = False
+        saw += 1
+        if ConfigCleanup.deleted:
+            f_title = item["snippet"]["title"]
+            if f_title == DELETED_TITLE:
+                found_deleted += 1
+                to_delete = True
+        if ConfigCleanup.privatized:
+            f_title = item["snippet"]["title"]
+            if f_title == PRIVATE_TITLE:
+                found_private += 1
+                to_delete = True
+        if to_delete:
+            wanted_to_delete += 1
+            if ConfigCleanup.do_delete:
+                f_id = item["id"]
+                delete_playlist_item_by_id(youtube, f_id)
+                deleted += 1
+    logger.info(f"saw {saw} items")
     logger.info(f"found_deleted {found_deleted} items")
     logger.info(f"found_private {found_private} items")
     logger.info(f"wanted_to_delete {wanted_to_delete} items")

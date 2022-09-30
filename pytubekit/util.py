@@ -40,7 +40,7 @@ class PagedRequest:
         return items
 
 
-def create_playlists(youtube) -> PagedRequest:
+def create_playlists_request(youtube) -> PagedRequest:
     kwargs = {
         "part": "snippet",
         "maxResults": ConfigPagination.page_size,
@@ -49,7 +49,7 @@ def create_playlists(youtube) -> PagedRequest:
     return PagedRequest(f=youtube.playlists().list, kwargs=kwargs)
 
 
-def create_playlist(youtube, playlist_id: str) -> PagedRequest:
+def create_playlist_request(youtube, playlist_id: str) -> PagedRequest:
     kwargs = {
         "part": "snippet,id",
         "playlistId": playlist_id,
@@ -59,10 +59,10 @@ def create_playlist(youtube, playlist_id: str) -> PagedRequest:
 
 
 def get_playlist_ids_from_names(youtube, playlist_names: List[str]) -> List[str]:
-    r = create_playlists(youtube)
+    r = create_playlists_request(youtube)
     items = r.get_all_items()
-    d = {item["snippet"]["title"]: item["id"] for item in items}
-    return [d[playlist_name] for playlist_name in playlist_names]
+    name_to_id = {item["snippet"]["title"]: item["id"] for item in items}
+    return [name_to_id[playlist_name] for playlist_name in playlist_names]
 
 
 def get_all_items(youtube):
@@ -71,7 +71,7 @@ def get_all_items(youtube):
 
 
 def get_all_items_from_playlist_id(youtube, playlist_id: str):
-    return create_playlist(youtube, playlist_id=playlist_id).get_all_items()
+    return create_playlist_request(youtube, playlist_id=playlist_id).get_all_items()
 
 
 def get_all_items_from_playlist_ids(youtube, playlist_ids: List[str]):
@@ -125,3 +125,12 @@ def get_youtube_channels(youtube):
 
 def get_youtube_playlists(youtube):
     return youtube.playlists()
+
+
+def get_my_playlists_ids(youtube):
+    r = create_playlists_request(youtube)
+    items = r.get_all_items()
+    ids = []
+    for item in items:
+        ids.append(item["id"])
+    return ids
