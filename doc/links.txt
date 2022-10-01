@@ -7,3 +7,6 @@ code examples are in:
 		https://developers.google.com/youtube/v3/docs
 	guides:
 		https://developers.google.com/youtube/v3/getting-started
+
+Code to remove videos from watch later:
+	https://gist.github.com/astamicu/eb351ce10451f1a51b71a1287d36880f
