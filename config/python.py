@@ -2,11 +2,14 @@ console_scripts = [
     "pytubekit=pytubekit.main:main",
 ]
 dev_requires = [
-    "pyclassifiers",
     "pypitools",
+    "black",
+]
+make_requires = [
+    "pyclassifiers",
     "pydmt",
     "Sphinx",
-    "black",
+    "pymakehelper",
 ]
 install_requires = [
     "google-api-python-client",
@@ -24,6 +27,5 @@ test_requires = [
     "pytest-cov",
     "pylint",
     "flake8",
-    "pymakehelper",
     "mypy",
 ]
