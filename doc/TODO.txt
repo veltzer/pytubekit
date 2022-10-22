@@ -1,3 +1,8 @@
+- implement a single playlist dump which dumps not only
+	the ids of the videos but also meta data about them.
+- use the dump of lists with details to find out what the problem is with my
+	"saw1" playlist which shows that it has unavailable videos in the youtube
+	UI even though I clean it up using my "remove_unavailable" feature.
 - since we cant download watch later from the api do that using regular
     scraping ideas.
 	https://github.com/longpdo/youtube-dl-watch-later-playlist
