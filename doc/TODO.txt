@@ -8,6 +8,10 @@
 	https://github.com/longpdo/youtube-dl-watch-later-playlist
 - implement argument free dump.
 - find how to list the "builtin" lists like "Watch later" and so how to clean them up.
+- implement the ability to download a playlist from a channel with all of the channels
+	videos.
+	This will enable to subtract from a channels playlist all the videos that you saw
+	(in several other playlist) and get a list of videos that you did not see.
 
 features to implements:
 - download watch later
