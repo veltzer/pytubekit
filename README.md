@@ -12,7 +12,7 @@ version: 0.0.25
 
 ## github
 
-![License](https://img.shields.io/github/license/veltzer/pytconf)
+![License](https://img.shields.io/github/license/veltzer/pytubekit)
 
 ## build
 
