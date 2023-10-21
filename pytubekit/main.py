@@ -9,7 +9,7 @@ import time
 
 import pylogconf.core
 # import pyvardump
-from pygooglehelper import register_functions
+from pygooglehelper import register_functions, ConfigRequest
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
@@ -260,7 +260,9 @@ def watch_later() -> None:
 )
 def main():
     pylogconf.core.setup()
-    register_functions(scopes=SCOPES, app_name=APP_NAME)
+    ConfigRequest.app_name = APP_NAME
+    ConfigRequest.scopes = SCOPES
+    register_functions()
     config_arg_parse_and_launch()
 
 
