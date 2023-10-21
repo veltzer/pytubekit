@@ -4,7 +4,7 @@ import sys
 from typing import List, Set
 
 import googleapiclient.discovery
-from pygooglehelper import get_credentials, ConfigAuth
+from pygooglehelper import get_credentials, ConfigRequest
 
 from pytubekit.configs import ConfigPagination, ConfigPlaylist
 from pytubekit.constants import SCOPES, API_SERVICE_NAME, API_VERSION, NEXT_PAGE_TOKEN, PAGE_TOKEN, ITEMS_TOKEN
@@ -91,13 +91,9 @@ def delete_playlist_item_by_id(youtube, playlist_item_id: str):
 
 
 def get_youtube():
-    credentials = get_credentials(
-        scopes=SCOPES,
-        app_name=APP_NAME,
-        host=ConfigAuth.host,
-        port=ConfigAuth.port,
-        authorization_prompt_message=ConfigAuth.authorization_prompt_message,
-    )
+    ConfigRequest.scopes = SCOPES
+    ConfigRequest.app_name = APP_NAME
+    credentials = get_credentials()
     youtube = googleapiclient.discovery.build(
         serviceName=API_SERVICE_NAME,
         version=API_VERSION,
