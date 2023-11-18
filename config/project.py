@@ -1,5 +1,5 @@
 name = "pytubekit"
-description_short = "Extra youtube operations"
+description_short = "Pytubekit will allow you to perform operations in your youtube account en masse"
 keywords = [
     "google",
     "youtube",
