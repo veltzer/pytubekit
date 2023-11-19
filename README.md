@@ -1,6 +1,6 @@
 # *pytubekit* project by Mark Veltzer
 
-description: Extra youtube operations
+description: Pytubekit will allow you to perform operations in your youtube account en masse
 
 project website: https://veltzer.github.io/pytubekit
 
