@@ -1,16 +1,14 @@
-console_scripts = [
+from typing import List
+
+
+console_scripts: List[str] = [
     "pytubekit=pytubekit.main:main",
 ]
-dev_requires = [
+dev_requires: List[str] = [
     "pypitools",
     "black",
 ]
-make_requires = [
-    "pyclassifiers",
-    "pydmt",
-    "pymakehelper",
-]
-install_requires = [
+install_requires: List[str] = [
     "google-api-python-client",
     "pygooglehelper",
     "pytconf",
@@ -19,10 +17,16 @@ install_requires = [
     "youtube-dl",
     "browsercookie",
 ]
-test_requires = [
+make_requires: List[str] = [
+    "pyclassifiers",
+    "pydmt",
+    "pymakehelper",
+]
+test_requires: List[str] = [
     "pytest",
     "pytest-cov",
     "pylint",
     "flake8",
     "mypy",
 ]
+requires = config_requires + install_requires + make_requires + test_requires
