@@ -4,6 +4,7 @@ from typing import List
 console_scripts: List[str] = [
     "pytubekit=pytubekit.main:main",
 ]
+config_requires: List[str] = []
 dev_requires: List[str] = [
     "pypitools",
     "black",
