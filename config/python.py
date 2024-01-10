@@ -4,10 +4,12 @@ from typing import List
 console_scripts: List[str] = [
     "pytubekit=pytubekit.main:main",
 ]
-config_requires: List[str] = []
 dev_requires: List[str] = [
     "pypitools",
     "black",
+]
+config_requires: List[str] = [
+    "pyclassifiers",
 ]
 install_requires: List[str] = [
     "google-api-python-client",
@@ -19,7 +21,6 @@ install_requires: List[str] = [
     "browsercookie",
 ]
 make_requires: List[str] = [
-    "pyclassifiers",
     "pydmt",
     "pymakehelper",
 ]
