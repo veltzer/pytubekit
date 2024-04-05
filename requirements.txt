@@ -1,0 +1,16 @@
+# THIS IS AN AUTO-GENERATED FILE. DO NOT EDIT!
+pyclassifiers
+google-api-python-client
+pygooglehelper
+pytconf
+pylogconf
+pyvardump
+youtube-dl
+browsercookie
+pydmt
+pymakehelper
+pytest
+pytest-cov
+pylint
+flake8
+mypy
