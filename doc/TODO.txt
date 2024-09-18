@@ -1,3 +1,6 @@
+- implement left_to_see which gets a channel or playlist,
+	get the ids of the videos of the channel or playlist,
+	subtracts the ones I saw and creates a list of those I did not see.
 - implement a single playlist dump which dumps not only
 	the ids of the videos but also meta data about them.
 - use the dump of lists with details to find out what the problem is with my
