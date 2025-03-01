@@ -24,6 +24,38 @@ from pytubekit.youtube import youtube_dl_download_urls
 
 
 @register_endpoint(
+    description="Show me my channel id",
+    configs=[],
+)
+def get_channel_id() -> None:
+    youtube = get_youtube()
+    channels_obj = get_youtube_channels(youtube)
+    request = channels_obj.list(
+        part="id",
+        mine=True
+    )
+    response = request.execute()
+    print(response["items"][0]["id"])
+
+
+@register_endpoint(
+    description="Show me my channel id",
+    configs=[],
+)
+def get_watch_later_playlist_id() -> None:
+    youtube = get_youtube()
+    channels_obj = get_youtube_channels(youtube)
+    request = channels_obj.list(
+        part="id",
+        mine=True
+    )
+    response = request.execute()
+    channel_id = response["items"][0]["id"]
+    playlist_id = channel_id[0] + "L" + channel_id[2:]
+    print(playlist_id)
+
+
+@register_endpoint(
     description="Show all playlists in your youtube account",
     configs=[ConfigPagination],
 )
