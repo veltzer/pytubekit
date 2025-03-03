@@ -66,7 +66,10 @@ def get_playlist_ids_from_names(youtube, playlist_names: List[str]) -> List[str]
 
 
 def get_all_items(youtube):
-    playlist_id = get_playlist_ids_from_names(youtube, [ConfigPlaylist.name])[0]
+    if ConfigPlaylist.name is not None:
+        playlist_id = get_playlist_ids_from_names(youtube, [ConfigPlaylist.name])[0]
+    else:
+        playlist_id = ConfigPlaylist.playlist_id
     return get_all_items_from_playlist_id(youtube, playlist_id)
 
 
