@@ -33,8 +33,13 @@ class ConfigSubtract(Config):
 
 class ConfigPlaylist(Config):
     """ Playlist parameters """
-    name = ParamCreator.create_str(
-        help_string="What playlist to use",
+    name = ParamCreator.create_str_or_none(
+        help_string="What playlist name to use",
+        default=None,
+    )
+    playlist_id = ParamCreator.create_str_or_none(
+        help_string="What playlist id to use",
+        default=None,
     )
 
 
