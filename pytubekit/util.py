@@ -90,7 +90,7 @@ def get_all_items_from_playlist_ids(youtube, playlist_ids: List[str]):
 
 def delete_playlist_item_by_id(youtube, playlist_item_id: str):
     logger = logging.getLogger()
-    logger.info(f"deleting playlist item {playlist_item_id}")
+    logger.info(f"deleting playlist item [{playlist_item_id}]")
     request = youtube.playlistItems().delete(
         id=playlist_item_id,
     )

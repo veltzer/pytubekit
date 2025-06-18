@@ -214,7 +214,7 @@ def remove_unavailable_from_all_playlists() -> None:
 
 
 @register_endpoint(
-    description="Subtracts a list of playlists from a playlist",
+    description="Subtracts a list of playlists from a list of playlists",
     configs=[ConfigPagination, ConfigSubtract, ConfigDelete],
 )
 def subtract() -> None:
@@ -222,7 +222,7 @@ def subtract() -> None:
     youtube = get_youtube()
     logger.info(f"subtracting [{ConfigSubtract.subtract_what}] from [{ConfigSubtract.subtract_from}]...")
     what_ids = get_playlist_item_ids_from_names(youtube, ConfigSubtract.subtract_what)
-    from_ids = get_playlist_item_ids_from_names(youtube, [ConfigSubtract.subtract_from])
+    from_ids = get_playlist_item_ids_from_names(youtube, ConfigSubtract.subtract_from)
     f_ids = from_ids.intersection(what_ids)
     deleted = 0
     wanted_to_delete = 0

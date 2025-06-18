@@ -26,8 +26,8 @@ class ConfigSubtract(Config):
     subtract_what = ParamCreator.create_list_str(
         help_string="What playlists to subtract",
     )
-    subtract_from = ParamCreator.create_str(
-        help_string="What playlist to use",
+    subtract_from = ParamCreator.create_list_str(
+        help_string="What playlist to subtract from",
     )
 
 
