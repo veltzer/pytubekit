@@ -13,6 +13,9 @@ setuptools.setup(
     packages=[
         "pytubekit",
     ],
+    package_data={
+		"pytubekit": ["*.json"],
+    },
     # from here all is optional
     description="Pytubekit will allow you to perform operations in your youtube account en masse",
     long_description=get_readme(),
