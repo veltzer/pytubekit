@@ -13,7 +13,7 @@ import youtube_dl
 from pytubekit.static import LOGGER_NAME
 
 
-def youtube_dl_download_urls(urls: List[str]) -> None:
+def youtube_dl_download_urls(urls: list[str]) -> None:
     logger = logging.getLogger(LOGGER_NAME)
     # all options are here:
     # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L128-L278
