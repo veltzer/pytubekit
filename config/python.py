@@ -1,18 +1,13 @@
-""" python depedencies for this project """
-from typing import List
+""" python deps for this project """
 
-
-console_scripts: List[str] = [
+console_scripts: list[str] = [
     "pytubekit=pytubekit.main:main",
 ]
-dev_requires: List[str] = [
-    "pypitools",
-    "black",
-]
-config_requires: List[str] = [
+
+config_requires: list[str] = [
     "pyclassifiers",
 ]
-install_requires: List[str] = [
+install_requires: list[str] = [
     "google-api-python-client",
     "pygooglehelper",
     "pytconf",
@@ -21,15 +16,14 @@ install_requires: List[str] = [
     "youtube-dl",
     "browsercookie",
 ]
-build_requires: List[str] = [
+build_requires: list[str] = [
     "pydmt",
     "pymakehelper",
 ]
-test_requires: List[str] = [
+test_requires: list[str] = [
     "pytest",
     "pytest-cov",
     "pylint",
-    "flake8",
     "mypy",
 ]
 requires = config_requires + install_requires + build_requires + test_requires

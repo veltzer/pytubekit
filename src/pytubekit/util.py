@@ -62,7 +62,7 @@ def create_playlist_request(youtube, playlist_id: str) -> PagedRequest:
     return PagedRequest(f=youtube.playlistItems().list, kwargs=kwargs)
 
 
-def get_playlist_ids_from_names(youtube, playlist_names: List[str]) -> List[str]:
+def get_playlist_ids_from_names(youtube, playlist_names: list[str]) -> list[str]:
     r = create_playlists_request(youtube)
     items = r.get_all_items()
     name_to_id = {item["snippet"]["title"]: item["id"] for item in items}
@@ -81,7 +81,7 @@ def get_all_items_from_playlist_id(youtube, playlist_id: str):
     return create_playlist_request(youtube, playlist_id=playlist_id).get_all_items()
 
 
-def get_all_items_from_playlist_ids(youtube, playlist_ids: List[str]):
+def get_all_items_from_playlist_ids(youtube, playlist_ids: list[str]):
     items = []
     for playlist_id in playlist_ids:
         items.extend(get_all_items_from_playlist_id(youtube, playlist_id))
@@ -130,7 +130,7 @@ def get_youtube_playlists(youtube):
     return youtube.playlists()
 
 
-def get_my_playlists_ids(youtube) -> List[str]:
+def get_my_playlists_ids(youtube) -> list[str]:
     r = create_playlists_request(youtube)
     items = r.get_all_items()
     ids = []
@@ -139,7 +139,7 @@ def get_my_playlists_ids(youtube) -> List[str]:
     return ids
 
 
-def get_playlist_item_ids_from_names(youtube, playlist_names) -> Set[str]:
+def get_playlist_item_ids_from_names(youtube, playlist_names) -> set[str]:
     playlist_ids = get_playlist_ids_from_names(youtube, playlist_names)
     items = get_all_items_from_playlist_ids(youtube, playlist_ids)
     return {item["id"] for item in items}
