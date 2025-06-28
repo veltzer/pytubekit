@@ -5,7 +5,6 @@ util.py
 import json
 import logging
 import sys
-from typing import List, Set
 
 import googleapiclient.discovery
 from pygooglehelper import get_credentials, ConfigRequest
