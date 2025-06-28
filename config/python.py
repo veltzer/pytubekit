@@ -1,8 +1,8 @@
 """ python deps for this project """
 
-console_scripts: list[str] = [
-    "pytubekit=pytubekit.main:main",
-]
+scripts: dict[str, str] = {
+    "pytubekit": "pytubekit.main:main",
+}
 
 config_requires: list[str] = [
     "pyclassifiers",
