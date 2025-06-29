@@ -68,3 +68,11 @@ include = [
     "LICENSE",
     "pyproject.toml"
 ]
+exclude = [
+    ".gitignore",
+    ".github/",
+    "tests/",
+    "docs/",
+    "config/",
+    "*.md",
+]
