@@ -10,7 +10,7 @@ certifi==2025.6.15
 cffi==1.17.1
 charset-normalizer==3.4.2
 click==8.2.1
-cryptography==45.0.4
+cryptography==45.0.5
 dill==0.4.0
 distlib==0.3.9
 docutils==0.21.2
@@ -54,7 +54,7 @@ mdurl==0.1.2
 more-itertools==10.7.0
 mypy==1.16.1
 mypy-extensions==1.1.0
-numpy==2.1.3
+numpy==2.3.1
 oauthlib==3.3.1
 packaging==25.0
 pandas==2.3.0
@@ -63,7 +63,7 @@ pexpect==4.9.0
 platformdirs==4.3.8
 pluggy==1.6.0
 proto-plus==1.26.1
-protobuf==5.29.5
+protobuf==6.31.1
 ptyprocess==0.7.0
 pyasn1==0.6.1
 pyasn1-modules==0.4.2
@@ -88,9 +88,9 @@ pyyaml==6.0.2
 referencing==0.36.2
 requests==2.32.4
 requests-oauthlib==2.0.0
-rich==13.9.4
+rich==14.0.0
 roman-numerals-py==3.1.0
-rpds-py==0.25.1
+rpds-py==0.26.0
 rsa==4.9.1
 ruff==0.12.1
 secretstorage==3.3.3
@@ -119,7 +119,7 @@ unidecode==1.4.0
 uritemplate==4.2.0
 urllib3==2.5.0
 userpath==1.9.2
-uv==0.7.17
+uv==0.7.18
 venv-run==0.2.0
 virtualenv==20.31.2
 webencodings==0.5.1
