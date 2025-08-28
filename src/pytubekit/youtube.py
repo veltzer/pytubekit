@@ -18,11 +18,11 @@ def youtube_dl_download_urls(urls: list[str]) -> None:
     # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L128-L278
     ydl_opts = {
         # this shuts everything down
-        # 'logger': logger,
-        'extract_flat': True,
-        'usenetrc': True,
-        # 'username': "mark.veltzer@gmail.com",
-        # 'password': "",
+        # "logger": logger,
+        "extract_flat": True,
+        "usenetrc": True,
+        # "username": "mark.veltzer@gmail.com",
+        # "password": "",
     }
     logger.debug(f"passing options {ydl_opts}")
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
