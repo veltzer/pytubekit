@@ -1,7 +1,6 @@
 # THIS IS AN AUTO-GENERATED FILE. DO NOT EDIT!
 browsercookie
 google-api-python-client
-hatch
 mypy
 pyclassifiers
 pycmdtools
