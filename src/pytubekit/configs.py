@@ -193,6 +193,16 @@ class ConfigRename(Config):
     )
 
 
+class ConfigLeftToSee(Config):
+    """ Left to see parameters """
+    lts_all_playlists = ParamCreator.create_list_str(
+        help_string="Playlist names containing all videos",
+    )
+    lts_seen_playlists = ParamCreator.create_list_str(
+        help_string="Playlist names containing already-seen videos",
+    )
+
+
 class ConfigCount(Config):
     """ Playlists to count """
     count_names = ParamCreator.create_list_str(
