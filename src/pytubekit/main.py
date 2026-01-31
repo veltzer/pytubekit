@@ -14,7 +14,8 @@ from pygooglehelper import register_functions, ConfigRequest
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
-    ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow
+    ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
+    ConfigCleanupPlaylists
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -126,13 +127,13 @@ def dump() -> None:
 
 @register_endpoint(
     description="Clean up a set of playlists (dedup, remove deleted, remove privatized)",
-    configs=[ConfigPagination, ConfigPlaylists, ConfigCleanup, ConfigDelete],
+    configs=[ConfigPagination, ConfigCleanupPlaylists, ConfigCleanup, ConfigDelete],
 )
 def cleanup() -> None:
     logger = logging.getLogger()
-    logger.info(f"cleaning up [{ConfigPlaylists.names}]...")
+    logger.info(f"cleaning up [{ConfigCleanupPlaylists.cleanup_names}]...")
     youtube = get_youtube()
-    playlist_ids = get_playlist_ids_from_names(youtube, ConfigPlaylists.names)
+    playlist_ids = get_playlist_ids_from_names(youtube, ConfigCleanupPlaylists.cleanup_names)
     items = get_all_items_from_playlist_ids(youtube, playlist_ids)
     seen = set()
     wanted_to_delete = 0
