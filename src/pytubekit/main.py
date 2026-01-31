@@ -15,7 +15,7 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
-    ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy
+    ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -288,6 +288,35 @@ def copy_playlist() -> None:
         add_video_to_playlist(youtube, destination_id, video_id)
         copied += 1
     logger.info(f"copied {copied} videos from [{ConfigCopy.copy_source}] to [{ConfigCopy.copy_destination}]")
+
+
+@register_endpoint(
+    description="Merge several playlists into one destination playlist, deduplicating",
+    configs=[ConfigPagination, ConfigMerge],
+)
+def merge() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    all_names = ConfigMerge.merge_sources + [ConfigMerge.merge_destination]
+    all_ids = get_playlist_ids_from_names(youtube, all_names)
+    source_ids = all_ids[:-1]
+    destination_id = all_ids[-1]
+    dest_items = get_all_items_from_playlist_ids(youtube, [destination_id])
+    seen = {item["snippet"]["resourceId"]["videoId"] for item in dest_items}
+    logger.info(f"destination [{ConfigMerge.merge_destination}] already has {len(seen)} videos")
+    source_items = get_all_items_from_playlist_ids(youtube, source_ids)
+    logger.info(f"source playlists have {len(source_items)} items total")
+    added = 0
+    skipped = 0
+    for item in source_items:
+        video_id = item["snippet"]["resourceId"]["videoId"]
+        if video_id in seen:
+            skipped += 1
+            continue
+        add_video_to_playlist(youtube, destination_id, video_id)
+        seen.add(video_id)
+        added += 1
+    logger.info(f"added {added} videos, skipped {skipped} duplicates")
 
 
 @register_endpoint(
