@@ -6,8 +6,10 @@ import json
 import logging
 import subprocess
 import sys
+import time
 
 import googleapiclient.discovery
+from googleapiclient.errors import HttpError
 from pygooglehelper import get_credentials, ConfigRequest
 
 from pytubekit.configs import ConfigPagination, ConfigPlaylist
@@ -20,6 +22,23 @@ def log_progress(logger, current: int, total: int, interval: int = 100):
         logger.info(f"progress: {current}/{total}")
 
 
+def retry_execute(request, max_retries: int = 5):
+    logger = logging.getLogger()
+    last_error = None
+    for attempt in range(max_retries):
+        try:
+            return request.execute()
+        except HttpError as e:
+            last_error = e
+            if e.resp.status in (403, 429, 500, 503) and attempt < max_retries - 1:
+                wait = 2 ** attempt
+                logger.warning(f"API error {e.resp.status}, retrying in {wait}s (attempt {attempt + 1}/{max_retries})")
+                time.sleep(wait)
+            else:
+                raise
+    raise last_error  # type: ignore[misc]
+
+
 class PagedRequest:
     def __init__(self, f, kwargs):
         self.f = f
@@ -30,7 +49,7 @@ class PagedRequest:
         if self.next_page_token is not None:
             self.kwargs[PAGE_TOKEN] = self.next_page_token
         request = self.f(**self.kwargs)
-        response = request.execute()
+        response = retry_execute(request)
         if NEXT_PAGE_TOKEN in response:
             self.next_page_token = response[NEXT_PAGE_TOKEN]
             over = False
@@ -99,7 +118,7 @@ def delete_playlist_item_by_id(youtube, playlist_item_id: str):
     request = youtube.playlistItems().delete(
         id=playlist_item_id,
     )
-    request.execute()
+    retry_execute(request)
 
 
 def get_youtube():
@@ -120,7 +139,7 @@ def get_video_info(youtube, youtube_id):
         part="snippet,status,snippet,contentDetails",
         id=youtube_id,
     )
-    return request.execute()
+    return retry_execute(request)
 
 
 def pretty_print(data, fp=sys.stdout):
@@ -199,7 +218,7 @@ def add_video_to_playlist(youtube, playlist_id: str, video_id: str):
             },
         },
     )
-    request.execute()
+    retry_execute(request)
 
 
 def get_playlist_item_count(youtube, playlist_id: str) -> int:
