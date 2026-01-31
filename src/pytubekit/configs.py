@@ -125,6 +125,23 @@ class ConfigOverflow(Config):
     )
 
 
+class ConfigCopy(Config):
+    """ Copy playlist parameters """
+    copy_source = ParamCreator.create_str(
+        help_string="Source playlist name to copy from",
+    )
+    copy_destination = ParamCreator.create_str(
+        help_string="Destination playlist name to copy to",
+    )
+
+
+class ConfigClear(Config):
+    """ Playlist to clear """
+    clear_name = ParamCreator.create_str(
+        help_string="Name of playlist to clear",
+    )
+
+
 class ConfigCount(Config):
     """ Playlists to count """
     count_names = ParamCreator.create_list_str(
