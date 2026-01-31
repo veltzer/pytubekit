@@ -15,7 +15,7 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
-    ConfigCleanupPlaylists
+    ConfigCleanupPlaylists, ConfigCount
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -238,6 +238,18 @@ def subtract() -> None:
                 deleted += 1
     logger.info(f"wanted_to_delete {wanted_to_delete} items")
     logger.info(f"deleted {deleted} items")
+
+
+@register_endpoint(
+    description="Print the item count for one or more playlists",
+    configs=[ConfigPagination, ConfigCount],
+)
+def count() -> None:
+    youtube = get_youtube()
+    playlist_ids = get_playlist_ids_from_names(youtube, ConfigCount.count_names)
+    for playlist_name, playlist_id in zip(ConfigCount.count_names, playlist_ids):
+        item_count = get_playlist_item_count(youtube, playlist_id)
+        print(f"{playlist_name}: {item_count}")
 
 
 @register_endpoint(

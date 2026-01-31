@@ -125,6 +125,13 @@ class ConfigOverflow(Config):
     )
 
 
+class ConfigCount(Config):
+    """ Playlists to count """
+    count_names = ParamCreator.create_list_str(
+        help_string="What playlists to count items in",
+    )
+
+
 class ConfigPrint(Config):
     """ How to dump things """
     full = ParamCreator.create_bool(
