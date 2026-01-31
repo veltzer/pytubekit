@@ -15,7 +15,7 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
-    ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge
+    ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -317,6 +317,38 @@ def merge() -> None:
         seen.add(video_id)
         added += 1
     logger.info(f"added {added} videos, skipped {skipped} duplicates")
+
+
+SORT_KEYS = {
+    "title": lambda item: item["snippet"].get("title", "").lower(),
+    "channel": lambda item: item["snippet"].get("videoOwnerChannelTitle", "").lower(),
+    "date": lambda item: item["snippet"].get("publishedAt", ""),
+}
+
+
+@register_endpoint(
+    description="Sort a playlist by title, channel, or date (deletes and re-adds all items)",
+    configs=[ConfigPagination, ConfigSort],
+)
+def sort_playlist() -> None:
+    logger = logging.getLogger()
+    if ConfigSort.sort_key not in SORT_KEYS:
+        logger.error(f"invalid sort key [{ConfigSort.sort_key}], must be one of {list(SORT_KEYS.keys())}")
+        return
+    youtube = get_youtube()
+    playlist_id = get_playlist_ids_from_names(youtube, [ConfigSort.sort_playlist_name])[0]
+    items = get_all_items_from_playlist_ids(youtube, [playlist_id])
+    logger.info(f"playlist [{ConfigSort.sort_playlist_name}] has {len(items)} items")
+    sorted_items = sorted(items, key=SORT_KEYS[ConfigSort.sort_key])
+    for item in items:
+        delete_playlist_item_by_id(youtube, item["id"])
+    logger.info(f"deleted {len(items)} items")
+    added = 0
+    for item in sorted_items:
+        video_id = item["snippet"]["resourceId"]["videoId"]
+        add_video_to_playlist(youtube, playlist_id, video_id)
+        added += 1
+    logger.info(f"re-added {added} items in sorted order (by {ConfigSort.sort_key})")
 
 
 @register_endpoint(
