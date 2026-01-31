@@ -17,15 +17,15 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
     ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort, ConfigSearch, \
-    ConfigExportCsv, ConfigRename, ConfigLeftToSee, ConfigCollectIds
-from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
+    ConfigExportCsv, ConfigRename, ConfigLeftToSee, ConfigCollectIds, ConfigAddFileToPlaylist
+from pytubekit.constants import SCOPES, MAX_PLAYLIST_ITEMS
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
     delete_playlist_item_by_id, get_playlist_ids_from_names, get_all_items_from_playlist_ids, \
     get_video_info, pretty_print, get_youtube_channels, get_youtube_playlists, get_my_playlists_ids, \
     read_video_ids_from_files, get_video_ids_from_playlist_names, \
     get_items_from_playlist_names, get_video_metadata, METADATA_FIELDNAMES, \
-    add_video_to_playlist, get_playlist_item_count, log_progress, retry_execute
+    add_video_to_playlist, get_playlist_item_count, log_progress, retry_execute, cleanup_items
 from pytubekit.youtube import youtube_dl_download_urls
 
 
@@ -97,6 +97,7 @@ def playlist() -> None:
     configs=[ConfigPagination, ConfigPrint, ConfigDump],
 )
 def dump() -> None:
+    logger = logging.getLogger()
     sub_dict = {
         "date": int(time.time()),
         "home": os.path.expanduser("~"),
@@ -112,10 +113,10 @@ def dump() -> None:
         f_id = item["id"]
         f_title = item["snippet"]["title"]
         id_to_title[f_id] = f_title
-    print("got lists data")
+    logger.info("got lists data")
     for f_id, f_title in id_to_title.items():
         filename = os.path.join(dump_folder, f_title)
-        print(f"dumping [{f_title}] to [{filename}]")
+        logger.info(f"dumping [{f_title}] to [{filename}]")
         with open(filename, "w") as f:
             r = create_playlist_request(youtube, playlist_id=f_id)
             items = r.get_all_items()
@@ -137,47 +138,13 @@ def cleanup() -> None:
     youtube = get_youtube()
     playlist_ids = get_playlist_ids_from_names(youtube, ConfigCleanupPlaylists.cleanup_names)
     items = get_all_items_from_playlist_ids(youtube, playlist_ids)
-    seen = set()
-    wanted_to_delete = 0
-    deleted = 0
-    saw = 0
-    found_duplicates = 0
-    found_deleted = 0
-    found_private = 0
-    total = len(items)
-    for item in items:
-        to_delete = False
-        saw += 1
-        log_progress(logger, saw, total)
-        if ConfigCleanup.dedup:
-            f_video_id = item["snippet"]["resourceId"]["videoId"]
-            if f_video_id in seen:
-                found_duplicates += 1
-                to_delete = True
-            else:
-                seen.add(f_video_id)
-        if ConfigCleanup.deleted:
-            f_title = item["snippet"]["title"]
-            if f_title == DELETED_TITLE:
-                found_deleted += 1
-                to_delete = True
-        if ConfigCleanup.privatized:
-            f_title = item["snippet"]["title"]
-            if f_title == PRIVATE_TITLE:
-                found_private += 1
-                to_delete = True
-        if to_delete:
-            wanted_to_delete += 1
-            if ConfigDelete.do_delete:
-                f_id = item["id"]
-                delete_playlist_item_by_id(youtube, f_id)
-                deleted += 1
-    logger.info(f"saw {saw} items")
-    logger.info(f"found_duplicates {found_duplicates} items")
-    logger.info(f"found_deleted {found_deleted} items")
-    logger.info(f"found_private {found_private} items")
-    logger.info(f"wanted_to_delete {wanted_to_delete} items")
-    logger.info(f"deleted {deleted} items")
+    cleanup_items(
+        youtube, items,
+        dedup=ConfigCleanup.dedup,
+        check_deleted=ConfigCleanup.deleted,
+        check_privatized=ConfigCleanup.privatized,
+        do_delete=ConfigDelete.do_delete,
+    )
 
 
 @register_endpoint(
@@ -190,37 +157,13 @@ def remove_unavailable_from_all_playlists() -> None:
     playlists_ids = get_my_playlists_ids(youtube)
     logger.info(f"working on playlist ids[{playlists_ids}]...")
     items = get_all_items_from_playlist_ids(youtube, playlists_ids)
-    wanted_to_delete = 0
-    deleted = 0
-    saw = 0
-    found_deleted = 0
-    found_private = 0
-    total = len(items)
-    for item in items:
-        to_delete = False
-        saw += 1
-        log_progress(logger, saw, total)
-        if ConfigCleanup.deleted:
-            f_title = item["snippet"]["title"]
-            if f_title == DELETED_TITLE:
-                found_deleted += 1
-                to_delete = True
-        if ConfigCleanup.privatized:
-            f_title = item["snippet"]["title"]
-            if f_title == PRIVATE_TITLE:
-                found_private += 1
-                to_delete = True
-        if to_delete:
-            wanted_to_delete += 1
-            if ConfigDelete.do_delete:
-                f_id = item["id"]
-                delete_playlist_item_by_id(youtube, f_id)
-                deleted += 1
-    logger.info(f"saw {saw} items")
-    logger.info(f"found_deleted {found_deleted} items")
-    logger.info(f"found_private {found_private} items")
-    logger.info(f"wanted_to_delete {wanted_to_delete} items")
-    logger.info(f"deleted {deleted} items")
+    cleanup_items(
+        youtube, items,
+        dedup=False,
+        check_deleted=ConfigCleanup.deleted,
+        check_privatized=ConfigCleanup.privatized,
+        do_delete=ConfigDelete.do_delete,
+    )
 
 
 @register_endpoint(
@@ -455,7 +398,7 @@ def overflow() -> None:
         youtube, [ConfigOverflow.source, ConfigOverflow.destination],
     )
     destination_count = get_playlist_item_count(youtube, destination_id)
-    available = 5000 - destination_count
+    available = MAX_PLAYLIST_ITEMS - destination_count
     logger.info(f"destination has {destination_count} items, {available} slots available")
     if available <= 0:
         logger.info("destination playlist is full, nothing to move")
@@ -570,6 +513,25 @@ def collect_ids() -> None:
     for video_id in sorted(found):
         print(video_id)
     logger.info(f"found {len(found)} unique video IDs")
+
+
+@register_endpoint(
+    description="Add video IDs from a file to a playlist",
+    configs=[ConfigPagination, ConfigAddFileToPlaylist],
+)
+def add_file_to_playlist() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    playlist_id = get_playlist_ids_from_names(youtube, [ConfigAddFileToPlaylist.add_playlist])[0]
+    video_ids = read_video_ids_from_files([str(ConfigAddFileToPlaylist.add_file)])
+    logger.info(f"read {len(video_ids)} video IDs from [{ConfigAddFileToPlaylist.add_file}]")
+    added = 0
+    total = len(video_ids)
+    for video_id in sorted(video_ids):
+        add_video_to_playlist(youtube, playlist_id, video_id)
+        added += 1
+        log_progress(logger, added, total)
+    logger.info(f"added {added} videos to [{ConfigAddFileToPlaylist.add_playlist}]")
 
 
 @register_endpoint(

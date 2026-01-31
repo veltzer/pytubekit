@@ -217,6 +217,16 @@ class ConfigCollectIds(Config):
     )
 
 
+class ConfigAddFileToPlaylist(Config):
+    """ Add videos from a file to a playlist """
+    add_file = ParamCreator.create_str(
+        help_string="Path to text file with video IDs (one per line)",
+    )
+    add_playlist = ParamCreator.create_str(
+        help_string="Name of playlist to add videos to",
+    )
+
+
 class ConfigPrint(Config):
     """ How to dump things """
     full = ParamCreator.create_bool(
