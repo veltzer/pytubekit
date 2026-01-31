@@ -57,6 +57,13 @@ class ConfigPlaylists(Config):
     )
 
 
+class ConfigCleanupPlaylists(Config):
+    """ Playlists to clean up """
+    cleanup_names = ParamCreator.create_list_str(
+        help_string="What playlists to clean up",
+    )
+
+
 class ConfigDelete(Config):
     """ Configs for doing delete """
     do_delete = ParamCreator.create_bool(
