@@ -295,7 +295,7 @@ def diff() -> None:
 def add_data() -> None:
     logger = logging.getLogger()
     input_path = ConfigAddData.input_file
-    output_path = ConfigAddData.output_file
+    output_path = ConfigAddData.output_csv
     processed_ids: set[str] = set()
     output_file_exists = os.path.exists(output_path)
     if output_file_exists:

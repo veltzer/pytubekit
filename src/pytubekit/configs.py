@@ -103,7 +103,7 @@ class ConfigAddData(Config):
     input_file = ParamCreator.create_str(
         help_string="Path to text file with video IDs (one per line)",
     )
-    output_file = ParamCreator.create_str(
+    output_csv = ParamCreator.create_str(
         help_string="Path to CSV file to write metadata to",
     )
 
