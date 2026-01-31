@@ -142,6 +142,16 @@ class ConfigClear(Config):
     )
 
 
+class ConfigMerge(Config):
+    """ Merge parameters """
+    merge_sources = ParamCreator.create_list_str(
+        help_string="Source playlist names to merge from",
+    )
+    merge_destination = ParamCreator.create_str(
+        help_string="Destination playlist name to merge into",
+    )
+
+
 class ConfigCount(Config):
     """ Playlists to count """
     count_names = ParamCreator.create_list_str(
