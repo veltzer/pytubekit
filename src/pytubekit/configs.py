@@ -81,6 +81,23 @@ class ConfigCleanup(Config):
     )
 
 
+class ConfigDiff(Config):
+    """ Parameters for diff """
+    source_playlists = ParamCreator.create_list_str(
+        help_string="YouTube playlist names to pull videos from",
+    )
+    seen_files = ParamCreator.create_list_str(
+        help_string="Local files with video IDs (one per line, dump format)",
+    )
+    reverse = ParamCreator.create_bool(
+        help_string="False = unseen videos, True = seen videos",
+        default=False,
+    )
+    output_file = ParamCreator.create_str(
+        help_string="Path to write results to",
+    )
+
+
 class ConfigPrint(Config):
     """ How to dump things """
     full = ParamCreator.create_bool(
