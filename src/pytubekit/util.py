@@ -4,25 +4,27 @@ util.py
 
 import json
 import logging
-import subprocess
 import sys
 import time
+from typing import Any, IO
 
 import googleapiclient.discovery
+import yt_dlp
 from googleapiclient.errors import HttpError
 from pygooglehelper import get_credentials, ConfigRequest
 
 from pytubekit.configs import ConfigPagination, ConfigPlaylist
-from pytubekit.constants import SCOPES, API_SERVICE_NAME, API_VERSION, NEXT_PAGE_TOKEN, PAGE_TOKEN, ITEMS_TOKEN
+from pytubekit.constants import SCOPES, API_SERVICE_NAME, API_VERSION, NEXT_PAGE_TOKEN, PAGE_TOKEN, ITEMS_TOKEN, \
+    DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import APP_NAME
 
 
-def log_progress(logger, current: int, total: int, interval: int = 100):
+def log_progress(logger: logging.Logger, current: int, total: int, interval: int = 100) -> None:
     if current % interval == 0 or current == total:
         logger.info(f"progress: {current}/{total}")
 
 
-def retry_execute(request, max_retries: int = 5):
+def retry_execute(request: Any, max_retries: int = 5) -> dict[str, Any]:
     logger = logging.getLogger()
     last_error = None
     for attempt in range(max_retries):
@@ -40,12 +42,12 @@ def retry_execute(request, max_retries: int = 5):
 
 
 class PagedRequest:
-    def __init__(self, f, kwargs):
+    def __init__(self, f: Any, kwargs: dict[str, Any]) -> None:
         self.f = f
-        self.next_page_token = None
+        self.next_page_token: str | None = None
         self.kwargs = kwargs
 
-    def get_next_page(self):
+    def get_next_page(self) -> tuple[bool, dict[str, Any]]:
         if self.next_page_token is not None:
             self.kwargs[PAGE_TOKEN] = self.next_page_token
         request = self.f(**self.kwargs)
@@ -57,8 +59,8 @@ class PagedRequest:
             over = True
         return over, response
 
-    def get_all_items(self):
-        items = []
+    def get_all_items(self) -> list[dict[str, Any]]:
+        items: list[dict[str, Any]] = []
         while True:
             over, response = self.get_next_page()
             # print(f"got {len(response[ITEMS_TOKEN])} items")
@@ -68,7 +70,7 @@ class PagedRequest:
         return items
 
 
-def create_playlists_request(youtube) -> PagedRequest:
+def create_playlists_request(youtube: Any) -> PagedRequest:
     kwargs = {
         "part": "snippet",
         "maxResults": ConfigPagination.page_size,
@@ -77,7 +79,7 @@ def create_playlists_request(youtube) -> PagedRequest:
     return PagedRequest(f=youtube.playlists().list, kwargs=kwargs)
 
 
-def create_playlist_request(youtube, playlist_id: str) -> PagedRequest:
+def create_playlist_request(youtube: Any, playlist_id: str) -> PagedRequest:
     kwargs = {
         "part": "snippet,id",
         "playlistId": playlist_id,
@@ -86,14 +88,14 @@ def create_playlist_request(youtube, playlist_id: str) -> PagedRequest:
     return PagedRequest(f=youtube.playlistItems().list, kwargs=kwargs)
 
 
-def get_playlist_ids_from_names(youtube, playlist_names: list[str]) -> list[str]:
+def get_playlist_ids_from_names(youtube: Any, playlist_names: list[str]) -> list[str]:
     r = create_playlists_request(youtube)
     items = r.get_all_items()
     name_to_id = {item["snippet"]["title"]: item["id"] for item in items}
     return [name_to_id[playlist_name] for playlist_name in playlist_names]
 
 
-def get_all_items(youtube):
+def get_all_items(youtube: Any) -> list[dict[str, Any]]:
     if ConfigPlaylist.name is not None:
         playlist_id = get_playlist_ids_from_names(youtube, [ConfigPlaylist.name])[0]
     else:
@@ -101,18 +103,18 @@ def get_all_items(youtube):
     return get_all_items_from_playlist_id(youtube, playlist_id)
 
 
-def get_all_items_from_playlist_id(youtube, playlist_id: str):
+def get_all_items_from_playlist_id(youtube: Any, playlist_id: str) -> list[dict[str, Any]]:
     return create_playlist_request(youtube, playlist_id=playlist_id).get_all_items()
 
 
-def get_all_items_from_playlist_ids(youtube, playlist_ids: list[str]):
-    items = []
+def get_all_items_from_playlist_ids(youtube: Any, playlist_ids: list[str]) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
     for playlist_id in playlist_ids:
         items.extend(get_all_items_from_playlist_id(youtube, playlist_id))
     return items
 
 
-def delete_playlist_item_by_id(youtube, playlist_item_id: str):
+def delete_playlist_item_by_id(youtube: Any, playlist_item_id: str) -> None:
     logger = logging.getLogger()
     logger.info(f"deleting playlist item [{playlist_item_id}]")
     request = youtube.playlistItems().delete(
@@ -121,7 +123,52 @@ def delete_playlist_item_by_id(youtube, playlist_item_id: str):
     retry_execute(request)
 
 
-def get_youtube():
+def cleanup_items(youtube: Any, items: list[dict[str, Any]], *, dedup: bool, check_deleted: bool, check_privatized: bool, do_delete: bool) -> None:
+    logger = logging.getLogger()
+    seen: set[str] = set()
+    saw = 0
+    found_duplicates = 0
+    found_deleted = 0
+    found_private = 0
+    wanted_to_delete = 0
+    deleted = 0
+    total = len(items)
+    for item in items:
+        to_delete = False
+        saw += 1
+        log_progress(logger, saw, total)
+        if dedup:
+            f_video_id = item["snippet"]["resourceId"]["videoId"]
+            if f_video_id in seen:
+                found_duplicates += 1
+                to_delete = True
+            else:
+                seen.add(f_video_id)
+        if check_deleted:
+            f_title = item["snippet"]["title"]
+            if f_title == DELETED_TITLE:
+                found_deleted += 1
+                to_delete = True
+        if check_privatized:
+            f_title = item["snippet"]["title"]
+            if f_title == PRIVATE_TITLE:
+                found_private += 1
+                to_delete = True
+        if to_delete:
+            wanted_to_delete += 1
+            if do_delete:
+                delete_playlist_item_by_id(youtube, item["id"])
+                deleted += 1
+    logger.info(f"saw {saw} items")
+    if dedup:
+        logger.info(f"found_duplicates {found_duplicates} items")
+    logger.info(f"found_deleted {found_deleted} items")
+    logger.info(f"found_private {found_private} items")
+    logger.info(f"wanted_to_delete {wanted_to_delete} items")
+    logger.info(f"deleted {deleted} items")
+
+
+def get_youtube() -> Any:
     ConfigRequest.scopes = SCOPES
     ConfigRequest.app_name = APP_NAME
     credentials = get_credentials()
@@ -134,7 +181,7 @@ def get_youtube():
     return youtube
 
 
-def get_video_info(youtube, youtube_id):
+def get_video_info(youtube: Any, youtube_id: str) -> dict[str, Any]:
     request = youtube.videos().list(
         part="snippet,status,snippet,contentDetails",
         id=youtube_id,
@@ -142,19 +189,19 @@ def get_video_info(youtube, youtube_id):
     return retry_execute(request)
 
 
-def pretty_print(data, fp=sys.stdout):
+def pretty_print(data: Any, fp: IO[str] = sys.stdout) -> None:
     json.dump(data, fp, indent=4)
 
 
-def get_youtube_channels(youtube):
+def get_youtube_channels(youtube: Any) -> Any:
     return youtube.channels()
 
 
-def get_youtube_playlists(youtube):
+def get_youtube_playlists(youtube: Any) -> Any:
     return youtube.playlists()
 
 
-def get_my_playlists_ids(youtube) -> list[str]:
+def get_my_playlists_ids(youtube: Any) -> list[str]:
     r = create_playlists_request(youtube)
     items = r.get_all_items()
     ids = []
@@ -163,7 +210,7 @@ def get_my_playlists_ids(youtube) -> list[str]:
     return ids
 
 
-def get_playlist_item_ids_from_names(youtube, playlist_names) -> set[str]:
+def get_playlist_item_ids_from_names(youtube: Any, playlist_names: list[str]) -> set[str]:
     playlist_ids = get_playlist_ids_from_names(youtube, playlist_names)
     items = get_all_items_from_playlist_ids(youtube, playlist_ids)
     return {item["id"] for item in items}
@@ -180,13 +227,13 @@ def read_video_ids_from_files(file_paths: list[str]) -> set[str]:
     return video_ids
 
 
-def get_video_ids_from_playlist_names(youtube, names: list[str]) -> set[str]:
+def get_video_ids_from_playlist_names(youtube: Any, names: list[str]) -> set[str]:
     playlist_ids = get_playlist_ids_from_names(youtube, names)
     items = get_all_items_from_playlist_ids(youtube, playlist_ids)
     return {item["snippet"]["resourceId"]["videoId"] for item in items}
 
 
-def get_items_from_playlist_names(youtube, names: list[str]):
+def get_items_from_playlist_names(youtube: Any, names: list[str]) -> list[dict[str, Any]]:
     playlist_ids = get_playlist_ids_from_names(youtube, names)
     return get_all_items_from_playlist_ids(youtube, playlist_ids)
 
@@ -203,7 +250,7 @@ METADATA_FIELDNAMES = [
 ]
 
 
-def add_video_to_playlist(youtube, playlist_id: str, video_id: str):
+def add_video_to_playlist(youtube: Any, playlist_id: str, video_id: str) -> None:
     logger = logging.getLogger()
     logger.info(f"adding video [{video_id}] to playlist [{playlist_id}]")
     request = youtube.playlistItems().insert(
@@ -221,43 +268,27 @@ def add_video_to_playlist(youtube, playlist_id: str, video_id: str):
     retry_execute(request)
 
 
-def get_playlist_item_count(youtube, playlist_id: str) -> int:
+def get_playlist_item_count(youtube: Any, playlist_id: str) -> int:
     items = get_all_items_from_playlist_id(youtube, playlist_id)
     return len(items)
 
 
-def get_video_metadata(video_id: str) -> dict | None:
+def get_video_metadata(video_id: str) -> dict[str, Any] | None:
     logger = logging.getLogger()
     video_url = f"https://www.youtube.com/watch?v={video_id}"
+    ydl_opts: dict[str, Any] = {
+        "quiet": True,
+        "no_warnings": True,
+        "skip_download": True,
+        "ignore_no_formats_error": True,
+    }
     try:
         logger.info(f"Fetching data for ID: {video_id}...")
-        cmd = [
-            "yt-dlp",
-            "-j",
-            "--no-warnings",
-            "--skip-download",
-            video_url,
-        ]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, check=False)
-        if result.returncode != 0 and "format" in result.stderr.lower():
-            cmd_fallback = [
-                "yt-dlp",
-                "-j",
-                "--no-warnings",
-                "--skip-download",
-                "--ignore-no-formats-error",
-                video_url,
-            ]
-            result = subprocess.run(cmd_fallback, capture_output=True, text=True, timeout=30, check=False)
-        if result.returncode != 0:
-            logger.warning(f"Error fetching ID {video_id}: {result.stderr}")
-            return None
-        if not result.stdout:
-            return None
-        info_dict = json.loads(result.stdout)
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(video_url, download=False)
         if not info_dict:
             return None
-        metadata = {
+        metadata: dict[str, Any] = {
             "video_id": video_id,
             "title": info_dict.get("title", ""),
             "description": info_dict.get("description", ""),
@@ -295,12 +326,6 @@ def get_video_metadata(video_id: str) -> dict | None:
                 ", ".join(info_dict.get("automatic_captions", {}).keys()) if info_dict.get("automatic_captions") else "",
         }
         return metadata
-    except subprocess.TimeoutExpired:
-        logger.warning(f"Timeout fetching ID {video_id}")
-        return None
-    except json.JSONDecodeError as e:
-        logger.warning(f"Error parsing JSON for ID {video_id}: {e}")
-        return None
     except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught
         logger.warning(f"An unexpected error occurred for ID {video_id}: {e}")
         return None
