@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pytubekit"
-version = "0.0.31"
+version = "0.0.32"
 requires-python = ">=3.12"
 authors = [
 	{ name = "Mark Veltzer", email = "mark.veltzer@gmail.com" }
