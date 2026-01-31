@@ -183,6 +183,16 @@ class ConfigExportCsv(Config):
     )
 
 
+class ConfigRename(Config):
+    """ Rename playlist parameters """
+    rename_playlist_name = ParamCreator.create_str(
+        help_string="Current name of the playlist to rename",
+    )
+    rename_new_name = ParamCreator.create_str(
+        help_string="New name for the playlist",
+    )
+
+
 class ConfigCount(Config):
     """ Playlists to count """
     count_names = ParamCreator.create_list_str(
