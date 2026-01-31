@@ -142,3 +142,22 @@ def get_playlist_item_ids_from_names(youtube, playlist_names) -> set[str]:
     playlist_ids = get_playlist_ids_from_names(youtube, playlist_names)
     items = get_all_items_from_playlist_ids(youtube, playlist_ids)
     return {item["id"] for item in items}
+
+
+def read_video_ids_from_files(file_paths: list[str]) -> set[str]:
+    video_ids = set()
+    for file_path in file_paths:
+        with open(file_path) as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    video_ids.add(line)
+    return video_ids
+
+
+def get_video_ids_from_playlist_names(youtube, names: list[str]) -> set[str]:
+    playlist_ids = get_playlist_ids_from_names(youtube, names)
+    items = get_all_items_from_playlist_ids(youtube, playlist_ids)
+    return {item["snippet"]["resourceId"]["videoId"] for item in items}
+
+
