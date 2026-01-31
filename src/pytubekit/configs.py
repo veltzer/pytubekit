@@ -98,6 +98,26 @@ class ConfigDiff(Config):
     )
 
 
+class ConfigAddData(Config):
+    """ Parameters for add_data """
+    input_file = ParamCreator.create_str(
+        help_string="Path to text file with video IDs (one per line)",
+    )
+    output_file = ParamCreator.create_str(
+        help_string="Path to CSV file to write metadata to",
+    )
+
+
+class ConfigOverflow(Config):
+    """ Overflow parameters """
+    source = ParamCreator.create_str(
+        help_string="Source playlist name",
+    )
+    destination = ParamCreator.create_str(
+        help_string="Destination playlist name",
+    )
+
+
 class ConfigPrint(Config):
     """ How to dump things """
     full = ParamCreator.create_bool(
