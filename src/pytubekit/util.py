@@ -4,6 +4,7 @@ util.py
 
 import json
 import logging
+import subprocess
 import sys
 
 import googleapiclient.discovery
@@ -164,3 +165,118 @@ def get_video_ids_from_playlist_names(youtube, names: list[str]) -> set[str]:
 def get_items_from_playlist_names(youtube, names: list[str]):
     playlist_ids = get_playlist_ids_from_names(youtube, names)
     return get_all_items_from_playlist_ids(youtube, playlist_ids)
+
+
+METADATA_FIELDNAMES = [
+    "video_id", "title", "description", "duration", "upload_date",
+    "uploader", "uploader_id", "channel", "channel_id",
+    "view_count", "like_count", "comment_count", "average_rating",
+    "age_limit", "categories", "tags", "is_live", "was_live", "live_status",
+    "resolution", "fps", "vcodec", "acodec", "width", "height",
+    "thumbnail", "webpage_url", "availability", "playable_in_embed",
+    "channel_follower_count", "language", "subtitles_available",
+    "automatic_captions_available",
+]
+
+
+def add_video_to_playlist(youtube, playlist_id: str, video_id: str):
+    logger = logging.getLogger()
+    logger.info(f"adding video [{video_id}] to playlist [{playlist_id}]")
+    request = youtube.playlistItems().insert(
+        part="snippet",
+        body={
+            "snippet": {
+                "playlistId": playlist_id,
+                "resourceId": {
+                    "kind": "youtube#video",
+                    "videoId": video_id,
+                },
+            },
+        },
+    )
+    request.execute()
+
+
+def get_playlist_item_count(youtube, playlist_id: str) -> int:
+    items = get_all_items_from_playlist_id(youtube, playlist_id)
+    return len(items)
+
+
+def get_video_metadata(video_id: str) -> dict | None:
+    logger = logging.getLogger()
+    video_url = f"https://www.youtube.com/watch?v={video_id}"
+    try:
+        logger.info(f"Fetching data for ID: {video_id}...")
+        cmd = [
+            "yt-dlp",
+            "-j",
+            "--no-warnings",
+            "--skip-download",
+            video_url,
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, check=False)
+        if result.returncode != 0 and "format" in result.stderr.lower():
+            cmd_fallback = [
+                "yt-dlp",
+                "-j",
+                "--no-warnings",
+                "--skip-download",
+                "--ignore-no-formats-error",
+                video_url,
+            ]
+            result = subprocess.run(cmd_fallback, capture_output=True, text=True, timeout=30, check=False)
+        if result.returncode != 0:
+            logger.warning(f"Error fetching ID {video_id}: {result.stderr}")
+            return None
+        if not result.stdout:
+            return None
+        info_dict = json.loads(result.stdout)
+        if not info_dict:
+            return None
+        metadata = {
+            "video_id": video_id,
+            "title": info_dict.get("title", ""),
+            "description": info_dict.get("description", ""),
+            "duration": info_dict.get("duration", ""),
+            "upload_date": info_dict.get("upload_date", ""),
+            "uploader": info_dict.get("uploader", ""),
+            "uploader_id": info_dict.get("uploader_id", ""),
+            "channel": info_dict.get("channel", ""),
+            "channel_id": info_dict.get("channel_id", ""),
+            "view_count": info_dict.get("view_count", ""),
+            "like_count": info_dict.get("like_count", ""),
+            "comment_count": info_dict.get("comment_count", ""),
+            "average_rating": info_dict.get("average_rating", ""),
+            "age_limit": info_dict.get("age_limit", ""),
+            "categories": ", ".join(info_dict.get("categories", [])) if info_dict.get("categories") else "",
+            "tags": ", ".join(info_dict.get("tags", [])) if info_dict.get("tags") else "",
+            "is_live": info_dict.get("is_live", ""),
+            "was_live": info_dict.get("was_live", ""),
+            "live_status": info_dict.get("live_status", ""),
+            "resolution": info_dict.get("resolution", ""),
+            "fps": info_dict.get("fps", ""),
+            "vcodec": info_dict.get("vcodec", ""),
+            "acodec": info_dict.get("acodec", ""),
+            "width": info_dict.get("width", ""),
+            "height": info_dict.get("height", ""),
+            "thumbnail": info_dict.get("thumbnail", ""),
+            "webpage_url": info_dict.get("webpage_url", ""),
+            "availability": info_dict.get("availability", ""),
+            "playable_in_embed": info_dict.get("playable_in_embed", ""),
+            "channel_follower_count": info_dict.get("channel_follower_count", ""),
+            "language": info_dict.get("language", ""),
+            "subtitles_available":
+                ", ".join(info_dict.get("subtitles", {}).keys()) if info_dict.get("subtitles") else "",
+            "automatic_captions_available":
+                ", ".join(info_dict.get("automatic_captions", {}).keys()) if info_dict.get("automatic_captions") else "",
+        }
+        return metadata
+    except subprocess.TimeoutExpired:
+        logger.warning(f"Timeout fetching ID {video_id}")
+        return None
+    except json.JSONDecodeError as e:
+        logger.warning(f"Error parsing JSON for ID {video_id}: {e}")
+        return None
+    except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught
+        logger.warning(f"An unexpected error occurred for ID {video_id}: {e}")
+        return None

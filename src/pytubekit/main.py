@@ -1,6 +1,7 @@
 """
 main entry point to the program
 """
+import csv
 import logging
 import os
 import pathlib
@@ -13,14 +14,15 @@ from pygooglehelper import register_functions, ConfigRequest
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
-    ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff
+    ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
     delete_playlist_item_by_id, get_playlist_ids_from_names, get_all_items_from_playlist_ids, \
     get_video_info, pretty_print, get_youtube_channels, get_youtube_playlists, get_my_playlists_ids, \
     read_video_ids_from_files, get_video_ids_from_playlist_names, \
-    get_items_from_playlist_names
+    get_items_from_playlist_names, get_video_metadata, METADATA_FIELDNAMES, \
+    add_video_to_playlist, get_playlist_item_count
 from pytubekit.youtube import youtube_dl_download_urls
 
 
@@ -238,6 +240,35 @@ def subtract() -> None:
 
 
 @register_endpoint(
+    description="Move videos from source playlist to destination playlist respecting the 5000 limit",
+    configs=[ConfigPagination, ConfigOverflow],
+)
+def overflow() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    source_id, destination_id = get_playlist_ids_from_names(
+        youtube, [ConfigOverflow.source, ConfigOverflow.destination],
+    )
+    destination_count = get_playlist_item_count(youtube, destination_id)
+    available = 5000 - destination_count
+    logger.info(f"destination has {destination_count} items, {available} slots available")
+    if available <= 0:
+        logger.info("destination playlist is full, nothing to move")
+        return
+    source_items = get_all_items_from_playlist_ids(youtube, [source_id])
+    logger.info(f"source has {len(source_items)} items")
+    moved = 0
+    for item in source_items:
+        if moved >= available:
+            break
+        video_id = item["snippet"]["resourceId"]["videoId"]
+        add_video_to_playlist(youtube, destination_id, video_id)
+        delete_playlist_item_by_id(youtube, item["id"])
+        moved += 1
+    logger.info(f"moved {moved} videos from [{ConfigOverflow.source}] to [{ConfigOverflow.destination}]")
+
+
+@register_endpoint(
     description="Find unseen/seen videos by diffing playlists against local files",
     configs=[ConfigPagination, ConfigDiff],
 )
@@ -255,6 +286,48 @@ def diff() -> None:
         for video_id in result_ids:
             print(video_id, file=f)
     logger.info(f"wrote {len(result_ids)} video IDs to [{ConfigDiff.output_file}]")
+
+
+@register_endpoint(
+    description="Fetch extensive metadata for video IDs and write to CSV (supports resume)",
+    configs=[ConfigAddData],
+)
+def add_data() -> None:
+    logger = logging.getLogger()
+    input_path = ConfigAddData.input_file
+    output_path = ConfigAddData.output_file
+    processed_ids: set[str] = set()
+    output_file_exists = os.path.exists(output_path)
+    if output_file_exists:
+        logger.info(f"Output file [{output_path}] found. Reading existing IDs to avoid re-processing.")
+        with open(output_path, encoding="utf-8", newline="") as f_out_read:
+            reader = csv.DictReader(f_out_read)
+            for row in reader:
+                if row and "video_id" in row:
+                    processed_ids.add(row["video_id"])
+        logger.info(f"Found {len(processed_ids)} previously processed IDs.")
+    with open(input_path) as infile, open(output_path, "a", encoding="utf-8", newline="") as outfile:
+        writer = csv.DictWriter(outfile, fieldnames=METADATA_FIELDNAMES)
+        if not output_file_exists:
+            writer.writeheader()
+            outfile.flush()
+        for line in infile:
+            video_id = line.strip()
+            if not video_id:
+                continue
+            if video_id in processed_ids:
+                logger.info(f"Skipping already processed ID: [{video_id}]")
+                continue
+            metadata = get_video_metadata(video_id)
+            if metadata:
+                writer.writerow(metadata)
+            else:
+                error_row = {field: "" for field in METADATA_FIELDNAMES}
+                error_row["video_id"] = video_id
+                error_row["title"] = "METADATA_NOT_FOUND"
+                writer.writerow(error_row)
+            outfile.flush()
+    logger.info("Processing complete")
 
 
 @register_endpoint(
