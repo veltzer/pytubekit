@@ -15,3 +15,4 @@ PAGE_TOKEN = "pageToken"
 ITEMS_TOKEN = "items"
 DELETED_TITLE = "Deleted video"
 PRIVATE_TITLE = "Private video"
+MAX_PLAYLIST_ITEMS = 5000

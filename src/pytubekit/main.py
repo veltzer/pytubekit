@@ -14,7 +14,7 @@ import pylogconf.core
 from pygooglehelper import register_functions, ConfigRequest
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
-from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
+from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
     ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort, ConfigSearch, \
     ConfigExportCsv, ConfigRename, ConfigLeftToSee, ConfigCollectIds
@@ -182,7 +182,7 @@ def cleanup() -> None:
 
 @register_endpoint(
     description="Remove unavialable or privatized from all playlists",
-    configs=[ConfigPagination, ConfigPlaylists, ConfigCleanup, ConfigDelete],
+    configs=[ConfigPagination, ConfigCleanup, ConfigDelete],
 )
 def remove_unavailable_from_all_playlists() -> None:
     logger = logging.getLogger()
