@@ -163,6 +163,26 @@ class ConfigSort(Config):
     )
 
 
+class ConfigSearch(Config):
+    """ Search playlist parameters """
+    search_playlists = ParamCreator.create_list_str(
+        help_string="Playlist names to search in",
+    )
+    search_query = ParamCreator.create_str(
+        help_string="Text to search for in video title or channel name",
+    )
+
+
+class ConfigExportCsv(Config):
+    """ Export playlist to CSV parameters """
+    export_playlist_name = ParamCreator.create_str(
+        help_string="Name of playlist to export",
+    )
+    export_csv_path = ParamCreator.create_str(
+        help_string="Path to CSV file to write",
+    )
+
+
 class ConfigCount(Config):
     """ Playlists to count """
     count_names = ParamCreator.create_list_str(

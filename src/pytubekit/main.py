@@ -15,7 +15,7 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
-    ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort
+    ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort, ConfigSearch
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -349,6 +349,23 @@ def sort_playlist() -> None:
         add_video_to_playlist(youtube, playlist_id, video_id)
         added += 1
     logger.info(f"re-added {added} items in sorted order (by {ConfigSort.sort_key})")
+
+
+@register_endpoint(
+    description="Search for videos by title or channel name across one or more playlists",
+    configs=[ConfigPagination, ConfigSearch],
+)
+def search_playlist() -> None:
+    youtube = get_youtube()
+    playlist_ids = get_playlist_ids_from_names(youtube, ConfigSearch.search_playlists)
+    items = get_all_items_from_playlist_ids(youtube, playlist_ids)
+    query = str(ConfigSearch.search_query).lower()
+    for item in items:
+        title = item["snippet"].get("title", "")
+        channel = item["snippet"].get("videoOwnerChannelTitle", "")
+        if query in title.lower() or query in channel.lower():
+            video_id = item["snippet"]["resourceId"]["videoId"]
+            print(f"{video_id}  {title}  [{channel}]")
 
 
 @register_endpoint(
