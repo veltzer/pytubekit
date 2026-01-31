@@ -152,6 +152,17 @@ class ConfigMerge(Config):
     )
 
 
+class ConfigSort(Config):
+    """ Sort playlist parameters """
+    sort_playlist_name = ParamCreator.create_str(
+        help_string="Name of playlist to sort",
+    )
+    sort_key = ParamCreator.create_str(
+        help_string="Sort key: title, channel, or date",
+        default="title",
+    )
+
+
 class ConfigCount(Config):
     """ Playlists to count """
     count_names = ParamCreator.create_list_str(
