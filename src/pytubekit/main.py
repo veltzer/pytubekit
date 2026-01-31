@@ -5,6 +5,7 @@ import csv
 import logging
 import os
 import pathlib
+import re
 import string
 import time
 
@@ -16,7 +17,7 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
     ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort, ConfigSearch, \
-    ConfigExportCsv, ConfigRename, ConfigLeftToSee
+    ConfigExportCsv, ConfigRename, ConfigLeftToSee, ConfigCollectIds
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -551,13 +552,24 @@ def video_info() -> None:
     pretty_print(info)
 
 
+YOUTUBE_ID_RE = re.compile(r"(?:youtu\.be/|youtube\.com/.*[?&]v=|^)([A-Za-z0-9_-]{11})(?:\s|$|&)")
+
+
 @register_endpoint(
-    description="Collect you tube video ids from files",
+    description="Extract YouTube video IDs from text files",
+    configs=[ConfigCollectIds],
 )
 def collect_ids() -> None:
-    for filename in os.listdir():
-        _, extension = os.path.splitext(filename)
-        print(extension)
+    logger = logging.getLogger()
+    found: set[str] = set()
+    for file_path in ConfigCollectIds.collect_files:
+        with open(str(file_path), encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                for match in YOUTUBE_ID_RE.findall(line):
+                    found.add(match)
+    for video_id in sorted(found):
+        print(video_id)
+    logger.info(f"found {len(found)} unique video IDs")
 
 
 @register_endpoint(
