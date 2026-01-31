@@ -210,6 +210,13 @@ class ConfigCount(Config):
     )
 
 
+class ConfigCollectIds(Config):
+    """ Collect IDs parameters """
+    collect_files = ParamCreator.create_list_str(
+        help_string="Files to scan for YouTube video IDs",
+    )
+
+
 class ConfigPrint(Config):
     """ How to dump things """
     full = ParamCreator.create_bool(
