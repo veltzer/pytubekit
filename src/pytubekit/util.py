@@ -15,6 +15,11 @@ from pytubekit.constants import SCOPES, API_SERVICE_NAME, API_VERSION, NEXT_PAGE
 from pytubekit.static import APP_NAME
 
 
+def log_progress(logger, current: int, total: int, interval: int = 100):
+    if current % interval == 0 or current == total:
+        logger.info(f"progress: {current}/{total}")
+
+
 class PagedRequest:
     def __init__(self, f, kwargs):
         self.f = f

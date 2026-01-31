@@ -16,7 +16,7 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
     ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort, ConfigSearch, \
-    ConfigExportCsv
+    ConfigExportCsv, ConfigRename, ConfigLeftToSee
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -390,6 +390,42 @@ def export_csv() -> None:
                 "channel": item["snippet"].get("videoOwnerChannelTitle", ""),
             })
     logger.info(f"exported {len(items)} items to [{ConfigExportCsv.export_csv_path}]")
+
+
+@register_endpoint(
+    description="Rename a playlist",
+    configs=[ConfigRename],
+)
+def rename_playlist() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    playlist_id = get_playlist_ids_from_names(youtube, [ConfigRename.rename_playlist_name])[0]
+    request = youtube.playlists().update(
+        part="snippet",
+        body={
+            "id": playlist_id,
+            "snippet": {
+                "title": str(ConfigRename.rename_new_name),
+            },
+        },
+    )
+    request.execute()
+    logger.info(f"renamed [{ConfigRename.rename_playlist_name}] to [{ConfigRename.rename_new_name}]")
+
+
+@register_endpoint(
+    description="List unseen videos by subtracting seen playlists from source playlists",
+    configs=[ConfigPagination, ConfigLeftToSee],
+)
+def left_to_see() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    all_video_ids = get_video_ids_from_playlist_names(youtube, ConfigLeftToSee.lts_all_playlists)
+    seen_video_ids = get_video_ids_from_playlist_names(youtube, ConfigLeftToSee.lts_seen_playlists)
+    unseen = sorted(all_video_ids - seen_video_ids)
+    logger.info(f"total {len(all_video_ids)}, seen {len(seen_video_ids)}, unseen {len(unseen)}")
+    for video_id in unseen:
+        print(video_id)
 
 
 @register_endpoint(
