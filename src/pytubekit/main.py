@@ -15,7 +15,7 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
-    ConfigCleanupPlaylists, ConfigCount
+    ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -241,6 +241,24 @@ def subtract() -> None:
 
 
 @register_endpoint(
+    description="Delete all items from a playlist",
+    configs=[ConfigPagination, ConfigClear, ConfigDelete],
+)
+def clear_playlist() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    playlist_id = get_playlist_ids_from_names(youtube, [ConfigClear.clear_name])[0]
+    items = get_all_items_from_playlist_ids(youtube, [playlist_id])
+    logger.info(f"playlist [{ConfigClear.clear_name}] has {len(items)} items")
+    deleted = 0
+    for item in items:
+        if ConfigDelete.do_delete:
+            delete_playlist_item_by_id(youtube, item["id"])
+            deleted += 1
+    logger.info(f"deleted {deleted} items from [{ConfigClear.clear_name}]")
+
+
+@register_endpoint(
     description="Print the item count for one or more playlists",
     configs=[ConfigPagination, ConfigCount],
 )
@@ -250,6 +268,26 @@ def count() -> None:
     for playlist_name, playlist_id in zip(ConfigCount.count_names, playlist_ids):
         item_count = get_playlist_item_count(youtube, playlist_id)
         print(f"{playlist_name}: {item_count}")
+
+
+@register_endpoint(
+    description="Copy all videos from one playlist to another",
+    configs=[ConfigPagination, ConfigCopy],
+)
+def copy_playlist() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    source_id, destination_id = get_playlist_ids_from_names(
+        youtube, [ConfigCopy.copy_source, ConfigCopy.copy_destination],
+    )
+    items = get_all_items_from_playlist_ids(youtube, [source_id])
+    logger.info(f"source [{ConfigCopy.copy_source}] has {len(items)} items")
+    copied = 0
+    for item in items:
+        video_id = item["snippet"]["resourceId"]["videoId"]
+        add_video_to_playlist(youtube, destination_id, video_id)
+        copied += 1
+    logger.info(f"copied {copied} videos from [{ConfigCopy.copy_source}] to [{ConfigCopy.copy_destination}]")
 
 
 @register_endpoint(
