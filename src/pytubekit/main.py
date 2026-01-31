@@ -24,7 +24,7 @@ from pytubekit.util import create_playlists_request, get_youtube, create_playlis
     get_video_info, pretty_print, get_youtube_channels, get_youtube_playlists, get_my_playlists_ids, \
     read_video_ids_from_files, get_video_ids_from_playlist_names, \
     get_items_from_playlist_names, get_video_metadata, METADATA_FIELDNAMES, \
-    add_video_to_playlist, get_playlist_item_count
+    add_video_to_playlist, get_playlist_item_count, log_progress, retry_execute
 from pytubekit.youtube import youtube_dl_download_urls
 
 
@@ -39,7 +39,7 @@ def get_channel_id() -> None:
         part="id",
         mine=True
     )
-    response = request.execute()
+    response = retry_execute(request)
     print(response["items"][0]["id"])
 
 
@@ -54,7 +54,7 @@ def get_watch_later_playlist_id() -> None:
         part="id",
         mine=True
     )
-    response = request.execute()
+    response = retry_execute(request)
     channel_id = response["items"][0]["id"]
     playlist_id = channel_id[0] + "L" + channel_id[2:]
     print(playlist_id)
@@ -143,9 +143,11 @@ def cleanup() -> None:
     found_duplicates = 0
     found_deleted = 0
     found_private = 0
+    total = len(items)
     for item in items:
         to_delete = False
         saw += 1
+        log_progress(logger, saw, total)
         if ConfigCleanup.dedup:
             f_video_id = item["snippet"]["resourceId"]["videoId"]
             if f_video_id in seen:
@@ -192,9 +194,11 @@ def remove_unavailable_from_all_playlists() -> None:
     saw = 0
     found_deleted = 0
     found_private = 0
+    total = len(items)
     for item in items:
         to_delete = False
         saw += 1
+        log_progress(logger, saw, total)
         if ConfigCleanup.deleted:
             f_title = item["snippet"]["title"]
             if f_title == DELETED_TITLE:
@@ -230,7 +234,9 @@ def subtract() -> None:
     from_items = get_items_from_playlist_names(youtube, ConfigSubtract.subtract_from)
     deleted = 0
     wanted_to_delete = 0
-    for item in from_items:
+    total = len(from_items)
+    for i, item in enumerate(from_items, start=1):
+        log_progress(logger, i, total)
         video_id = item["snippet"]["resourceId"]["videoId"]
         if video_id in what_video_ids:
             wanted_to_delete += 1
@@ -252,7 +258,9 @@ def clear_playlist() -> None:
     items = get_all_items_from_playlist_ids(youtube, [playlist_id])
     logger.info(f"playlist [{ConfigClear.clear_name}] has {len(items)} items")
     deleted = 0
-    for item in items:
+    total = len(items)
+    for i, item in enumerate(items, start=1):
+        log_progress(logger, i, total)
         if ConfigDelete.do_delete:
             delete_playlist_item_by_id(youtube, item["id"])
             deleted += 1
@@ -284,10 +292,12 @@ def copy_playlist() -> None:
     items = get_all_items_from_playlist_ids(youtube, [source_id])
     logger.info(f"source [{ConfigCopy.copy_source}] has {len(items)} items")
     copied = 0
+    total = len(items)
     for item in items:
         video_id = item["snippet"]["resourceId"]["videoId"]
         add_video_to_playlist(youtube, destination_id, video_id)
         copied += 1
+        log_progress(logger, copied, total)
     logger.info(f"copied {copied} videos from [{ConfigCopy.copy_source}] to [{ConfigCopy.copy_destination}]")
 
 
@@ -309,7 +319,9 @@ def merge() -> None:
     logger.info(f"source playlists have {len(source_items)} items total")
     added = 0
     skipped = 0
-    for item in source_items:
+    total = len(source_items)
+    for i, item in enumerate(source_items, start=1):
+        log_progress(logger, i, total)
         video_id = item["snippet"]["resourceId"]["videoId"]
         if video_id in seen:
             skipped += 1
@@ -341,14 +353,17 @@ def sort_playlist() -> None:
     items = get_all_items_from_playlist_ids(youtube, [playlist_id])
     logger.info(f"playlist [{ConfigSort.sort_playlist_name}] has {len(items)} items")
     sorted_items = sorted(items, key=SORT_KEYS[ConfigSort.sort_key])
-    for item in items:
+    total = len(items)
+    for i, item in enumerate(items, start=1):
         delete_playlist_item_by_id(youtube, item["id"])
-    logger.info(f"deleted {len(items)} items")
+        log_progress(logger, i, total)
+    logger.info(f"deleted {total} items")
     added = 0
     for item in sorted_items:
         video_id = item["snippet"]["resourceId"]["videoId"]
         add_video_to_playlist(youtube, playlist_id, video_id)
         added += 1
+        log_progress(logger, added, total)
     logger.info(f"re-added {added} items in sorted order (by {ConfigSort.sort_key})")
 
 
@@ -409,7 +424,7 @@ def rename_playlist() -> None:
             },
         },
     )
-    request.execute()
+    retry_execute(request)
     logger.info(f"renamed [{ConfigRename.rename_playlist_name}] to [{ConfigRename.rename_new_name}]")
 
 
@@ -430,7 +445,7 @@ def left_to_see() -> None:
 
 @register_endpoint(
     description="Move videos from source playlist to destination playlist respecting the 5000 limit",
-    configs=[ConfigPagination, ConfigOverflow],
+    configs=[ConfigPagination, ConfigOverflow, ConfigDelete],
 )
 def overflow() -> None:
     logger = logging.getLogger()
@@ -447,14 +462,21 @@ def overflow() -> None:
     source_items = get_all_items_from_playlist_ids(youtube, [source_id])
     logger.info(f"source has {len(source_items)} items")
     moved = 0
+    to_move = min(available, len(source_items))
+    logger.info(f"would move {to_move} videos")
     for item in source_items:
         if moved >= available:
             break
-        video_id = item["snippet"]["resourceId"]["videoId"]
-        add_video_to_playlist(youtube, destination_id, video_id)
-        delete_playlist_item_by_id(youtube, item["id"])
+        if ConfigDelete.do_delete:
+            video_id = item["snippet"]["resourceId"]["videoId"]
+            add_video_to_playlist(youtube, destination_id, video_id)
+            delete_playlist_item_by_id(youtube, item["id"])
         moved += 1
-    logger.info(f"moved {moved} videos from [{ConfigOverflow.source}] to [{ConfigOverflow.destination}]")
+        log_progress(logger, moved, to_move)
+    if ConfigDelete.do_delete:
+        logger.info(f"moved {moved} videos from [{ConfigOverflow.source}] to [{ConfigOverflow.destination}]")
+    else:
+        logger.info(f"dry run: would move {moved} videos from [{ConfigOverflow.source}] to [{ConfigOverflow.destination}]")
 
 
 @register_endpoint(
@@ -548,7 +570,7 @@ def channels() -> None:
         part="snippet,contentDetails,statistics",
         mine=True
     )
-    response = request.execute()
+    response = retry_execute(request)
     pretty_print(response)
     for item in response["items"]:
         f_channel_id = item["id"]
@@ -558,7 +580,7 @@ def channels() -> None:
             channelId=f_channel_id,
             maxResults=25
         )
-        res = request.execute()
+        res = retry_execute(request)
         pretty_print(res)
 
 
