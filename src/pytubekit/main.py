@@ -15,7 +15,8 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigPlaylists, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
-    ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort, ConfigSearch
+    ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort, ConfigSearch, \
+    ConfigExportCsv
 from pytubekit.constants import SCOPES, DELETED_TITLE, PRIVATE_TITLE
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -366,6 +367,29 @@ def search_playlist() -> None:
         if query in title.lower() or query in channel.lower():
             video_id = item["snippet"]["resourceId"]["videoId"]
             print(f"{video_id}  {title}  [{channel}]")
+
+
+@register_endpoint(
+    description="Export a playlist to CSV with video ID, title, channel, and position",
+    configs=[ConfigPagination, ConfigExportCsv],
+)
+def export_csv() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    playlist_id = get_playlist_ids_from_names(youtube, [ConfigExportCsv.export_playlist_name])[0]
+    items = get_all_items_from_playlist_ids(youtube, [playlist_id])
+    fieldnames = ["position", "video_id", "title", "channel"]
+    with open(str(ConfigExportCsv.export_csv_path), "w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for position, item in enumerate(items, start=1):
+            writer.writerow({
+                "position": position,
+                "video_id": item["snippet"]["resourceId"]["videoId"],
+                "title": item["snippet"].get("title", ""),
+                "channel": item["snippet"].get("videoOwnerChannelTitle", ""),
+            })
+    logger.info(f"exported {len(items)} items to [{ConfigExportCsv.export_csv_path}]")
 
 
 @register_endpoint(
