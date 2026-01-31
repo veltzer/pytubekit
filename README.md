@@ -6,7 +6,7 @@ project website: https://veltzer.github.io/pytubekit
 
 author: Mark Veltzer
 
-version: 0.0.31
+version: 0.0.32
 
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
@@ -40,4 +40,4 @@ version: 0.0.31
 ![discord](https://img.shields.io/discord/719336281624281119)
 ![discord](https://img.shields.io/discord/719336282194444302)
 
-Mark Veltzer, Copyright © 2020, 2021, 2022, 2023, 2024, 2025
+Mark Veltzer, Copyright © 2020, 2021, 2022, 2023, 2024, 2025, 2026
