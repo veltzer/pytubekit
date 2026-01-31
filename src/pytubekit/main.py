@@ -19,7 +19,8 @@ from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
     delete_playlist_item_by_id, get_playlist_ids_from_names, get_all_items_from_playlist_ids, \
     get_video_info, pretty_print, get_youtube_channels, get_youtube_playlists, get_my_playlists_ids, \
-    get_playlist_item_ids_from_names, read_video_ids_from_files, get_video_ids_from_playlist_names
+    get_playlist_item_ids_from_names, read_video_ids_from_files, get_video_ids_from_playlist_names, \
+    get_items_from_playlist_names
 from pytubekit.youtube import youtube_dl_download_urls
 
 
@@ -231,6 +232,29 @@ def subtract() -> None:
         if ConfigDelete.do_delete:
             delete_playlist_item_by_id(youtube, f_id)
             deleted += 1
+    logger.info(f"wanted_to_delete {wanted_to_delete} items")
+    logger.info(f"deleted {deleted} items")
+
+
+@register_endpoint(
+    description="Remove videos from A playlists that exist in B playlists (A = A - B)",
+    configs=[ConfigPagination, ConfigSubtract, ConfigDelete],
+)
+def subtract_by_video() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    logger.info(f"subtracting [{ConfigSubtract.subtract_what}] from [{ConfigSubtract.subtract_from}] by video ID...")
+    what_video_ids = get_video_ids_from_playlist_names(youtube, ConfigSubtract.subtract_what)
+    from_items = get_items_from_playlist_names(youtube, ConfigSubtract.subtract_from)
+    deleted = 0
+    wanted_to_delete = 0
+    for item in from_items:
+        video_id = item["snippet"]["resourceId"]["videoId"]
+        if video_id in what_video_ids:
+            wanted_to_delete += 1
+            if ConfigDelete.do_delete:
+                delete_playlist_item_by_id(youtube, item["id"])
+                deleted += 1
     logger.info(f"wanted_to_delete {wanted_to_delete} items")
     logger.info(f"deleted {deleted} items")
 

@@ -159,3 +159,8 @@ def get_video_ids_from_playlist_names(youtube, names: list[str]) -> set[str]:
     playlist_ids = get_playlist_ids_from_names(youtube, names)
     items = get_all_items_from_playlist_ids(youtube, playlist_ids)
     return {item["snippet"]["resourceId"]["videoId"] for item in items}
+
+
+def get_items_from_playlist_names(youtube, names: list[str]):
+    playlist_ids = get_playlist_ids_from_names(youtube, names)
+    return get_all_items_from_playlist_ids(youtube, playlist_ids)
