@@ -11,6 +11,5 @@ pylogconf
 pymakehelper
 pytconf
 pytest
-pyvardump
 ruff
 youtube-dl

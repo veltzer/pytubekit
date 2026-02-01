@@ -7,7 +7,6 @@ install_requires: list[str] = [
     "pygooglehelper",
     "pytconf",
     "pylogconf",
-    "pyvardump",
     "youtube-dl",
     "browsercookie",
 ]

@@ -51,9 +51,6 @@ The `playlists` command currently only shows playlist names. Adding the item cou
 ### Drop `browsercookie` dependency
 `browsercookie` is listed in `pyproject.toml` dependencies but is never imported anywhere in the source code. Remove it.
 
-### Drop `pyvardump` dependency
-`pyvardump` is listed in dependencies and has a commented-out import in `main.py` (`# import pyvardump`). If it is not used, remove the dependency and the dead comment.
-
 ## Code quality
 
 ### Better error message for missing playlist names

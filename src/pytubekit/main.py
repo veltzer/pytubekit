@@ -10,7 +10,6 @@ import string
 import time
 
 import pylogconf.core
-# import pyvardump
 from pygooglehelper import register_functions, ConfigRequest
 from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
 
