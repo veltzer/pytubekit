@@ -1,78 +1,72 @@
-# Suggestions for pytubekit
+# Suggestions for pytubekit (round 2)
 
 ## New commands
 
-### `add_file_to_playlist`
-Read video IDs from a local file (one per line) and add them all to a named playlist.
-This is the inverse of `dump` and is already listed in `TODO.txt`.
+### `create_playlist`
+Create a new empty playlist by name. Currently the only way to create playlists is through the YouTube UI. Uses `playlists().insert()`.
 
-### `clear_playlist`
-Delete every item from a playlist. Useful for resetting overflow playlists.
-Also listed in `TODO.txt`.
+### `delete_playlist`
+Delete a playlist entirely (not just clear its items). Uses `playlists().delete()`.
 
-### `copy_playlist`
-Copy all videos from one playlist to another (like `overflow` but without deleting from source and without the 5000 cap).
+### `intersect`
+Given two or more playlists, output the video IDs that appear in all of them. The inverse of `subtract` — useful for finding overlap between playlists.
 
-### `count`
-Print the item count for one or more playlists. Quick way to check which playlists are approaching the 5000 limit without fetching full item lists through the UI.
+### `stats`
+Print a summary of the account: total playlists, total videos across all playlists, largest and smallest playlists. A quick health-check command.
 
-### `merge`
-Merge several playlists into one destination playlist, deduplicating along the way.
+### `dump_single`
+Dump a single named playlist to a file (like `dump` but for one playlist instead of all). Currently `dump` always dumps everything. Mentioned in `TODO.txt` as "implement argument free dump" (the other direction — dump a specific one by name).
 
-### `sort_playlist`
-Sort a playlist by title, upload date, or channel name. YouTube's UI only offers limited sorting.
-
-### `search_playlist`
-Search for a video title or channel name across one or more playlists and print matching entries.
-
-### `export_csv`
-Export a playlist as CSV with columns for video ID, title, channel, and position. More structured than the current plain-ID `dump`.
-
-### `rename_playlist`
-Rename a playlist via the API (uses `playlists().update()`).
-
-### `left_to_see`
-Given a channel or playlist, subtract already-seen videos (from other playlists or dump files) and output the remainder. Already described in `TODO.txt`.
+### `reverse_playlist`
+Reverse the order of items in a playlist. Similar to `sort_playlist` but simpler — just flip the order. Useful when YouTube imports add items in the wrong direction.
 
 ## Improvements to existing commands
 
-### Progress indicators
-Long-running commands (`cleanup`, `overflow`, `subtract`, `dump`, `add_data`) produce no output until they finish. Adding a progress bar or periodic log line (e.g. "processed 200/1500 items") would improve usability.
+### `get_watch_later_playlist_id` description is wrong
+The description says "Show me my channel id" (copy-paste from `get_channel_id`). Should say "Show the Watch Later playlist id".
 
-### Dry-run mode for `overflow`
-`cleanup` and `subtract` already accept `ConfigDelete.do_delete`. `overflow` should support the same flag so users can preview how many videos would move before committing.
+### `remove_unavailable_from_all_playlists` has a typo in description
+The description says "unavialable" instead of "unavailable".
 
-### Retry / back-off on API errors
-YouTube API v3 returns 403 when the daily quota is exhausted and 429 on rate-limit. Adding exponential back-off with a configurable max-retry count would make bulk operations more reliable.
+### `add_file_to_playlist` should skip duplicates
+Currently it blindly adds every ID from the file. If a video is already in the playlist, YouTube will add a duplicate. The command should optionally (or by default) fetch existing video IDs and skip duplicates.
 
-### `collect_ids` is a stub
-The current implementation only prints file extensions in the working directory. Either implement the intended functionality (extract YouTube video IDs from local files) or remove the command.
+### `copy_playlist` should skip duplicates
+Same issue — if the destination already has some of the source videos, they get duplicated. `merge` already handles this; `copy_playlist` should too.
 
-### `watch_later` uses youtube-dl
-`youtube-dl` is unmaintained since late 2021. The `add_data` command already shells out to `yt-dlp`. Migrate `watch_later` (and the `youtube.py` module) to use `yt-dlp` as well.
+### `sort_playlist` is destructive on failure
+If the process crashes after deleting items but before re-adding them, items are lost. A safer approach: first add all items in the new order to a temporary playlist, then clear the original and copy back — or at least warn the user and require a `--force` flag.
 
-### Consistent output formatting
-Some commands use `print()`, others use `logger.info()`. Standardizing on logging for operational messages and reserving `print()` / stdout for data output would make it easier to pipe results.
+### `count` should use `contentDetails.itemCount`
+The `count` command currently fetches all items via `get_playlist_item_count` (which calls `get_all_items_from_playlist_id`) just to count them. The YouTube API returns `contentDetails.itemCount` in the `playlists().list()` response, which is a single API call instead of potentially hundreds of paginated calls.
 
-### `remove_unavailable_from_all_playlists` still uses `ConfigPlaylists`
-It accepts `--names` but never actually uses the value — it fetches all playlist IDs with `get_my_playlists_ids`. The `ConfigPlaylists` config could be dropped from its config list to avoid confusing the user.
+### `playlists` should show item counts
+The `playlists` command currently only shows playlist names. Adding the item count (from `contentDetails.itemCount`) would be more useful and costs no extra API calls since it just requires adding `contentDetails` to the `part` parameter.
+
+## Packaging and dependencies
+
+### Drop `youtube-dl` dependency
+`pyproject.toml` still lists `youtube-dl` as a dependency. All code has been migrated to `yt-dlp`, but the dependency was never removed. It should be replaced with `yt-dlp`.
+
+### Drop `browsercookie` dependency
+`browsercookie` is listed in `pyproject.toml` dependencies but is never imported anywhere in the source code. Remove it.
+
+### Drop `pyvardump` dependency
+`pyvardump` is listed in dependencies and has a commented-out import in `main.py` (`# import pyvardump`). If it is not used, remove the dependency and the dead comment.
 
 ## Code quality
 
-### Test coverage
-The only test is an empty placeholder. Priority areas for unit tests:
-- `PagedRequest` pagination logic (mock the API, verify all pages are consumed).
-- `get_playlist_ids_from_names` — verify behaviour when a name is missing.
-- `overflow` logic — verify the 5000 cap is respected and videos are added before deleted.
+### Better error message for missing playlist names
+`get_playlist_ids_from_names` raises a bare `KeyError` when a playlist name is not found. Wrapping this in a user-friendly message (e.g. "Playlist 'xyz' not found. Available playlists: ...") would save debugging time.
 
-### Type annotations
-Many utility functions lack return-type annotations (e.g. `get_all_items`, `get_items_from_playlist_names`). Adding them would let mypy catch more issues.
+### `main` function missing return type
+The `main()` function at the bottom of `main.py` is the only endpoint function without a `-> None` return type annotation.
 
-### Magic number 5000
-The playlist limit in `overflow` is a bare literal. Extract it to a constant in `constants.py` (e.g. `MAX_PLAYLIST_ITEMS = 5000`).
+### Unused imports in `main.py`
+`main.py` imports `string` and `time` at the top level. `string` is only used in `dump()` and `time` is only used in `dump()`. These are fine but worth noting — more importantly, `pathlib` is imported but could replace several `os.path` calls for consistency.
 
-### Duplicate deletion logic
-`cleanup` and `remove_unavailable_from_all_playlists` share nearly identical loops for detecting deleted/private videos. Extract the shared logic into a helper in `util.py`.
+### `json` import no longer needed in `util.py`
+After migrating `get_video_metadata` from subprocess+JSON parsing to the `yt_dlp` Python API, the `json` module is only used by `pretty_print` (via `json.dump`). This is fine, but worth auditing whether any other dead imports crept in.
 
-### `subprocess` call in `get_video_metadata`
-Calling `yt-dlp` via `subprocess.run` works but is fragile. The `yt-dlp` Python package exposes `yt_dlp.YoutubeDL` which can be used directly, avoiding shell escaping issues and giving structured output natively.
+### Validate playlist name exists before expensive operations
+Commands like `sort_playlist`, `clear_playlist`, and `overflow` resolve playlist names to IDs and then immediately start fetching/deleting. If the name is wrong, the error comes late. Validating upfront (or using the improved error message above) would catch mistakes faster.
