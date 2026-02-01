@@ -131,7 +131,6 @@ Videos are identified as deleted or private by checking their title against the 
 | pygooglehelper | OAuth2 credential management |
 | pytconf | CLI configuration framework |
 | pylogconf | Logging configuration |
-| pyvardump | Variable dumping utility |
 | youtube-dl | Video/playlist downloading |
 | browsercookie | Browser cookie extraction |
 

@@ -27,7 +27,6 @@ pygooglehelper
 pylint
 pylogconf
 pytest
-pyvardump
 sdist
 untracked
 Unix
