@@ -16,7 +16,8 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
     ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort, ConfigSearch, \
-    ConfigExportCsv, ConfigRename, ConfigLeftToSee, ConfigCollectIds, ConfigAddFileToPlaylist
+    ConfigExportCsv, ConfigRename, ConfigLeftToSee, ConfigCollectIds, ConfigAddFileToPlaylist, \
+    ConfigCreatePlaylist, ConfigDeletePlaylist, ConfigFindVideo
 from pytubekit.constants import SCOPES, MAX_PLAYLIST_ITEMS
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -532,6 +533,97 @@ def add_file_to_playlist() -> None:
         added += 1
         log_progress(logger, added, total)
     logger.info(f"added {added} videos to [{ConfigAddFileToPlaylist.add_playlist}]")
+
+
+@register_endpoint(
+    description="Create a new playlist",
+    configs=[ConfigCreatePlaylist],
+)
+def create_playlist() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    request = youtube.playlists().insert(
+        part="snippet,status",
+        body={
+            "snippet": {
+                "title": str(ConfigCreatePlaylist.create_name),
+                "description": str(ConfigCreatePlaylist.create_description),
+            },
+            "status": {
+                "privacyStatus": str(ConfigCreatePlaylist.create_privacy),
+            },
+        },
+    )
+    response = retry_execute(request)
+    playlist_id = response["id"]
+    logger.info(f"created playlist [{ConfigCreatePlaylist.create_name}] with id [{playlist_id}]")
+    print(playlist_id)
+
+
+@register_endpoint(
+    description="Delete a playlist by name",
+    configs=[ConfigDeletePlaylist],
+)
+def delete_playlist() -> None:
+    logger = logging.getLogger()
+    youtube = get_youtube()
+    playlist_id = get_playlist_ids_from_names(youtube, [ConfigDeletePlaylist.delete_playlist_name])[0]
+    request = youtube.playlists().delete(id=playlist_id)
+    retry_execute(request)
+    logger.info(f"deleted playlist [{ConfigDeletePlaylist.delete_playlist_name}] (id [{playlist_id}])")
+
+
+@register_endpoint(
+    description="Find which playlists contain a given video",
+    configs=[ConfigPagination, ConfigFindVideo],
+)
+def find_video() -> None:
+    youtube = get_youtube()
+    r = create_playlists_request(youtube)
+    all_playlists = r.get_all_items()
+    target = str(ConfigFindVideo.find_video_id)
+    for pl in all_playlists:
+        pl_id = pl["id"]
+        pl_title = pl["snippet"]["title"]
+        items = get_all_items_from_playlist_ids(youtube, [pl_id])
+        for item in items:
+            if item["snippet"]["resourceId"]["videoId"] == target:
+                print(pl_title)
+                break
+
+
+@register_endpoint(
+    description="Show summary statistics for all playlists",
+    configs=[ConfigPagination],
+)
+def stats() -> None:
+    youtube = get_youtube()
+    r = create_playlists_request(youtube)
+    all_playlists = r.get_all_items()
+    if not all_playlists:
+        print("No playlists found.")
+        return
+    total_videos = 0
+    largest_name = ""
+    largest_count = -1
+    smallest_name = ""
+    smallest_count = -1
+    for pl in all_playlists:
+        name = pl["snippet"]["title"]
+        count_inner = pl["contentDetails"]["itemCount"]
+        print(f"{name}: {count}")
+        total_videos += count_inner
+        if count_inner > largest_count:
+            largest_count = count_inner
+            largest_name = name
+        if smallest_count < 0 or count_inner < smallest_count:
+            smallest_count = count
+            smallest_name = name
+    print("---")
+    print(f"Playlists: {len(all_playlists)}")
+    print(f"Total videos: {total_videos}")
+    print(f"Largest: {largest_name} ({largest_count})")
+    print(f"Smallest: {smallest_name} ({smallest_count})")
 
 
 @register_endpoint(

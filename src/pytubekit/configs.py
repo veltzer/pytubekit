@@ -227,6 +227,23 @@ class ConfigAddFileToPlaylist(Config):
     )
 
 
+class ConfigCreatePlaylist(Config):
+    """ Create playlist parameters """
+    create_name = ParamCreator.create_str(help_string="Name for the new playlist")
+    create_description = ParamCreator.create_str(help_string="Description for the new playlist", default="")
+    create_privacy = ParamCreator.create_str(help_string="Privacy status: public, unlisted, or private", default="public")
+
+
+class ConfigDeletePlaylist(Config):
+    """ Delete playlist parameters """
+    delete_playlist_name = ParamCreator.create_str(help_string="Name of the playlist to delete")
+
+
+class ConfigFindVideo(Config):
+    """ Find video parameters """
+    find_video_id = ParamCreator.create_str(help_string="Video ID to search for across all playlists")
+
+
 class ConfigPrint(Config):
     """ How to dump things """
     full = ParamCreator.create_bool(
