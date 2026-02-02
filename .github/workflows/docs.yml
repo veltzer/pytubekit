@@ -1,0 +1,26 @@
+name: docs
+on:
+  push:
+    branches: [master]
+    paths:
+      - "mkdocs/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+      - name: install mkdocs-material
+        run: pip install mkdocs-material
+      - name: deploy
+        run: cd mkdocs && mkdocs gh-deploy --force
