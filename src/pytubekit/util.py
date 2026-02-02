@@ -72,7 +72,7 @@ class PagedRequest:
 
 def create_playlists_request(youtube: Any) -> PagedRequest:
     kwargs = {
-        "part": "snippet",
+        "part": "snippet,contentDetails",
         "maxResults": ConfigPagination.page_size,
         "mine": True,
     }
