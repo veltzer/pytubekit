@@ -7,7 +7,7 @@ install_requires: list[str] = [
     "pygooglehelper",
     "pytconf",
     "pylogconf",
-    "youtube-dl",
+    "yt-dlp",
     "browsercookie",
 ]
 build_requires: list[str] = config.shared.PBUILD

@@ -12,4 +12,4 @@ pymakehelper
 pytconf
 pytest
 ruff
-youtube-dl
+yt-dlp

@@ -37,7 +37,7 @@ dependencies = [
     "pygooglehelper",
     "pytconf",
     "pylogconf",
-    "youtube-dl",
+    "yt-dlp",
     "browsercookie",
 ]
 

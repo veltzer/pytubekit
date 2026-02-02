@@ -1,0 +1,42 @@
+site_name: pytubekit
+site_url: https://veltzer.github.io/pytubekit
+site_description: Bulk YouTube account operations from the command line
+site_author: Mark Veltzer
+repo_url: https://github.com/veltzer/pytubekit
+repo_name: veltzer/pytubekit
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: red
+      accent: red
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: red
+      accent: red
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.code.copy
+    - navigation.instant
+    - navigation.sections
+
+nav:
+  - Home: index.md
+  - CLI Reference: cli-reference.md
+  - Architecture: architecture.md
+  - Development: development.md
+  - Notes: notes.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - tables
+  - toc:
+      permalink: true

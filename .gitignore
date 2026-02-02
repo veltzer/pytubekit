@@ -162,5 +162,8 @@ terraform.tfstate.backup
 target/
 project/
 
+# mkdocs
+/mkdocs/site/
+
 # rsb
 /.rsb/

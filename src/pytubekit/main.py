@@ -73,7 +73,8 @@ def playlists() -> None:
             pretty_print(item)
         else:
             f_title = item["snippet"]["title"]
-            print(f"{f_title}")
+            f_count = item["contentDetails"]["itemCount"]
+            print(f"{f_title}: {f_count}")
 
 
 @register_endpoint(
