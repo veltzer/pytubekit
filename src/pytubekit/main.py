@@ -388,7 +388,7 @@ def left_to_see() -> None:
 
 
 @register_endpoint(
-    description="Move videos from source playlist to destination playlist respecting the 5000 limit",
+    description=f"Move videos from source playlist to destination playlist respecting the {MAX_PLAYLIST_ITEMS} limit",
     configs=[ConfigPagination, ConfigOverflow, ConfigDelete],
 )
 def overflow() -> None:
