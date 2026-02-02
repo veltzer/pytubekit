@@ -114,6 +114,39 @@ No additional parameters.
 
 ---
 
+### `find_video`
+
+Find which playlists contain a given video. Iterates all playlists and checks each for the specified video ID.
+
+```bash
+pytubekit find_video --find-video-id dQw4w9WgXcQ
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `--find-video-id` | str | (required) | YouTube video ID to search for |
+| `--page-size` | int | 50 | Page size for API pagination |
+
+---
+
+### `stats`
+
+Show summary statistics for all playlists: each playlist name with its item count, then totals (number of playlists, total videos, largest, smallest).
+
+```bash
+pytubekit stats
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `--page-size` | int | 50 | Page size for API pagination |
+
+---
+
 ### `search_playlist`
 
 Search for videos by title or channel name across one or more playlists.
@@ -301,6 +334,41 @@ pytubekit remove_unavailable_from_all_playlists --no-do-delete   # Dry run
 ---
 
 ## Playlist Operations
+
+### `create_playlist`
+
+Create a new playlist with a given name, description, and privacy status.
+
+```bash
+pytubekit create_playlist --create-name "My New Playlist"
+pytubekit create_playlist --create-name "Private List" --create-description "Personal videos" --create-privacy private
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `--create-name` | str | (required) | Name for the new playlist |
+| `--create-description` | str | `""` | Description for the new playlist |
+| `--create-privacy` | str | `public` | Privacy status: `public`, `unlisted`, or `private` |
+
+---
+
+### `delete_playlist`
+
+Delete a playlist by name.
+
+```bash
+pytubekit delete_playlist --delete-playlist-name "Old Playlist"
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `--delete-playlist-name` | str | (required) | Name of the playlist to delete |
+
+---
 
 ### `subtract`
 
