@@ -13,6 +13,14 @@ class ConfigPagination(Config):
     )
 
 
+class ConfigChannelId(Config):
+    """ Channel ID options """
+    watch_later = ParamCreator.create_bool(
+        help_string="Output Watch Later playlist ID instead of channel ID",
+        default=False,
+    )
+
+
 class ConfigDump(Config):
     """ Parameters for dumping """
     dump_folder = ParamCreator.create_str(
@@ -91,18 +99,29 @@ class ConfigCleanup(Config):
 
 class ConfigDiff(Config):
     """ Parameters for diff """
-    source_playlists = ParamCreator.create_list_str(
-        help_string="YouTube playlist names to pull videos from",
+    diff_a_playlists = ParamCreator.create_list_str(
+        help_string="Source A: YouTube playlist names",
+        default=[],
     )
-    seen_files = ParamCreator.create_list_str(
-        help_string="Local files with video IDs (one per line, dump format)",
+    diff_a_files = ParamCreator.create_list_str(
+        help_string="Source A: local files with video IDs",
+        default=[],
     )
-    reverse = ParamCreator.create_bool(
-        help_string="False = unseen videos, True = seen videos",
+    diff_b_playlists = ParamCreator.create_list_str(
+        help_string="Source B: YouTube playlist names",
+        default=[],
+    )
+    diff_b_files = ParamCreator.create_list_str(
+        help_string="Source B: local files with video IDs",
+        default=[],
+    )
+    diff_reverse = ParamCreator.create_bool(
+        help_string="False = A-B (difference), True = A&B (intersection)",
         default=False,
     )
-    output_file = ParamCreator.create_str(
-        help_string="Path to write results to",
+    diff_output_file = ParamCreator.create_str_or_none(
+        help_string="Path to write results to (omit for stdout)",
+        default=None,
     )
 
 
@@ -185,16 +204,6 @@ class ConfigRename(Config):
     )
     rename_new_name = ParamCreator.create_str(
         help_string="New name for the playlist",
-    )
-
-
-class ConfigLeftToSee(Config):
-    """ Left to see parameters """
-    lts_all_playlists = ParamCreator.create_list_str(
-        help_string="Playlist names containing all videos",
-    )
-    lts_seen_playlists = ParamCreator.create_list_str(
-        help_string="Playlist names containing already-seen videos",
     )
 
 
