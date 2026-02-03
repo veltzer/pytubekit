@@ -31,10 +31,9 @@ These commands only call `*.list` methods — typically a few units total.
 | Command | Approximate cost |
 |---------|:----------------:|
 | `playlists` | 1 per page of playlists |
-| `stats` | 1 per page of playlists |
+| `stats` | 1 per page of playlists (or 1 per page per filtered playlist with `--stats-names`) |
 | `get_channel_id` | 1 |
 | `channels` | 2–3 |
-| `count` | 1 per page of playlists + 1 per page per counted playlist |
 | `video_info` | 1 |
 
 ### Medium-cost commands (read-heavy)
@@ -60,11 +59,9 @@ cleared consumes **10,000 units** — your entire daily quota.
 | Command | Approximate cost |
 |---------|:----------------:|
 | `cleanup` | reads + 50 per deleted item |
-| `remove_unavailable_from_all_playlists` | reads + 50 per deleted item |
 | `subtract` | reads + 50 per deleted item |
 | `clear_playlist` | reads + 50 × playlist size |
-| `copy_playlist` | reads + 50 × playlist size |
-| `merge` | reads + 50 per new item added |
+| `merge` | reads + 50 per new item added (or 50 × size with `--no-merge-dedup`) |
 | `sort_playlist` | reads + 50 × size (delete all) + 50 × size (re-add) = **100 × size** |
 | `overflow` | reads + 50 per moved item (insert + delete = 100 per item) |
 | `add_file_to_playlist` | reads + 50 per video added |
@@ -80,11 +77,11 @@ The API returns at most 50 items per page. Using a smaller `--page-size` means
 more pages and more API calls for the same data. Keep it at 50 unless you have a
 specific reason to lower it.
 
-### 2. Prefer `stats` and `count` over `playlist` for size checks
+### 2. Prefer `stats` over `playlist` for size checks
 
-`stats` and `count` read the `itemCount` field from the playlist metadata — no
-need to iterate every item. Use them instead of fetching full playlist contents
-when you only need counts.
+`stats` reads the `itemCount` field from the playlist metadata — no need to
+iterate every item. Use it instead of fetching full playlist contents when you
+only need counts. Use `--stats-names` to filter to specific playlists.
 
 ### 3. Use `dump` for offline analysis
 
@@ -98,9 +95,9 @@ playlists without fetching them again.
 
 ### 5. Run `cleanup` on specific playlists, not all
 
-`remove_unavailable_from_all_playlists` iterates every playlist you own and
+Running `cleanup` without `--cleanup-names` iterates every playlist you own and
 deletes items from each. If you know which playlists have problems, target them
-with `cleanup --cleanup-names` instead.
+with `--cleanup-names` instead.
 
 ### 6. Avoid `sort_playlist` on large playlists
 
@@ -144,12 +141,11 @@ directly and make zero API calls:
 pytubekit dump --dump-folder ~/youtube-dump
 
 # All subsequent analysis is free
-pytubekit local_count --local-dump-folder ~/youtube-dump
-pytubekit local_find_video --local-dump-folder ~/youtube-dump --local-video-id dQw4w9WgXcQ
-pytubekit local_search --local-dump-folder ~/youtube-dump --local-search-pattern "python"
+pytubekit stats --local-dump-folder ~/youtube-dump
+pytubekit find_video --local-dump-folder ~/youtube-dump --find-video-id dQw4w9WgXcQ
+pytubekit search_playlist --local-dump-folder ~/youtube-dump --search-query "python"
 pytubekit local_dedup --local-dump-folder ~/youtube-dump
 pytubekit local_diff --local-diff-a ~/youtube-dump --local-diff-b ~/seen-dump
-pytubekit local_left_to_see --local-lts-all-folder ~/youtube-dump --local-lts-seen-folder ~/seen-dump
 ```
 
 ### 11. Monitor usage in the Google Cloud Console
@@ -172,9 +168,8 @@ These commands do not call the YouTube Data API at all:
 | `collect_ids` | Scans local files only |
 | `add_data` | Uses yt-dlp, not the API |
 | `watch_later` | Uses yt-dlp, not the API |
-| `local_find_video` | Reads dump files only |
-| `local_search` | Reads dump files only |
-| `local_count` | Reads dump files only |
+| `find_video --local-dump-folder` | Reads dump files only |
+| `search_playlist --local-dump-folder` | Reads dump files only |
+| `stats --local-dump-folder` | Reads dump files only |
 | `local_diff` | Reads dump files only |
-| `local_left_to_see` | Reads dump files only |
 | `local_dedup` | Reads dump files only |
