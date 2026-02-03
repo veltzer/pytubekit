@@ -16,7 +16,7 @@ version: 0.0.35
 
 ## build
 
-![build](https://github.com/veltzer/pytubekit/workflows/build/badge.svg)
+![build](https://github.com/veltzer/pytubekit/workflows/build/badge.svg)![docs](https://github.com/veltzer/pytubekit/workflows/docs/badge.svg)
 
 ## pypi
 
