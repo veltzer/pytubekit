@@ -244,6 +244,52 @@ class ConfigFindVideo(Config):
     find_video_id = ParamCreator.create_str(help_string="Video ID to search for across all playlists")
 
 
+class ConfigLocalDumpFolder(Config):
+    """ Local dump folder to operate on """
+    local_dump_folder = ParamCreator.create_str(
+        help_string="Path to dump folder",
+        default=".",
+    )
+
+
+class ConfigLocalVideoId(Config):
+    """ Video ID to find locally """
+    local_video_id = ParamCreator.create_str(
+        help_string="Video ID to search for in dump files",
+    )
+
+
+class ConfigLocalSearch(Config):
+    """ Local search parameters """
+    local_search_pattern = ParamCreator.create_str(
+        help_string="Case-insensitive substring to search for in dump files",
+    )
+
+
+class ConfigLocalDiff(Config):
+    """ Local diff parameters """
+    local_diff_a = ParamCreator.create_str(
+        help_string="Path A (file or folder)",
+    )
+    local_diff_b = ParamCreator.create_str(
+        help_string="Path B (file or folder)",
+    )
+    local_diff_reverse = ParamCreator.create_bool(
+        help_string="False = A-B (difference), True = A&B (intersection)",
+        default=False,
+    )
+
+
+class ConfigLocalLeftToSee(Config):
+    """ Local left-to-see parameters """
+    local_lts_all_folder = ParamCreator.create_str(
+        help_string="Folder with all video IDs",
+    )
+    local_lts_seen_folder = ParamCreator.create_str(
+        help_string="Folder with seen video IDs",
+    )
+
+
 class ConfigPrint(Config):
     """ How to dump things """
     full = ParamCreator.create_bool(

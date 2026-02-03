@@ -17,7 +17,8 @@ from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, C
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
     ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort, ConfigSearch, \
     ConfigExportCsv, ConfigRename, ConfigLeftToSee, ConfigCollectIds, ConfigAddFileToPlaylist, \
-    ConfigCreatePlaylist, ConfigDeletePlaylist, ConfigFindVideo
+    ConfigCreatePlaylist, ConfigDeletePlaylist, ConfigFindVideo, \
+    ConfigLocalDumpFolder, ConfigLocalVideoId, ConfigLocalSearch, ConfigLocalDiff, ConfigLocalLeftToSee
 from pytubekit.constants import SCOPES, MAX_PLAYLIST_ITEMS
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -25,7 +26,8 @@ from pytubekit.util import create_playlists_request, get_youtube, create_playlis
     get_video_info, pretty_print, get_youtube_channels, get_youtube_playlists, get_my_playlists_ids, \
     read_video_ids_from_files, get_video_ids_from_playlist_names, \
     get_items_from_playlist_names, get_video_metadata, METADATA_FIELDNAMES, \
-    add_video_to_playlist, get_playlist_item_count, log_progress, retry_execute, cleanup_items
+    add_video_to_playlist, get_playlist_item_count, log_progress, retry_execute, cleanup_items, \
+    read_all_dump_files, read_video_ids_from_path
 from pytubekit.youtube import youtube_dl_download_urls
 
 
@@ -655,6 +657,113 @@ def channels() -> None:
 )
 def watch_later() -> None:
     youtube_dl_download_urls(["https://www.youtube.com/playlist?list=WL"])
+
+
+@register_endpoint(
+    description="Find which dump files contain a given video ID (zero API quota)",
+    configs=[ConfigLocalDumpFolder, ConfigLocalVideoId],
+)
+def local_find_video() -> None:
+    data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
+    target = str(ConfigLocalVideoId.local_video_id)
+    for filename, lines in data.items():
+        if target in lines:
+            print(filename)
+
+
+@register_endpoint(
+    description="Case-insensitive search across dump files (zero API quota)",
+    configs=[ConfigLocalDumpFolder, ConfigLocalSearch],
+)
+def local_search() -> None:
+    data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
+    pattern = str(ConfigLocalSearch.local_search_pattern).lower()
+    for filename, lines in data.items():
+        for lineno, line in enumerate(lines, start=1):
+            if pattern in line.lower():
+                print(f"{filename}:{lineno}: {line}")
+
+
+@register_endpoint(
+    description="Count lines per dump file with summary (zero API quota)",
+    configs=[ConfigLocalDumpFolder],
+)
+def local_count() -> None:
+    data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
+    if not data:
+        print("No files found.")
+        return
+    total = 0
+    largest_name = ""
+    largest_count = -1
+    smallest_name = ""
+    smallest_count = -1
+    for filename, lines in data.items():
+        c = len(lines)
+        print(f"{filename}: {c}")
+        total += c
+        if c > largest_count:
+            largest_count = c
+            largest_name = filename
+        if smallest_count < 0 or c < smallest_count:
+            smallest_count = c
+            smallest_name = filename
+    print("---")
+    print(f"Files: {len(data)}")
+    print(f"Total lines: {total}")
+    print(f"Largest: {largest_name} ({largest_count})")
+    print(f"Smallest: {smallest_name} ({smallest_count})")
+
+
+@register_endpoint(
+    description="Diff two paths (file or folder): A-B or A&B (zero API quota)",
+    configs=[ConfigLocalDiff],
+)
+def local_diff() -> None:
+    ids_a = read_video_ids_from_path(ConfigLocalDiff.local_diff_a)
+    ids_b = read_video_ids_from_path(ConfigLocalDiff.local_diff_b)
+    if ConfigLocalDiff.local_diff_reverse:
+        result = sorted(ids_a & ids_b)
+    else:
+        result = sorted(ids_a - ids_b)
+    for video_id in result:
+        print(video_id)
+
+
+@register_endpoint(
+    description="List unseen video IDs from two dump folders: all - seen (zero API quota)",
+    configs=[ConfigLocalLeftToSee],
+)
+def local_left_to_see() -> None:
+    all_ids = read_video_ids_from_path(ConfigLocalLeftToSee.local_lts_all_folder)
+    seen_ids = read_video_ids_from_path(ConfigLocalLeftToSee.local_lts_seen_folder)
+    unseen = sorted(all_ids - seen_ids)
+    for video_id in unseen:
+        print(video_id)
+
+
+@register_endpoint(
+    description="Report intra-playlist and cross-playlist duplicates in dump files (zero API quota)",
+    configs=[ConfigLocalDumpFolder],
+)
+def local_dedup() -> None:
+    data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
+    # intra-playlist duplicates
+    for filename, lines in data.items():
+        seen: set[str] = set()
+        for line in lines:
+            if line in seen:
+                print(f"INTRA {filename}: {line}")
+            else:
+                seen.add(line)
+    # cross-playlist duplicates
+    global_seen: dict[str, str] = {}
+    for filename, lines in data.items():
+        for line in lines:
+            if line in global_seen and global_seen[line] != filename:
+                print(f"CROSS {global_seen[line]} & {filename}: {line}")
+            elif line not in global_seen:
+                global_seen[line] = filename
 
 
 @register_main(
