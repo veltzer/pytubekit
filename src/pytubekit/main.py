@@ -4,6 +4,7 @@ main entry point to the program
 import csv
 import logging
 import os
+from typing import Any
 import pathlib
 import re
 import string
@@ -16,9 +17,9 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
     ConfigCleanupPlaylists, ConfigClear, ConfigMerge, ConfigSort, ConfigSearch, \
-    ConfigExportCsv, ConfigRename, ConfigLeftToSee, ConfigCollectIds, ConfigAddFileToPlaylist, \
+    ConfigExportCsv, ConfigRename, ConfigCollectIds, ConfigAddFileToPlaylist, \
     ConfigCreatePlaylist, ConfigDeletePlaylist, ConfigFindVideo, \
-    ConfigLocalDumpFolder, ConfigLocalDiff, ConfigStatsFilter
+    ConfigLocalDumpFolder, ConfigLocalDiff, ConfigStatsFilter, ConfigChannelId
 from pytubekit.constants import SCOPES, MAX_PLAYLIST_ITEMS
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -32,8 +33,8 @@ from pytubekit.youtube import youtube_dl_download_urls
 
 
 @register_endpoint(
-    description="Show me my channel id",
-    configs=[],
+    description="Show channel ID (or Watch Later playlist ID with --watch-later)",
+    configs=[ConfigChannelId],
 )
 def get_channel_id() -> None:
     youtube = get_youtube()
@@ -43,41 +44,11 @@ def get_channel_id() -> None:
         mine=True
     )
     response = retry_execute(request)
-    print(response["items"][0]["id"])
-
-
-@register_endpoint(
-    description="Show me my channel id",
-    configs=[],
-)
-def get_watch_later_playlist_id() -> None:
-    youtube = get_youtube()
-    channels_obj = get_youtube_channels(youtube)
-    request = channels_obj.list(
-        part="id",
-        mine=True
-    )
-    response = retry_execute(request)
     channel_id = response["items"][0]["id"]
-    playlist_id = channel_id[0] + "L" + channel_id[2:]
-    print(playlist_id)
-
-
-@register_endpoint(
-    description="Show all playlists in your youtube account",
-    configs=[ConfigPagination],
-)
-def playlists() -> None:
-    youtube = get_youtube()
-    r = create_playlists_request(youtube)
-    items = r.get_all_items()
-    for item in items:
-        if ConfigPrint.full:
-            pretty_print(item)
-        else:
-            f_title = item["snippet"]["title"]
-            f_count = item["contentDetails"]["itemCount"]
-            print(f"{f_title}: {f_count}")
+    if ConfigChannelId.watch_later:
+        print(channel_id[0] + "L" + channel_id[2:])
+    else:
+        print(channel_id)
 
 
 @register_endpoint(
@@ -342,21 +313,6 @@ def rename_playlist() -> None:
 
 
 @register_endpoint(
-    description="List unseen videos by subtracting seen playlists from source playlists",
-    configs=[ConfigPagination, ConfigLeftToSee],
-)
-def left_to_see() -> None:
-    logger = logging.getLogger()
-    youtube = get_youtube()
-    all_video_ids = get_video_ids_from_playlist_names(youtube, ConfigLeftToSee.lts_all_playlists)
-    seen_video_ids = get_video_ids_from_playlist_names(youtube, ConfigLeftToSee.lts_seen_playlists)
-    unseen = sorted(all_video_ids - seen_video_ids)
-    logger.info(f"total {len(all_video_ids)}, seen {len(seen_video_ids)}, unseen {len(unseen)}")
-    for video_id in unseen:
-        print(video_id)
-
-
-@register_endpoint(
     description=f"Move videos from source playlist to destination playlist respecting the {MAX_PLAYLIST_ITEMS} limit",
     configs=[ConfigPagination, ConfigOverflow, ConfigDelete],
 )
@@ -392,24 +348,42 @@ def overflow() -> None:
         logger.info(f"dry run: would move {moved} videos from [{ConfigOverflow.source}] to [{ConfigOverflow.destination}]")
 
 
+def get_video_ids_from_sources(
+    youtube: Any,
+    playlists: list[str],
+    files: list[str],
+) -> set[str]:
+    ids: set[str] = set()
+    if playlists:
+        ids.update(get_video_ids_from_playlist_names(youtube, playlists))
+    if files:
+        ids.update(read_video_ids_from_files(files))
+    return ids
+
+
 @register_endpoint(
-    description="Find unseen/seen videos by diffing playlists against local files",
+    description="Compute set difference (A-B) or intersection (A&B) between video ID sources",
     configs=[ConfigPagination, ConfigDiff],
 )
 def diff() -> None:
     logger = logging.getLogger()
-    youtube = get_youtube()
-    playlist_video_ids = get_video_ids_from_playlist_names(youtube, ConfigDiff.source_playlists)
-    file_video_ids = read_video_ids_from_files(ConfigDiff.seen_files)
-    if ConfigDiff.reverse:
-        result_ids = sorted(playlist_video_ids & file_video_ids)
+    need_youtube = ConfigDiff.diff_a_playlists or ConfigDiff.diff_b_playlists
+    youtube = get_youtube() if need_youtube else None
+    ids_a = get_video_ids_from_sources(youtube, ConfigDiff.diff_a_playlists, ConfigDiff.diff_a_files)
+    ids_b = get_video_ids_from_sources(youtube, ConfigDiff.diff_b_playlists, ConfigDiff.diff_b_files)
+    if ConfigDiff.diff_reverse:
+        result_ids = sorted(ids_a & ids_b)
     else:
-        result_ids = sorted(playlist_video_ids - file_video_ids)
-    logger.info(f"found {len(result_ids)} videos")
-    with open(ConfigDiff.output_file, "w") as f:
+        result_ids = sorted(ids_a - ids_b)
+    logger.info(f"A has {len(ids_a)}, B has {len(ids_b)}, result has {len(result_ids)}")
+    if ConfigDiff.diff_output_file:
+        with open(ConfigDiff.diff_output_file, "w") as f:
+            for video_id in result_ids:
+                print(video_id, file=f)
+        logger.info(f"wrote {len(result_ids)} video IDs to [{ConfigDiff.diff_output_file}]")
+    else:
         for video_id in result_ids:
-            print(video_id, file=f)
-    logger.info(f"wrote {len(result_ids)} video IDs to [{ConfigDiff.output_file}]")
+            print(video_id)
 
 
 @register_endpoint(

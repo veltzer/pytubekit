@@ -30,7 +30,6 @@ These commands only call `*.list` methods — typically a few units total.
 
 | Command | Approximate cost |
 |---------|:----------------:|
-| `playlists` | 1 per page of playlists |
 | `stats` | 1 per page of playlists (or 1 per page per filtered playlist with `--stats-names`) |
 | `get_channel_id` | 1 |
 | `channels` | 2–3 |

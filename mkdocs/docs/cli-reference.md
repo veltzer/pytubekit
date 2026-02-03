@@ -6,43 +6,21 @@ Pytubekit provides a single entry point (`pytubekit`) with multiple subcommands 
 
 ### `get_channel_id`
 
-Show your YouTube channel ID.
+Show your YouTube channel ID, or with `--watch-later`, show the Watch Later playlist ID.
 
 ```bash
+# Get channel ID
 pytubekit get_channel_id
-```
 
-No additional parameters.
-
----
-
-### `get_watch_later_playlist_id`
-
-Get the playlist ID for your "Watch Later" playlist. This is derived from your channel ID by replacing the second character with "L".
-
-```bash
-pytubekit get_watch_later_playlist_id
-```
-
-No additional parameters.
-
----
-
-### `playlists`
-
-List all playlists in your YouTube account. Shows each playlist name and its item count.
-
-```bash
-pytubekit playlists
-pytubekit playlists --full    # Output full JSON for each playlist
+# Get Watch Later playlist ID
+pytubekit get_channel_id --watch-later
 ```
 
 **Parameters:**
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `--page-size` | int | 50 | Page size for API pagination (max 50) |
-| `--full` | bool | False | Output full JSON instead of just titles |
+| `--watch-later` | bool | False | Output Watch Later playlist ID instead of channel ID |
 
 ---
 
@@ -253,42 +231,35 @@ pytubekit add_data --input-file ids.txt --output-csv metadata.csv
 
 ### `diff`
 
-Find unseen or seen videos by diffing YouTube playlists against local files of video IDs.
+Compute set difference (A-B) or intersection (A&B) between video ID sources. Sources can be YouTube playlists or local files.
 
 ```bash
-# Find videos in playlists that are NOT in local files (unseen)
-pytubekit diff --source-playlists "All" --seen-files seen.txt --output-file unseen.txt
+# Playlists vs files: videos in playlists but not in local files
+pytubekit diff --diff-a-playlists "All" --diff-b-files seen.txt
 
-# Find videos in playlists that ARE in local files (seen)
-pytubekit diff --source-playlists "All" --seen-files seen.txt --reverse --output-file seen_online.txt
+# Playlists vs playlists: videos in "All" but not in "Watched"
+pytubekit diff --diff-a-playlists "All" --diff-b-playlists "Watched"
+
+# Files vs files: videos in file A but not in file B
+pytubekit diff --diff-a-files all.txt --diff-b-files seen.txt
+
+# Intersection instead of difference
+pytubekit diff --diff-a-playlists "All" --diff-b-files seen.txt --diff-reverse
+
+# Write to file instead of stdout
+pytubekit diff --diff-a-playlists "All" --diff-b-files seen.txt --diff-output-file unseen.txt
 ```
 
 **Parameters:**
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `--source-playlists` | list[str] | (required) | YouTube playlist names to pull videos from |
-| `--seen-files` | list[str] | (required) | Local files with video IDs (one per line) |
-| `--reverse` | bool | False | `False` = unseen videos, `True` = seen videos |
-| `--output-file` | str | (required) | Path to write results to |
-| `--page-size` | int | 50 | Page size for API pagination |
-
----
-
-### `left_to_see`
-
-List unseen videos by subtracting seen playlists from source playlists.
-
-```bash
-pytubekit left_to_see --lts-all-playlists "Channel Videos" --lts-seen-playlists "Watched"
-```
-
-**Parameters:**
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `--lts-all-playlists` | list[str] | (required) | Playlist names containing all videos |
-| `--lts-seen-playlists` | list[str] | (required) | Playlist names containing already-seen videos |
+| `--diff-a-playlists` | list[str] | `[]` | Source A: YouTube playlist names |
+| `--diff-a-files` | list[str] | `[]` | Source A: local files with video IDs |
+| `--diff-b-playlists` | list[str] | `[]` | Source B: YouTube playlist names |
+| `--diff-b-files` | list[str] | `[]` | Source B: local files with video IDs |
+| `--diff-reverse` | bool | False | `False` = A-B (difference), `True` = A&B (intersection) |
+| `--diff-output-file` | str | None | Path to write results (omit for stdout) |
 | `--page-size` | int | 50 | Page size for API pagination |
 
 ---
