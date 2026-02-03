@@ -522,6 +522,121 @@ pytubekit add_file_to_playlist --add-file ids.txt --add-playlist "My Playlist"
 
 ---
 
+## Local Commands (Zero API Quota)
+
+These commands work entirely on dump files produced by `dump`. They make **zero YouTube API calls** and consume no quota.
+
+### `local_find_video`
+
+Find which dump files contain a given video ID.
+
+```bash
+pytubekit local_find_video --local-video-id dQw4w9WgXcQ
+pytubekit local_find_video --local-dump-folder /path/to/dump --local-video-id dQw4w9WgXcQ
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `--local-dump-folder` | str | `.` | Path to dump folder |
+| `--local-video-id` | str | (required) | Video ID to search for |
+
+---
+
+### `local_search`
+
+Case-insensitive substring search across all dump files. Output is grep-like: `filename:lineno: line`.
+
+```bash
+pytubekit local_search --local-search-pattern "dQw4"
+pytubekit local_search --local-dump-folder /path/to/dump --local-search-pattern "dQw4"
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `--local-dump-folder` | str | `.` | Path to dump folder |
+| `--local-search-pattern` | str | (required) | Case-insensitive substring to search for |
+
+---
+
+### `local_count`
+
+Count lines per dump file and print a summary (total, largest, smallest).
+
+```bash
+pytubekit local_count
+pytubekit local_count --local-dump-folder /path/to/dump
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `--local-dump-folder` | str | `.` | Path to dump folder |
+
+---
+
+### `local_diff`
+
+Read two paths (each can be a file or folder) and compute the set difference A−B (default) or intersection A∩B (`--local-diff-reverse`).
+
+```bash
+# IDs in folder A but not in folder B
+pytubekit local_diff --local-diff-a /dump/all --local-diff-b /dump/seen
+
+# IDs in both A and B
+pytubekit local_diff --local-diff-a /dump/all --local-diff-b /dump/seen --local-diff-reverse
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `--local-diff-a` | str | (required) | Path A (file or folder) |
+| `--local-diff-b` | str | (required) | Path B (file or folder) |
+| `--local-diff-reverse` | bool | False | `False` = A−B, `True` = A∩B |
+
+---
+
+### `local_left_to_see`
+
+Compute unseen video IDs from two dump folders: all − seen.
+
+```bash
+pytubekit local_left_to_see --local-lts-all-folder /dump/all --local-lts-seen-folder /dump/seen
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `--local-lts-all-folder` | str | (required) | Folder with all video IDs |
+| `--local-lts-seen-folder` | str | (required) | Folder with seen video IDs |
+
+---
+
+### `local_dedup`
+
+Report intra-playlist duplicates (same ID appears more than once in a single file) and cross-playlist duplicates (same ID appears in multiple files).
+
+```bash
+pytubekit local_dedup
+pytubekit local_dedup --local-dump-folder /path/to/dump
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `--local-dump-folder` | str | `.` | Path to dump folder |
+
+Output lines are prefixed with `INTRA` (within one file) or `CROSS` (across files).
+
+---
+
 ## Download
 
 ### `watch_later`

@@ -4,6 +4,7 @@ util.py
 
 import json
 import logging
+import os
 import sys
 import time
 from typing import Any, IO
@@ -329,3 +330,24 @@ def get_video_metadata(video_id: str) -> dict[str, Any] | None:
     except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught
         logger.warning(f"An unexpected error occurred for ID {video_id}: {e}")
         return None
+
+
+def read_all_dump_files(dump_folder: str) -> dict[str, list[str]]:
+    result: dict[str, list[str]] = {}
+    for filename in sorted(os.listdir(dump_folder)):
+        filepath = os.path.join(dump_folder, filename)
+        if not os.path.isfile(filepath):
+            continue
+        with open(filepath) as f:
+            result[filename] = [line.strip() for line in f if line.strip()]
+    return result
+
+
+def read_video_ids_from_path(path: str) -> set[str]:
+    if os.path.isdir(path):
+        data = read_all_dump_files(path)
+        ids: set[str] = set()
+        for lines in data.values():
+            ids.update(lines)
+        return ids
+    return read_video_ids_from_files([path])
