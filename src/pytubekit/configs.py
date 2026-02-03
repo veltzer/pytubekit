@@ -60,7 +60,8 @@ class ConfigPlaylists(Config):
 class ConfigCleanupPlaylists(Config):
     """ Playlists to clean up """
     cleanup_names = ParamCreator.create_list_str(
-        help_string="What playlists to clean up",
+        help_string="What playlists to clean up (omit for all)",
+        default=[],
     )
 
 
@@ -125,16 +126,6 @@ class ConfigOverflow(Config):
     )
 
 
-class ConfigCopy(Config):
-    """ Copy playlist parameters """
-    copy_source = ParamCreator.create_str(
-        help_string="Source playlist name to copy from",
-    )
-    copy_destination = ParamCreator.create_str(
-        help_string="Destination playlist name to copy to",
-    )
-
-
 class ConfigClear(Config):
     """ Playlist to clear """
     clear_name = ParamCreator.create_str(
@@ -149,6 +140,10 @@ class ConfigMerge(Config):
     )
     merge_destination = ParamCreator.create_str(
         help_string="Destination playlist name to merge into",
+    )
+    merge_dedup = ParamCreator.create_bool(
+        help_string="Skip duplicates already in destination",
+        default=True,
     )
 
 
@@ -203,13 +198,6 @@ class ConfigLeftToSee(Config):
     )
 
 
-class ConfigCount(Config):
-    """ Playlists to count """
-    count_names = ParamCreator.create_list_str(
-        help_string="What playlists to count items in",
-    )
-
-
 class ConfigCollectIds(Config):
     """ Collect IDs parameters """
     collect_files = ParamCreator.create_list_str(
@@ -244,25 +232,19 @@ class ConfigFindVideo(Config):
     find_video_id = ParamCreator.create_str(help_string="Video ID to search for across all playlists")
 
 
+class ConfigStatsFilter(Config):
+    """ Optional filter for stats command """
+    stats_names = ParamCreator.create_list_str(
+        help_string="Filter to these playlist names (omit for all)",
+        default=[],
+    )
+
+
 class ConfigLocalDumpFolder(Config):
     """ Local dump folder to operate on """
     local_dump_folder = ParamCreator.create_str(
         help_string="Path to dump folder",
         default=".",
-    )
-
-
-class ConfigLocalVideoId(Config):
-    """ Video ID to find locally """
-    local_video_id = ParamCreator.create_str(
-        help_string="Video ID to search for in dump files",
-    )
-
-
-class ConfigLocalSearch(Config):
-    """ Local search parameters """
-    local_search_pattern = ParamCreator.create_str(
-        help_string="Case-insensitive substring to search for in dump files",
     )
 
 
@@ -279,15 +261,6 @@ class ConfigLocalDiff(Config):
         default=False,
     )
 
-
-class ConfigLocalLeftToSee(Config):
-    """ Local left-to-see parameters """
-    local_lts_all_folder = ParamCreator.create_str(
-        help_string="Folder with all video IDs",
-    )
-    local_lts_seen_folder = ParamCreator.create_str(
-        help_string="Folder with seen video IDs",
-    )
 
 
 class ConfigPrint(Config):

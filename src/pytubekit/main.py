@@ -15,10 +15,10 @@ from pytconf import register_main, config_arg_parse_and_launch, register_endpoin
 
 from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigVideo, \
     ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
-    ConfigCleanupPlaylists, ConfigCount, ConfigClear, ConfigCopy, ConfigMerge, ConfigSort, ConfigSearch, \
+    ConfigCleanupPlaylists, ConfigClear, ConfigMerge, ConfigSort, ConfigSearch, \
     ConfigExportCsv, ConfigRename, ConfigLeftToSee, ConfigCollectIds, ConfigAddFileToPlaylist, \
     ConfigCreatePlaylist, ConfigDeletePlaylist, ConfigFindVideo, \
-    ConfigLocalDumpFolder, ConfigLocalVideoId, ConfigLocalSearch, ConfigLocalDiff, ConfigLocalLeftToSee
+    ConfigLocalDumpFolder, ConfigLocalDiff, ConfigStatsFilter
 from pytubekit.constants import SCOPES, MAX_PLAYLIST_ITEMS
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
@@ -132,37 +132,22 @@ def dump() -> None:
 
 
 @register_endpoint(
-    description="Clean up a set of playlists (dedup, remove deleted, remove privatized)",
+    description="Clean up playlists (dedup, remove deleted, remove privatized)",
     configs=[ConfigPagination, ConfigCleanupPlaylists, ConfigCleanup, ConfigDelete],
 )
 def cleanup() -> None:
     logger = logging.getLogger()
-    logger.info(f"cleaning up [{ConfigCleanupPlaylists.cleanup_names}]...")
     youtube = get_youtube()
-    playlist_ids = get_playlist_ids_from_names(youtube, ConfigCleanupPlaylists.cleanup_names)
+    if ConfigCleanupPlaylists.cleanup_names:
+        logger.info(f"cleaning up [{ConfigCleanupPlaylists.cleanup_names}]...")
+        playlist_ids = get_playlist_ids_from_names(youtube, ConfigCleanupPlaylists.cleanup_names)
+    else:
+        logger.info("cleaning up all playlists...")
+        playlist_ids = get_my_playlists_ids(youtube)
     items = get_all_items_from_playlist_ids(youtube, playlist_ids)
     cleanup_items(
         youtube, items,
         dedup=ConfigCleanup.dedup,
-        check_deleted=ConfigCleanup.deleted,
-        check_privatized=ConfigCleanup.privatized,
-        do_delete=ConfigDelete.do_delete,
-    )
-
-
-@register_endpoint(
-    description="Remove unavialable or privatized from all playlists",
-    configs=[ConfigPagination, ConfigCleanup, ConfigDelete],
-)
-def remove_unavailable_from_all_playlists() -> None:
-    logger = logging.getLogger()
-    youtube = get_youtube()
-    playlists_ids = get_my_playlists_ids(youtube)
-    logger.info(f"working on playlist ids[{playlists_ids}]...")
-    items = get_all_items_from_playlist_ids(youtube, playlists_ids)
-    cleanup_items(
-        youtube, items,
-        dedup=False,
         check_deleted=ConfigCleanup.deleted,
         check_privatized=ConfigCleanup.privatized,
         do_delete=ConfigDelete.do_delete,
@@ -215,41 +200,7 @@ def clear_playlist() -> None:
 
 
 @register_endpoint(
-    description="Print the item count for one or more playlists",
-    configs=[ConfigPagination, ConfigCount],
-)
-def count() -> None:
-    youtube = get_youtube()
-    playlist_ids = get_playlist_ids_from_names(youtube, ConfigCount.count_names)
-    for playlist_name, playlist_id in zip(ConfigCount.count_names, playlist_ids):
-        item_count = get_playlist_item_count(youtube, playlist_id)
-        print(f"{playlist_name}: {item_count}")
-
-
-@register_endpoint(
-    description="Copy all videos from one playlist to another",
-    configs=[ConfigPagination, ConfigCopy],
-)
-def copy_playlist() -> None:
-    logger = logging.getLogger()
-    youtube = get_youtube()
-    source_id, destination_id = get_playlist_ids_from_names(
-        youtube, [ConfigCopy.copy_source, ConfigCopy.copy_destination],
-    )
-    items = get_all_items_from_playlist_ids(youtube, [source_id])
-    logger.info(f"source [{ConfigCopy.copy_source}] has {len(items)} items")
-    copied = 0
-    total = len(items)
-    for item in items:
-        video_id = item["snippet"]["resourceId"]["videoId"]
-        add_video_to_playlist(youtube, destination_id, video_id)
-        copied += 1
-        log_progress(logger, copied, total)
-    logger.info(f"copied {copied} videos from [{ConfigCopy.copy_source}] to [{ConfigCopy.copy_destination}]")
-
-
-@register_endpoint(
-    description="Merge several playlists into one destination playlist, deduplicating",
+    description="Merge/copy playlists into a destination playlist",
     configs=[ConfigPagination, ConfigMerge],
 )
 def merge() -> None:
@@ -259,9 +210,11 @@ def merge() -> None:
     all_ids = get_playlist_ids_from_names(youtube, all_names)
     source_ids = all_ids[:-1]
     destination_id = all_ids[-1]
-    dest_items = get_all_items_from_playlist_ids(youtube, [destination_id])
-    seen = {item["snippet"]["resourceId"]["videoId"] for item in dest_items}
-    logger.info(f"destination [{ConfigMerge.merge_destination}] already has {len(seen)} videos")
+    seen: set[str] = set()
+    if ConfigMerge.merge_dedup:
+        dest_items = get_all_items_from_playlist_ids(youtube, [destination_id])
+        seen = {item["snippet"]["resourceId"]["videoId"] for item in dest_items}
+        logger.info(f"destination [{ConfigMerge.merge_destination}] already has {len(seen)} videos")
     source_items = get_all_items_from_playlist_ids(youtube, source_ids)
     logger.info(f"source playlists have {len(source_items)} items total")
     added = 0
@@ -270,13 +223,17 @@ def merge() -> None:
     for i, item in enumerate(source_items, start=1):
         log_progress(logger, i, total)
         video_id = item["snippet"]["resourceId"]["videoId"]
-        if video_id in seen:
+        if ConfigMerge.merge_dedup and video_id in seen:
             skipped += 1
             continue
         add_video_to_playlist(youtube, destination_id, video_id)
-        seen.add(video_id)
+        if ConfigMerge.merge_dedup:
+            seen.add(video_id)
         added += 1
-    logger.info(f"added {added} videos, skipped {skipped} duplicates")
+    if ConfigMerge.merge_dedup:
+        logger.info(f"added {added} videos, skipped {skipped} duplicates")
+    else:
+        logger.info(f"copied {added} videos")
 
 
 SORT_KEYS = {
@@ -315,20 +272,29 @@ def sort_playlist() -> None:
 
 
 @register_endpoint(
-    description="Search for videos by title or channel name across one or more playlists",
-    configs=[ConfigPagination, ConfigSearch],
+    description="Search for videos by title/channel (API) or video ID (local dump files)",
+    configs=[ConfigPagination, ConfigSearch, ConfigLocalDumpFolder],
 )
 def search_playlist() -> None:
-    youtube = get_youtube()
-    playlist_ids = get_playlist_ids_from_names(youtube, ConfigSearch.search_playlists)
-    items = get_all_items_from_playlist_ids(youtube, playlist_ids)
     query = str(ConfigSearch.search_query).lower()
-    for item in items:
-        title = item["snippet"].get("title", "")
-        channel = item["snippet"].get("videoOwnerChannelTitle", "")
-        if query in title.lower() or query in channel.lower():
-            video_id = item["snippet"]["resourceId"]["videoId"]
-            print(f"{video_id}  {title}  [{channel}]")
+    if ConfigLocalDumpFolder.local_dump_folder != ".":
+        # Local mode: search dump files
+        data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
+        for filename, lines in data.items():
+            for lineno, line in enumerate(lines, start=1):
+                if query in line.lower():
+                    print(f"{filename}:{lineno}: {line}")
+    else:
+        # API mode: search YouTube playlists
+        youtube = get_youtube()
+        playlist_ids = get_playlist_ids_from_names(youtube, ConfigSearch.search_playlists)
+        items = get_all_items_from_playlist_ids(youtube, playlist_ids)
+        for item in items:
+            title = item["snippet"].get("title", "")
+            channel = item["snippet"].get("videoOwnerChannelTitle", "")
+            if query in title.lower() or query in channel.lower():
+                video_id = item["snippet"]["resourceId"]["videoId"]
+                print(f"{video_id}  {title}  [{channel}]")
 
 
 @register_endpoint(
@@ -576,56 +542,82 @@ def delete_playlist() -> None:
 
 
 @register_endpoint(
-    description="Find which playlists contain a given video",
-    configs=[ConfigPagination, ConfigFindVideo],
+    description="Find which playlists (or dump files) contain a given video",
+    configs=[ConfigPagination, ConfigFindVideo, ConfigLocalDumpFolder],
 )
 def find_video() -> None:
-    youtube = get_youtube()
-    r = create_playlists_request(youtube)
-    all_playlists = r.get_all_items()
     target = str(ConfigFindVideo.find_video_id)
-    for pl in all_playlists:
-        pl_id = pl["id"]
-        pl_title = pl["snippet"]["title"]
-        items = get_all_items_from_playlist_ids(youtube, [pl_id])
-        for item in items:
-            if item["snippet"]["resourceId"]["videoId"] == target:
-                print(pl_title)
-                break
+    if ConfigLocalDumpFolder.local_dump_folder != ".":
+        # Local mode: search dump files
+        data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
+        for filename, lines in data.items():
+            if target in lines:
+                print(filename)
+    else:
+        # API mode: search YouTube playlists
+        youtube = get_youtube()
+        r = create_playlists_request(youtube)
+        all_playlists = r.get_all_items()
+        for pl in all_playlists:
+            pl_id = pl["id"]
+            pl_title = pl["snippet"]["title"]
+            items = get_all_items_from_playlist_ids(youtube, [pl_id])
+            for item in items:
+                if item["snippet"]["resourceId"]["videoId"] == target:
+                    print(pl_title)
+                    break
+
+
+def print_stats_summary(items: list[tuple[str, int]], label: str) -> None:
+    if not items:
+        print(f"No {label} found.")
+        return
+    total = 0
+    largest_name, largest_count = "", -1
+    smallest_name, smallest_count = "", -1
+    for name, count in items:
+        print(f"{name}: {count}")
+        total += count
+        if count > largest_count:
+            largest_count, largest_name = count, name
+        if smallest_count < 0 or count < smallest_count:
+            smallest_count, smallest_name = count, name
+    print("---")
+    print(f"{label.capitalize()}: {len(items)}")
+    print(f"Total: {total}")
+    print(f"Largest: {largest_name} ({largest_count})")
+    print(f"Smallest: {smallest_name} ({smallest_count})")
 
 
 @register_endpoint(
-    description="Show summary statistics for all playlists",
-    configs=[ConfigPagination],
+    description="Show statistics for playlists (or dump files)",
+    configs=[ConfigPagination, ConfigLocalDumpFolder, ConfigStatsFilter],
 )
 def stats() -> None:
-    youtube = get_youtube()
-    r = create_playlists_request(youtube)
-    all_playlists = r.get_all_items()
-    if not all_playlists:
-        print("No playlists found.")
-        return
-    total_videos = 0
-    largest_name = ""
-    largest_count = -1
-    smallest_name = ""
-    smallest_count = -1
-    for pl in all_playlists:
-        name = pl["snippet"]["title"]
-        count_inner = pl["contentDetails"]["itemCount"]
-        print(f"{name}: {count}")
-        total_videos += count_inner
-        if count_inner > largest_count:
-            largest_count = count_inner
-            largest_name = name
-        if smallest_count < 0 or count_inner < smallest_count:
-            smallest_count = count
-            smallest_name = name
-    print("---")
-    print(f"Playlists: {len(all_playlists)}")
-    print(f"Total videos: {total_videos}")
-    print(f"Largest: {largest_name} ({largest_count})")
-    print(f"Smallest: {smallest_name} ({smallest_count})")
+    if ConfigLocalDumpFolder.local_dump_folder != ".":
+        # Local mode: count lines in dump files
+        data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
+        if ConfigStatsFilter.stats_names:
+            data = {k: v for k, v in data.items() if k in ConfigStatsFilter.stats_names}
+        items = [(name, len(lines)) for name, lines in data.items()]
+        print_stats_summary(items, "files")
+    else:
+        # API mode: query YouTube playlists
+        youtube = get_youtube()
+        if ConfigStatsFilter.stats_names:
+            playlist_ids = get_playlist_ids_from_names(youtube, ConfigStatsFilter.stats_names)
+            items = [
+                (name, get_playlist_item_count(youtube, pl_id))
+                for name, pl_id in zip(ConfigStatsFilter.stats_names, playlist_ids)
+            ]
+        else:
+            r = create_playlists_request(youtube)
+            all_playlists = r.get_all_items()
+            items = [
+                (pl["snippet"]["title"], pl["contentDetails"]["itemCount"])
+                for pl in all_playlists
+            ]
+        print_stats_summary(items, "playlists")
 
 
 @register_endpoint(
@@ -660,62 +652,6 @@ def watch_later() -> None:
 
 
 @register_endpoint(
-    description="Find which dump files contain a given video ID (zero API quota)",
-    configs=[ConfigLocalDumpFolder, ConfigLocalVideoId],
-)
-def local_find_video() -> None:
-    data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
-    target = str(ConfigLocalVideoId.local_video_id)
-    for filename, lines in data.items():
-        if target in lines:
-            print(filename)
-
-
-@register_endpoint(
-    description="Case-insensitive search across dump files (zero API quota)",
-    configs=[ConfigLocalDumpFolder, ConfigLocalSearch],
-)
-def local_search() -> None:
-    data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
-    pattern = str(ConfigLocalSearch.local_search_pattern).lower()
-    for filename, lines in data.items():
-        for lineno, line in enumerate(lines, start=1):
-            if pattern in line.lower():
-                print(f"{filename}:{lineno}: {line}")
-
-
-@register_endpoint(
-    description="Count lines per dump file with summary (zero API quota)",
-    configs=[ConfigLocalDumpFolder],
-)
-def local_count() -> None:
-    data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
-    if not data:
-        print("No files found.")
-        return
-    total = 0
-    largest_name = ""
-    largest_count = -1
-    smallest_name = ""
-    smallest_count = -1
-    for filename, lines in data.items():
-        c = len(lines)
-        print(f"{filename}: {c}")
-        total += c
-        if c > largest_count:
-            largest_count = c
-            largest_name = filename
-        if smallest_count < 0 or c < smallest_count:
-            smallest_count = c
-            smallest_name = filename
-    print("---")
-    print(f"Files: {len(data)}")
-    print(f"Total lines: {total}")
-    print(f"Largest: {largest_name} ({largest_count})")
-    print(f"Smallest: {smallest_name} ({smallest_count})")
-
-
-@register_endpoint(
     description="Diff two paths (file or folder): A-B or A&B (zero API quota)",
     configs=[ConfigLocalDiff],
 )
@@ -727,18 +663,6 @@ def local_diff() -> None:
     else:
         result = sorted(ids_a - ids_b)
     for video_id in result:
-        print(video_id)
-
-
-@register_endpoint(
-    description="List unseen video IDs from two dump folders: all - seen (zero API quota)",
-    configs=[ConfigLocalLeftToSee],
-)
-def local_left_to_see() -> None:
-    all_ids = read_video_ids_from_path(ConfigLocalLeftToSee.local_lts_all_folder)
-    seen_ids = read_video_ids_from_path(ConfigLocalLeftToSee.local_lts_seen_folder)
-    unseen = sorted(all_ids - seen_ids)
-    for video_id in unseen:
         print(video_id)
 
 

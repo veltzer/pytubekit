@@ -69,23 +69,6 @@ Provide either `--name` or `--playlist-id`, not both.
 
 ---
 
-### `count`
-
-Print the item count for one or more playlists.
-
-```bash
-pytubekit count --count-names "Music" "Talks"
-```
-
-**Parameters:**
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `--count-names` | list[str] | (required) | Playlist names to count items in |
-| `--page-size` | int | 50 | Page size for API pagination |
-
----
-
 ### `video_info`
 
 Get detailed information about a specific video (snippet, status, content details).
@@ -116,10 +99,14 @@ No additional parameters.
 
 ### `find_video`
 
-Find which playlists contain a given video. Iterates all playlists and checks each for the specified video ID.
+Find which playlists (or dump files) contain a given video. By default, queries the YouTube API. With `--local-dump-folder`, searches local dump files instead (zero API quota).
 
 ```bash
+# API mode: search YouTube playlists
 pytubekit find_video --find-video-id dQw4w9WgXcQ
+
+# Local mode: search dump files (zero API quota)
+pytubekit find_video --find-video-id dQw4w9WgXcQ --local-dump-folder /path/to/dump
 ```
 
 **Parameters:**
@@ -127,41 +114,59 @@ pytubekit find_video --find-video-id dQw4w9WgXcQ
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `--find-video-id` | str | (required) | YouTube video ID to search for |
-| `--page-size` | int | 50 | Page size for API pagination |
+| `--local-dump-folder` | str | `.` | Path to dump folder (if not `.`, uses local mode) |
+| `--page-size` | int | 50 | Page size for API pagination (API mode only) |
 
 ---
 
 ### `stats`
 
-Show summary statistics for all playlists: each playlist name with its item count, then totals (number of playlists, total videos, largest, smallest).
+Show statistics for playlists (or dump files): each name with its item count, then totals (count, total items, largest, smallest). By default, shows all playlists. Use `--stats-names` to filter to specific playlists. With `--local-dump-folder`, reads local dump files instead (zero API quota).
 
 ```bash
+# API mode: all playlists
 pytubekit stats
+
+# API mode: specific playlists only
+pytubekit stats --stats-names "Music" "Talks"
+
+# Local mode: count lines in dump files (zero API quota)
+pytubekit stats --local-dump-folder /path/to/dump
+
+# Local mode: specific files only
+pytubekit stats --local-dump-folder /path/to/dump --stats-names "Music" "Talks"
 ```
 
 **Parameters:**
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `--page-size` | int | 50 | Page size for API pagination |
+| `--stats-names` | list[str] | `[]` | Filter to these playlist/file names (omit for all) |
+| `--local-dump-folder` | str | `.` | Path to dump folder (if not `.`, uses local mode) |
+| `--page-size` | int | 50 | Page size for API pagination (API mode only) |
 
 ---
 
 ### `search_playlist`
 
-Search for videos by title or channel name across one or more playlists.
+Search for videos by title or channel name across playlists (API mode), or search video IDs in dump files (local mode). With `--local-dump-folder`, searches local dump files with zero API quota.
 
 ```bash
+# API mode: search YouTube playlists by title/channel
 pytubekit search_playlist --search-playlists "Music" "Talks" --search-query "python"
+
+# Local mode: search dump files by video ID (zero API quota)
+pytubekit search_playlist --search-query "dQw4" --local-dump-folder /path/to/dump
 ```
 
 **Parameters:**
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `--search-playlists` | list[str] | (required) | Playlist names to search in |
-| `--search-query` | str | (required) | Text to search for in video title or channel name |
-| `--page-size` | int | 50 | Page size for API pagination |
+| `--search-playlists` | list[str] | (required for API mode) | Playlist names to search in |
+| `--search-query` | str | (required) | Text to search for |
+| `--local-dump-folder` | str | `.` | Path to dump folder (if not `.`, uses local mode) |
+| `--page-size` | int | 50 | Page size for API pagination (API mode only) |
 
 ---
 
@@ -292,43 +297,31 @@ pytubekit left_to_see --lts-all-playlists "Channel Videos" --lts-seen-playlists 
 
 ### `cleanup`
 
-Clean up a set of playlists by removing duplicates, deleted videos, and/or private videos.
+Clean up playlists by removing duplicates, deleted videos, and/or private videos. By default, targets all playlists. Use `--cleanup-names` to filter to specific playlists.
 
 ```bash
+# Clean up all playlists
+pytubekit cleanup
+
+# Clean up specific playlists
 pytubekit cleanup --cleanup-names "Playlist1" "Playlist2"
-pytubekit cleanup --cleanup-names "My Playlist" --no-dedup      # Skip deduplication
-pytubekit cleanup --cleanup-names "My Playlist" --no-do-delete   # Dry run (report only)
+
+# Skip deduplication
+pytubekit cleanup --cleanup-names "My Playlist" --no-dedup
+
+# Dry run (report only)
+pytubekit cleanup --no-do-delete
 ```
 
 **Parameters:**
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `--cleanup-names` | list[str] | (required) | Playlist names to clean up |
+| `--cleanup-names` | list[str] | `[]` | Playlist names to clean up (omit for all) |
 | `--dedup` | bool | True | Detect and remove duplicate entries |
 | `--deleted` | bool | True | Remove deleted videos |
 | `--privatized` | bool | True | Remove private videos |
 | `--do-delete` | bool | True | Actually perform deletions (set to False for dry run) |
-| `--page-size` | int | 50 | Page size for API pagination |
-
----
-
-### `remove_unavailable_from_all_playlists`
-
-Remove unavailable (deleted/private) videos from all of your playlists.
-
-```bash
-pytubekit remove_unavailable_from_all_playlists
-pytubekit remove_unavailable_from_all_playlists --no-do-delete   # Dry run
-```
-
-**Parameters:**
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `--deleted` | bool | True | Remove deleted videos |
-| `--privatized` | bool | True | Remove private videos |
-| `--do-delete` | bool | True | Actually perform deletions |
 | `--page-size` | int | 50 | Page size for API pagination |
 
 ---
@@ -389,30 +382,16 @@ pytubekit subtract --subtract-what "Watched" --subtract-from "To Watch"
 
 ---
 
-### `copy_playlist`
-
-Copy all videos from one playlist to another.
-
-```bash
-pytubekit copy_playlist --copy-source "Original" --copy-destination "Backup"
-```
-
-**Parameters:**
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `--copy-source` | str | (required) | Source playlist name to copy from |
-| `--copy-destination` | str | (required) | Destination playlist name to copy to |
-| `--page-size` | int | 50 | Page size for API pagination |
-
----
-
 ### `merge`
 
-Merge several playlists into one destination playlist, deduplicating along the way.
+Merge or copy playlists into a destination playlist. By default, deduplicates (skips videos already in destination). Use `--no-merge-dedup` to copy all videos without deduplication.
 
 ```bash
+# Merge with deduplication (default)
 pytubekit merge --merge-sources "Rock" "Pop" --merge-destination "All Music"
+
+# Copy without deduplication (like old copy_playlist)
+pytubekit merge --merge-sources "Original" --merge-destination "Backup" --no-merge-dedup
 ```
 
 **Parameters:**
@@ -421,6 +400,7 @@ pytubekit merge --merge-sources "Rock" "Pop" --merge-destination "All Music"
 |-----------|------|---------|-------------|
 | `--merge-sources` | list[str] | (required) | Source playlist names to merge from |
 | `--merge-destination` | str | (required) | Destination playlist name to merge into |
+| `--merge-dedup` | bool | True | Skip duplicates already in destination |
 | `--page-size` | int | 50 | Page size for API pagination |
 
 ---
@@ -526,58 +506,8 @@ pytubekit add_file_to_playlist --add-file ids.txt --add-playlist "My Playlist"
 
 These commands work entirely on dump files produced by `dump`. They make **zero YouTube API calls** and consume no quota.
 
-### `local_find_video`
-
-Find which dump files contain a given video ID.
-
-```bash
-pytubekit local_find_video --local-video-id dQw4w9WgXcQ
-pytubekit local_find_video --local-dump-folder /path/to/dump --local-video-id dQw4w9WgXcQ
-```
-
-**Parameters:**
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `--local-dump-folder` | str | `.` | Path to dump folder |
-| `--local-video-id` | str | (required) | Video ID to search for |
-
----
-
-### `local_search`
-
-Case-insensitive substring search across all dump files. Output is grep-like: `filename:lineno: line`.
-
-```bash
-pytubekit local_search --local-search-pattern "dQw4"
-pytubekit local_search --local-dump-folder /path/to/dump --local-search-pattern "dQw4"
-```
-
-**Parameters:**
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `--local-dump-folder` | str | `.` | Path to dump folder |
-| `--local-search-pattern` | str | (required) | Case-insensitive substring to search for |
-
----
-
-### `local_count`
-
-Count lines per dump file and print a summary (total, largest, smallest).
-
-```bash
-pytubekit local_count
-pytubekit local_count --local-dump-folder /path/to/dump
-```
-
-**Parameters:**
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `--local-dump-folder` | str | `.` | Path to dump folder |
-
----
+!!! tip
+    The `find_video`, `stats`, and `search_playlist` commands also support local mode via `--local-dump-folder`.
 
 ### `local_diff`
 
@@ -598,23 +528,6 @@ pytubekit local_diff --local-diff-a /dump/all --local-diff-b /dump/seen --local-
 | `--local-diff-a` | str | (required) | Path A (file or folder) |
 | `--local-diff-b` | str | (required) | Path B (file or folder) |
 | `--local-diff-reverse` | bool | False | `False` = A−B, `True` = A∩B |
-
----
-
-### `local_left_to_see`
-
-Compute unseen video IDs from two dump folders: all − seen.
-
-```bash
-pytubekit local_left_to_see --local-lts-all-folder /dump/all --local-lts-seen-folder /dump/seen
-```
-
-**Parameters:**
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `--local-lts-all-folder` | str | (required) | Folder with all video IDs |
-| `--local-lts-seen-folder` | str | (required) | Folder with seen video IDs |
 
 ---
 
