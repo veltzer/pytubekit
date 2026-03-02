@@ -1,2 +1,20 @@
 [processor.make]
 exclude_files = ["Makefile"]
+
+[processor.pyrefly]
+enabled = false
+
+[processor.markdownlint]
+enabled = false
+
+[processor.ascii_check]
+enabled = false
+
+[processor.a2x]
+enabled = false
+
+[processor.rumdl]
+enabled = false
+
+[processor.mdl]
+enabled = false
