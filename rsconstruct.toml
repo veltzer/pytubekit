@@ -18,3 +18,30 @@ enabled = false
 
 [processor.mdl]
 enabled = false
+
+[processor.slidev]
+enabled = false
+
+[processor.tidy]
+enabled = false
+
+[processor.htmlhint]
+enabled = false
+
+[processor.htmllint]
+enabled = false
+
+[processor.jslint]
+enabled = false
+
+[processor.jshint]
+enabled = false
+
+[processor.eslint]
+enabled = false
+
+[processor.stylelint]
+enabled = false
+
+[processor.standard]
+enabled = false
