@@ -2,16 +2,20 @@
 test_basic.py
 """
 
+import json
 import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
 from googleapiclient.errors import HttpError
 
-from pytubekit.constants import NEXT_PAGE_TOKEN, ITEMS_TOKEN, DELETED_TITLE, PRIVATE_TITLE
+from pytubekit.configs import ConfigBudget
+from pytubekit.constants import NEXT_PAGE_TOKEN, ITEMS_TOKEN, DELETED_TITLE, PRIVATE_TITLE, QUOTA_UNITS_PER_MUTATION
 from pytubekit.util import (
     PagedRequest, get_playlist_ids_from_names, cleanup_items,
     retry_execute, read_video_ids_from_files, log_progress,
+    perform_mutation, get_playlist_item_count,
+    QuotaExceededError, MutationBudgetError, RunStats,
 )
 
 
@@ -32,6 +36,18 @@ def _make_playlist_item(playlist_id: str, title: str) -> dict:
         "id": playlist_id,
         "snippet": {"title": title},
     }
+
+
+def _make_http_error(status: int, reason: str | None = None) -> HttpError:
+    resp = MagicMock()
+    resp.status = status
+    resp.reason = "error"
+    if reason is None:
+        content = b"error"
+    else:
+        payload = {"error": {"message": "boom", "errors": [{"reason": reason, "domain": "youtube.quota"}]}}
+        content = json.dumps(payload).encode("utf-8")
+    return HttpError(resp, content)
 
 
 class TestPagedRequestSinglePage(unittest.TestCase):
@@ -187,6 +203,83 @@ class TestRetryExecute(unittest.TestCase):
         with self.assertRaises(HttpError):
             retry_execute(request, max_retries=3)
         self.assertEqual(request.execute.call_count, 3)
+
+    @patch("pytubekit.util.time.sleep")
+    def test_quota_exceeded_fails_fast(self, mock_sleep):
+        error = _make_http_error(403, "quotaExceeded")
+        request = MagicMock()
+        request.execute.side_effect = error
+        with self.assertRaises(QuotaExceededError):
+            retry_execute(request, max_retries=5)
+        request.execute.assert_called_once()
+        mock_sleep.assert_not_called()
+
+    @patch("pytubekit.util.time.sleep")
+    def test_rate_limit_403_retries(self, _mock_sleep):
+        error = _make_http_error(403, "rateLimitExceeded")
+        request = MagicMock()
+        request.execute.side_effect = [error, {"ok": True}]
+        result = retry_execute(request, max_retries=3)
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(request.execute.call_count, 2)
+
+    @patch("pytubekit.util.time.sleep")
+    def test_plain_403_fails_fast(self, mock_sleep):
+        error = _make_http_error(403, "forbidden")
+        request = MagicMock()
+        request.execute.side_effect = error
+        with self.assertRaises(HttpError):
+            retry_execute(request, max_retries=3)
+        request.execute.assert_called_once()
+        mock_sleep.assert_not_called()
+
+
+class TestPerformMutation(unittest.TestCase):
+    def setUp(self):
+        RunStats.reset()
+        ConfigBudget.max_mutations = None
+
+    def tearDown(self):
+        RunStats.reset()
+        ConfigBudget.max_mutations = None
+
+    def test_counts_mutations_and_quota(self):
+        request = MagicMock()
+        request.execute.return_value = {"ok": True}
+        perform_mutation(request)
+        self.assertEqual(RunStats.mutations_performed, 1)
+        self.assertEqual(RunStats.quota_spent, QUOTA_UNITS_PER_MUTATION)
+
+    def test_budget_enforced(self):
+        ConfigBudget.max_mutations = 2
+        request = MagicMock()
+        request.execute.return_value = {"ok": True}
+        perform_mutation(request)
+        perform_mutation(request)
+        with self.assertRaises(MutationBudgetError):
+            perform_mutation(request)
+        self.assertEqual(request.execute.call_count, 2)
+        self.assertEqual(RunStats.mutations_performed, 2)
+
+    def test_no_budget_is_unlimited(self):
+        request = MagicMock()
+        request.execute.return_value = {"ok": True}
+        for _ in range(5):
+            perform_mutation(request)
+        self.assertEqual(RunStats.mutations_performed, 5)
+
+
+class TestGetPlaylistItemCount(unittest.TestCase):
+    def test_uses_content_details_item_count(self):
+        youtube = MagicMock()
+        youtube.playlists().list.return_value.execute.return_value = {
+            ITEMS_TOKEN: [{"contentDetails": {"itemCount": 42}}],
+        }
+        self.assertEqual(get_playlist_item_count(youtube, "plid"), 42)
+        youtube.playlistItems.assert_not_called()
+        _, kwargs = youtube.playlists().list.call_args
+        self.assertEqual(kwargs["part"], "contentDetails")
+        self.assertEqual(kwargs["id"], "plid")
 
 
 class TestReadVideoIdsFromFiles(unittest.TestCase):

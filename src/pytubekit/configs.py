@@ -73,6 +73,14 @@ class ConfigCleanupPlaylists(Config):
     )
 
 
+class ConfigBudget(Config):
+    """ API quota budget parameters """
+    max_mutations = ParamCreator.create_int_or_none(
+        help_string="Stop cleanly after this many write operations (each costs 50 quota units); omit for unlimited",
+        default=None,
+    )
+
+
 class ConfigDelete(Config):
     """ Configs for doing delete """
     do_delete = ParamCreator.create_bool(

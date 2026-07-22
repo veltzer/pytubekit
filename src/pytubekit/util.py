@@ -14,10 +14,33 @@ import yt_dlp
 from googleapiclient.errors import HttpError
 from pygooglehelper import get_credentials, ConfigRequest
 
-from pytubekit.configs import ConfigPagination, ConfigPlaylist
+from pytubekit.configs import ConfigPagination, ConfigPlaylist, ConfigBudget
 from pytubekit.constants import SCOPES, API_SERVICE_NAME, API_VERSION, NEXT_PAGE_TOKEN, PAGE_TOKEN, ITEMS_TOKEN, \
-    DELETED_TITLE, PRIVATE_TITLE
+    DELETED_TITLE, PRIVATE_TITLE, DAILY_QUOTA_UNITS, QUOTA_UNITS_PER_MUTATION
 from pytubekit.static import APP_NAME
+
+QUOTA_REASONS = {"quotaExceeded", "dailyLimitExceeded"}
+RETRYABLE_403_REASONS = {"rateLimitExceeded", "userRateLimitExceeded"}
+RETRYABLE_STATUSES = (429, 500, 503)
+
+
+class QuotaExceededError(Exception):
+    """ The YouTube API daily quota is exhausted """
+
+
+class MutationBudgetError(Exception):
+    """ The --max_mutations budget for this run was reached """
+
+
+class RunStats:
+    """ Per-run counters for API quota accounting """
+    quota_spent = 0
+    mutations_performed = 0
+
+    @classmethod
+    def reset(cls) -> None:
+        cls.quota_spent = 0
+        cls.mutations_performed = 0
 
 
 def log_progress(logger: logging.Logger, current: int, total: int, interval: int = 100) -> None:
@@ -25,21 +48,56 @@ def log_progress(logger: logging.Logger, current: int, total: int, interval: int
         logger.info(f"progress: {current}/{total}")
 
 
-def retry_execute(request: Any, max_retries: int = 5) -> dict[str, Any]:
+def log_mutation_cost_estimate(logger: logging.Logger, mutations: int) -> None:
+    if mutations > 0:
+        cost = mutations * QUOTA_UNITS_PER_MUTATION
+        logger.info(f"estimated quota cost to apply: ~{cost} units (daily budget is {DAILY_QUOTA_UNITS})")
+
+
+def get_error_reasons(e: HttpError) -> set[str]:
+    details = getattr(e, "error_details", None)
+    if not isinstance(details, list):
+        return set()
+    return {d.get("reason", "") for d in details if isinstance(d, dict)}
+
+
+def retry_execute(request: Any, max_retries: int = 5, cost: int = 1) -> dict[str, Any]:
     logger = logging.getLogger()
     last_error = None
     for attempt in range(max_retries):
         try:
-            return request.execute()
+            response = request.execute()
+            RunStats.quota_spent += cost
+            return response
         except HttpError as e:
             last_error = e
-            if e.resp.status in (403, 429, 500, 503) and attempt < max_retries - 1:
+            reasons = get_error_reasons(e)
+            if reasons & QUOTA_REASONS:
+                raise QuotaExceededError(
+                    "YouTube API daily quota exhausted; it resets at midnight Pacific time. "
+                    "Prefer dump + local_* commands to conserve quota."
+                ) from e
+            retryable = e.resp.status in RETRYABLE_STATUSES or \
+                (e.resp.status == 403 and reasons & RETRYABLE_403_REASONS)
+            if retryable and attempt < max_retries - 1:
                 wait = 2 ** attempt
                 logger.warning(f"API error {e.resp.status}, retrying in {wait}s (attempt {attempt + 1}/{max_retries})")
                 time.sleep(wait)
             else:
                 raise
     raise last_error  # type: ignore[misc]
+
+
+def perform_mutation(request: Any) -> dict[str, Any]:
+    limit = ConfigBudget.max_mutations
+    if limit is not None and RunStats.mutations_performed >= limit:
+        raise MutationBudgetError(
+            f"stopping cleanly: reached --max_mutations limit of {limit} write operations "
+            f"(~{limit * QUOTA_UNITS_PER_MUTATION} quota units)"
+        )
+    response = retry_execute(request, cost=QUOTA_UNITS_PER_MUTATION)
+    RunStats.mutations_performed += 1
+    return response
 
 
 class PagedRequest:
@@ -121,7 +179,7 @@ def delete_playlist_item_by_id(youtube: Any, playlist_item_id: str) -> None:
     request = youtube.playlistItems().delete(
         id=playlist_item_id,
     )
-    retry_execute(request)
+    perform_mutation(request)
 
 
 def cleanup_items(youtube: Any, items: list[dict[str, Any]], *, dedup: bool, check_deleted: bool, check_privatized: bool, do_delete: bool) -> None:
@@ -167,6 +225,8 @@ def cleanup_items(youtube: Any, items: list[dict[str, Any]], *, dedup: bool, che
     logger.info(f"found_private {found_private} items")
     logger.info(f"wanted_to_delete {wanted_to_delete} items")
     logger.info(f"deleted {deleted} items")
+    if not do_delete:
+        log_mutation_cost_estimate(logger, wanted_to_delete)
 
 
 def get_youtube() -> Any:
@@ -266,12 +326,35 @@ def add_video_to_playlist(youtube: Any, playlist_id: str, video_id: str) -> None
             },
         },
     )
-    retry_execute(request)
+    perform_mutation(request)
+
+
+def move_playlist_item(youtube: Any, playlist_id: str, item: dict[str, Any], position: int) -> None:
+    logger = logging.getLogger()
+    item_id = item["id"]
+    logger.info(f"moving playlist item [{item_id}] to position {position}")
+    request = youtube.playlistItems().update(
+        part="snippet",
+        body={
+            "id": item_id,
+            "snippet": {
+                "playlistId": playlist_id,
+                "resourceId": item["snippet"]["resourceId"],
+                "position": position,
+            },
+        },
+    )
+    perform_mutation(request)
 
 
 def get_playlist_item_count(youtube: Any, playlist_id: str) -> int:
-    items = get_all_items_from_playlist_id(youtube, playlist_id)
-    return len(items)
+    request = youtube.playlists().list(
+        part="contentDetails",
+        id=playlist_id,
+        maxResults=1,
+    )
+    response = retry_execute(request)
+    return int(response[ITEMS_TOKEN][0]["contentDetails"]["itemCount"])
 
 
 def get_video_metadata(video_id: str) -> dict[str, Any] | None:
