@@ -4,6 +4,7 @@ main entry point to the program
 import csv
 import logging
 import os
+import sys
 from typing import Any
 import pathlib
 import re
@@ -19,8 +20,8 @@ from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, C
     ConfigCleanupPlaylists, ConfigClear, ConfigMerge, ConfigSort, ConfigSearch, \
     ConfigExportCsv, ConfigRename, ConfigCollectIds, ConfigAddFileToPlaylist, \
     ConfigCreatePlaylist, ConfigDeletePlaylist, ConfigFindVideo, \
-    ConfigLocalDumpFolder, ConfigLocalDiff, ConfigStatsFilter, ConfigChannelId
-from pytubekit.constants import SCOPES, MAX_PLAYLIST_ITEMS
+    ConfigLocalDumpFolder, ConfigLocalDiff, ConfigStatsFilter, ConfigChannelId, ConfigBudget
+from pytubekit.constants import SCOPES, MAX_PLAYLIST_ITEMS, DAILY_QUOTA_UNITS
 from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
 from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
     delete_playlist_item_by_id, get_playlist_ids_from_names, get_all_items_from_playlist_ids, \
@@ -28,7 +29,8 @@ from pytubekit.util import create_playlists_request, get_youtube, create_playlis
     read_video_ids_from_files, get_video_ids_from_playlist_names, \
     get_items_from_playlist_names, get_video_metadata, METADATA_FIELDNAMES, \
     add_video_to_playlist, get_playlist_item_count, log_progress, retry_execute, cleanup_items, \
-    read_all_dump_files, read_video_ids_from_path
+    read_all_dump_files, read_video_ids_from_path, perform_mutation, move_playlist_item, \
+    log_mutation_cost_estimate, QuotaExceededError, MutationBudgetError, RunStats
 from pytubekit.youtube import youtube_dl_download_urls
 
 
@@ -104,7 +106,7 @@ def dump() -> None:
 
 @register_endpoint(
     description="Clean up playlists (dedup, remove deleted, remove privatized)",
-    configs=[ConfigPagination, ConfigCleanupPlaylists, ConfigCleanup, ConfigDelete],
+    configs=[ConfigPagination, ConfigCleanupPlaylists, ConfigCleanup, ConfigDelete, ConfigBudget],
 )
 def cleanup() -> None:
     logger = logging.getLogger()
@@ -127,7 +129,7 @@ def cleanup() -> None:
 
 @register_endpoint(
     description="Remove videos from A playlists that exist in B playlists (A = A - B)",
-    configs=[ConfigPagination, ConfigSubtract, ConfigDelete],
+    configs=[ConfigPagination, ConfigSubtract, ConfigDelete, ConfigBudget],
 )
 def subtract() -> None:
     logger = logging.getLogger()
@@ -148,11 +150,13 @@ def subtract() -> None:
                 deleted += 1
     logger.info(f"wanted_to_delete {wanted_to_delete} items")
     logger.info(f"deleted {deleted} items")
+    if not ConfigDelete.do_delete:
+        log_mutation_cost_estimate(logger, wanted_to_delete)
 
 
 @register_endpoint(
     description="Delete all items from a playlist",
-    configs=[ConfigPagination, ConfigClear, ConfigDelete],
+    configs=[ConfigPagination, ConfigClear, ConfigDelete, ConfigBudget],
 )
 def clear_playlist() -> None:
     logger = logging.getLogger()
@@ -168,11 +172,13 @@ def clear_playlist() -> None:
             delete_playlist_item_by_id(youtube, item["id"])
             deleted += 1
     logger.info(f"deleted {deleted} items from [{ConfigClear.clear_name}]")
+    if not ConfigDelete.do_delete:
+        log_mutation_cost_estimate(logger, total)
 
 
 @register_endpoint(
     description="Merge/copy playlists into a destination playlist",
-    configs=[ConfigPagination, ConfigMerge],
+    configs=[ConfigPagination, ConfigMerge, ConfigBudget],
 )
 def merge() -> None:
     logger = logging.getLogger()
@@ -215,8 +221,8 @@ SORT_KEYS = {
 
 
 @register_endpoint(
-    description="Sort a playlist by title, channel, or date (deletes and re-adds all items)",
-    configs=[ConfigPagination, ConfigSort],
+    description="Sort a playlist by title, channel, or date (moves items in place)",
+    configs=[ConfigPagination, ConfigSort, ConfigDelete, ConfigBudget],
 )
 def sort_playlist() -> None:
     logger = logging.getLogger()
@@ -228,18 +234,24 @@ def sort_playlist() -> None:
     items = get_all_items_from_playlist_ids(youtube, [playlist_id])
     logger.info(f"playlist [{ConfigSort.sort_playlist_name}] has {len(items)} items")
     sorted_items = sorted(items, key=SORT_KEYS[ConfigSort.sort_key])
-    total = len(items)
-    for i, item in enumerate(items, start=1):
-        delete_playlist_item_by_id(youtube, item["id"])
-        log_progress(logger, i, total)
-    logger.info(f"deleted {total} items")
-    added = 0
-    for item in sorted_items:
-        video_id = item["snippet"]["resourceId"]["videoId"]
-        add_video_to_playlist(youtube, playlist_id, video_id)
-        added += 1
-        log_progress(logger, added, total)
-    logger.info(f"re-added {added} items in sorted order (by {ConfigSort.sort_key})")
+    current_ids = [item["id"] for item in items]
+    moves = 0
+    total = len(sorted_items)
+    for position, item in enumerate(sorted_items):
+        item_id = item["id"]
+        if current_ids[position] == item_id:
+            continue
+        current_ids.remove(item_id)
+        current_ids.insert(position, item_id)
+        moves += 1
+        if ConfigDelete.do_delete:
+            move_playlist_item(youtube, playlist_id, item, position)
+        log_progress(logger, position + 1, total)
+    if ConfigDelete.do_delete:
+        logger.info(f"sorted playlist with {moves} moves (by {ConfigSort.sort_key})")
+    else:
+        logger.info(f"dry run: sorting would need {moves} moves (by {ConfigSort.sort_key})")
+        log_mutation_cost_estimate(logger, moves)
 
 
 @register_endpoint(
@@ -308,13 +320,13 @@ def rename_playlist() -> None:
             },
         },
     )
-    retry_execute(request)
+    perform_mutation(request)
     logger.info(f"renamed [{ConfigRename.rename_playlist_name}] to [{ConfigRename.rename_new_name}]")
 
 
 @register_endpoint(
     description=f"Move videos from source playlist to destination playlist respecting the {MAX_PLAYLIST_ITEMS} limit",
-    configs=[ConfigPagination, ConfigOverflow, ConfigDelete],
+    configs=[ConfigPagination, ConfigOverflow, ConfigDelete, ConfigBudget],
 )
 def overflow() -> None:
     logger = logging.getLogger()
@@ -346,6 +358,8 @@ def overflow() -> None:
         logger.info(f"moved {moved} videos from [{ConfigOverflow.source}] to [{ConfigOverflow.destination}]")
     else:
         logger.info(f"dry run: would move {moved} videos from [{ConfigOverflow.source}] to [{ConfigOverflow.destination}]")
+        # each move is an insert plus a delete
+        log_mutation_cost_estimate(logger, moved * 2)
 
 
 def get_video_ids_from_sources(
@@ -460,7 +474,7 @@ def collect_ids() -> None:
 
 @register_endpoint(
     description="Add video IDs from a file to a playlist",
-    configs=[ConfigPagination, ConfigAddFileToPlaylist],
+    configs=[ConfigPagination, ConfigAddFileToPlaylist, ConfigBudget],
 )
 def add_file_to_playlist() -> None:
     logger = logging.getLogger()
@@ -496,7 +510,7 @@ def create_playlist() -> None:
             },
         },
     )
-    response = retry_execute(request)
+    response = perform_mutation(request)
     playlist_id = response["id"]
     logger.info(f"created playlist [{ConfigCreatePlaylist.create_name}] with id [{playlist_id}]")
     print(playlist_id)
@@ -511,7 +525,7 @@ def delete_playlist() -> None:
     youtube = get_youtube()
     playlist_id = get_playlist_ids_from_names(youtube, [ConfigDeletePlaylist.delete_playlist_name])[0]
     request = youtube.playlists().delete(id=playlist_id)
-    retry_execute(request)
+    perform_mutation(request)
     logger.info(f"deleted playlist [{ConfigDeletePlaylist.delete_playlist_name}] (id [{playlist_id}])")
 
 
@@ -674,7 +688,15 @@ def main():
     ConfigRequest.scopes = SCOPES
     ConfigRequest.location = os.path.dirname(os.path.realpath(__file__))
     register_functions()
-    config_arg_parse_and_launch()
+    logger = logging.getLogger()
+    try:
+        config_arg_parse_and_launch()
+    except (QuotaExceededError, MutationBudgetError) as e:
+        logger.error(str(e))
+        sys.exit(1)
+    finally:
+        if RunStats.quota_spent > 0:
+            logger.info(f"API quota spent this run: ~{RunStats.quota_spent} units (daily budget is {DAILY_QUOTA_UNITS})")
 
 
 if __name__ == "__main__":
