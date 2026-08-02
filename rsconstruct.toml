@@ -11,7 +11,6 @@
 # layout of each repo decides which checks run.
 
 [build]
-skip_missing_src_dirs = true
 
 # ─── analyzers ───────────────────────────────────────────────────────────────
 
@@ -27,6 +26,7 @@ skip_missing_src_dirs = true
 # silently skipped where absent. Repos still on config/*.py keep a
 # dep_inputs override in their local overlay until converted.
 [processor.tera]
+src_dirs = ["tera.templates"]
 dep_auto = [
 	"config/project.lua",
 	"config/personal.lua",
@@ -59,6 +59,7 @@ src_dirs = ["src", "scripts", "config", "tests", "exercises", "animations"]
 src_dirs = ["src", "scripts", "config", "tests", "animations"]
 
 [processor.pytest]
+src_dirs = ["tests"]
 
 # ─── shell ───────────────────────────────────────────────────────────────────
 
