@@ -16,7 +16,8 @@ version: 0.0.36
 
 ## build
 
-![docs](https://github.com/veltzer/pytubekit/workflows/docs/badge.svg)![build](https://github.com/veltzer/pytubekit/workflows/build/badge.svg)
+![build](https://github.com/veltzer/pytubekit/workflows/build/badge.svg)
+![docs](https://github.com/veltzer/pytubekit/workflows/docs/badge.svg)
 
 ## pypi
 
@@ -32,9 +33,8 @@ version: 0.0.36
 ![PyPI - Downloads](https://img.shields.io/pypi/dw/pytubekit)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/pytubekit)
 
-
-
 ## contact me
+
 [mailto](mailto:mark.veltzer@gmail.com)
 ![gitter](https://img.shields.io/gitter/room/veltzer/mark.veltzer)
 ![discord](https://img.shields.io/discord/719336281624281119)
