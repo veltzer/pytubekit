@@ -6,11 +6,10 @@
 # one-off workarounds) lives in rsconstruct.local.toml, which rsconstruct
 # deep-merges over this file at load time.
 #
-# skip_missing_src_dirs makes this file a menu: a processor whose directories
-# don't exist in a given repo simply matches no files there. The directory
-# layout of each repo decides which checks run.
-
-[build]
+# This file is a menu: src_dirs entries that don't exist in a given repo are
+# skipped (default behavior since 0.9.46), so a processor whose directories
+# are all absent simply matches no files there. The directory layout of each
+# repo decides which checks run.
 
 # ─── analyzers ───────────────────────────────────────────────────────────────
 
@@ -26,7 +25,6 @@
 # silently skipped where absent. Repos still on config/*.py keep a
 # dep_inputs override in their local overlay until converted.
 [processor.tera]
-src_dirs = ["tera.templates"]
 dep_auto = [
 	"config/project.lua",
 	"config/personal.lua",
