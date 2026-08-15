@@ -4,33 +4,81 @@ main entry point to the program
 import csv
 import logging
 import os
-import sys
-from typing import Any
 import pathlib
 import re
 import string
+import sys
 import time
+from typing import Any
 
 import pylogconf.core
-from pygooglehelper import register_functions, ConfigRequest
-from pytconf import register_main, config_arg_parse_and_launch, register_endpoint
+from pygooglehelper import ConfigRequest, register_functions
+from pytconf import config_arg_parse_and_launch, register_endpoint, register_main
 
-from pytubekit.configs import ConfigPlaylist, ConfigPagination, ConfigCleanup, ConfigVideo, \
-    ConfigPrint, ConfigDump, ConfigSubtract, ConfigDelete, ConfigDiff, ConfigAddData, ConfigOverflow, \
-    ConfigCleanupPlaylists, ConfigClear, ConfigMerge, ConfigSort, ConfigSearch, \
-    ConfigExportCsv, ConfigRename, ConfigCollectIds, ConfigAddFileToPlaylist, \
-    ConfigCreatePlaylist, ConfigDeletePlaylist, ConfigFindVideo, \
-    ConfigLocalDumpFolder, ConfigLocalDiff, ConfigStatsFilter, ConfigChannelId, ConfigBudget
-from pytubekit.constants import SCOPES, MAX_PLAYLIST_ITEMS, DAILY_QUOTA_UNITS
-from pytubekit.static import DESCRIPTION, APP_NAME, VERSION_STR
-from pytubekit.util import create_playlists_request, get_youtube, create_playlist_request, get_all_items, \
-    delete_playlist_item_by_id, get_playlist_ids_from_names, get_all_items_from_playlist_ids, \
-    get_video_info, pretty_print, get_youtube_channels, get_youtube_playlists, get_my_playlists_ids, \
-    read_video_ids_from_files, get_video_ids_from_playlist_names, \
-    get_items_from_playlist_names, get_video_metadata, METADATA_FIELDNAMES, \
-    add_video_to_playlist, get_playlist_item_count, log_progress, retry_execute, cleanup_items, \
-    read_all_dump_files, read_video_ids_from_path, perform_mutation, move_playlist_item, \
-    log_mutation_cost_estimate, QuotaExceededError, MutationBudgetError, RunStats
+from pytubekit.configs import (
+    ConfigAddData,
+    ConfigAddFileToPlaylist,
+    ConfigBudget,
+    ConfigChannelId,
+    ConfigCleanup,
+    ConfigCleanupPlaylists,
+    ConfigClear,
+    ConfigCollectIds,
+    ConfigCreatePlaylist,
+    ConfigDelete,
+    ConfigDeletePlaylist,
+    ConfigDiff,
+    ConfigDump,
+    ConfigExportCsv,
+    ConfigFindVideo,
+    ConfigLocalDiff,
+    ConfigLocalDumpFolder,
+    ConfigMerge,
+    ConfigOverflow,
+    ConfigPagination,
+    ConfigPlaylist,
+    ConfigPrint,
+    ConfigRename,
+    ConfigSearch,
+    ConfigSort,
+    ConfigStatsFilter,
+    ConfigSubtract,
+    ConfigVideo,
+)
+from pytubekit.constants import DAILY_QUOTA_UNITS, MAX_PLAYLIST_ITEMS, SCOPES
+from pytubekit.static import APP_NAME, DESCRIPTION, VERSION_STR
+from pytubekit.util import (
+    METADATA_FIELDNAMES,
+    MutationBudgetError,
+    QuotaExceededError,
+    RunStats,
+    add_video_to_playlist,
+    cleanup_items,
+    create_playlist_request,
+    create_playlists_request,
+    delete_playlist_item_by_id,
+    get_all_items,
+    get_all_items_from_playlist_ids,
+    get_items_from_playlist_names,
+    get_my_playlists_ids,
+    get_playlist_ids_from_names,
+    get_playlist_item_count,
+    get_video_ids_from_playlist_names,
+    get_video_info,
+    get_video_metadata,
+    get_youtube,
+    get_youtube_channels,
+    get_youtube_playlists,
+    log_mutation_cost_estimate,
+    log_progress,
+    move_playlist_item,
+    perform_mutation,
+    pretty_print,
+    read_all_dump_files,
+    read_video_ids_from_files,
+    read_video_ids_from_path,
+    retry_execute,
+)
 from pytubekit.youtube import youtube_dl_download_urls
 
 
