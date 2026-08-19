@@ -20,7 +20,16 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
-      - name: install mkdocs-material
-        run: pip install mkdocs-material
+      - name: install rsconstruct
+        run: |
+          gh release download --repo veltzer/rsconstruct --pattern 'rsconstruct-linux-x86_64' --output /usr/local/bin/rsconstruct
+          chmod +x /usr/local/bin/rsconstruct
+          rsconstruct version
+        env:
+          GH_TOKEN: ${{ github.token }}
+      # mkdocs-material comes from rsconstruct.local.toml [dependencies] pip;
+      # nothing is pip-installed by hand.
+      - name: install
+        run: rsconstruct tools install-deps
       - name: deploy
         run: cd mkdocs && mkdocs gh-deploy --force

@@ -19,4 +19,8 @@ pip = [
     "pylogconf",
     "yt-dlp",
     "browsercookie",
+    # mkdocs-material is what .github/workflows/docs.yml deploys the mkdocs/
+    # site with; declared here so install-deps installs it instead of the
+    # workflow hand-running pip.
+    "mkdocs-material",
 ]
