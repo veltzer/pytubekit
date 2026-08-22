@@ -15,11 +15,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: setup python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: "pip"
       - name: install rsconstruct
         run: |
           gh release download --repo veltzer/rsconstruct --pattern 'rsconstruct-linux-x86_64' --output /usr/local/bin/rsconstruct
