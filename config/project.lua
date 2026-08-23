@@ -6,3 +6,4 @@ KEYWORDS = {
     "playlist",
     "videos",
 }
+PYPI = true
