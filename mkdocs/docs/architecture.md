@@ -11,8 +11,7 @@ pytubekit/
 │   ├── constants.py        # API constants, scopes, and sentinel values
 │   ├── static.py           # Version string, description, app name
 │   ├── util.py             # YouTube API utility functions
-│   ├── youtube.py          # yt-dlp integration
-│   └── client_secret.json  # OAuth2 client credentials
+│   └── youtube.py          # yt-dlp integration
 ├── config/                 # Build/project configuration (pydmt)
 │   ├── project.py          # Project name, description, keywords
 │   ├── version.py          # Version tuple
@@ -134,7 +133,7 @@ CLI parameters are defined declaratively as `pytconf.Config` subclasses. Each en
 
 Authentication is handled by `pygooglehelper`, which manages the OAuth2 flow:
 
-1. Reads `client_secret.json` from the package directory
+1. Reads `client_secret.json` from `~/.config/pytubekit/`
 2. Opens browser for user consent on first run
 3. Caches credentials for subsequent runs
 

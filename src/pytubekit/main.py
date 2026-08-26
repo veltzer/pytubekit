@@ -734,7 +734,7 @@ def local_dedup() -> None:
 def main():
     pylogconf.core.setup()
     ConfigRequest.scopes = SCOPES
-    ConfigRequest.location = os.path.dirname(os.path.realpath(__file__))
+    ConfigRequest.app_name = APP_NAME
     register_functions()
     logger = logging.getLogger()
     try:

@@ -4,7 +4,7 @@
 
 - Python >= 3.12
 - A Google Cloud project with the YouTube Data API v3 enabled
-- OAuth2 client credentials (`client_secret.json`)
+- OAuth2 client credentials at `~/.config/pytubekit/client_secret.json`
 
 ## Setting Up a Development Environment
 
