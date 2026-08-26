@@ -112,7 +112,7 @@ CLI parameters are defined declaratively as `pytconf.Config` subclasses. Each en
 ### OAuth2 Authentication
 
 Authentication is handled by `pygooglehelper`, which manages the OAuth2 flow:
-1. Reads `client_secret.json` from `~/.config/pytubekit/`
+1. Reads `client_secret.json` from `~/.config/pytubekit/`, falling back to the copy shipped in the package
 2. Opens browser for user consent on first run
 3. Caches credentials for subsequent runs
 
