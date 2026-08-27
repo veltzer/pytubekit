@@ -32,10 +32,6 @@ src_dirs = ["src", "config", "tests"]
 [processor.mypy]
 src_dirs = ["src", "config", "tests"]
 
-[processor.requirements]
-src_dirs = ["src", "config", "tests"]
-enabled = false
-
 [processor.pytest]
 src_dirs = ["tests"]
 
@@ -46,18 +42,3 @@ src_dirs = ["config"]
 
 [processor.taplo]
 src_dirs = ["."]
-
-# Runtime deps so CI (rsconstruct tools install-deps) can run pytest.
-[dependencies]
-pip = [
-    "google-api-python-client",
-    "pygooglehelper",
-    "pytconf",
-    "pylogconf",
-    "yt-dlp",
-    "browsercookie",
-    # mkdocs-material is what .github/workflows/docs.yml deploys the mkdocs/
-    # site with; declared here so install-deps installs it instead of the
-    # workflow hand-running pip.
-    "mkdocs-material",
-]
