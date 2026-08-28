@@ -76,7 +76,7 @@ def retry_execute(request: Any, max_retries: int = 5, cost: int = 1) -> dict[str
     last_error = None
     for attempt in range(max_retries):
         try:
-            response = request.execute()
+            response: dict[str, Any] = request.execute()
             RunStats.quota_spent += cost
             return response
         except HttpError as e:
