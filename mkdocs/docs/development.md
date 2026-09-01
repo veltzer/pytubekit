@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Python >= 3.12
+- Python >= 3.14
 - A Google Cloud project with the YouTube Data API v3 enabled
 - OAuth2 client credentials at `~/.config/pytubekit/client_secret.json` (required to build a release: the build hook copies it into the package)
 
@@ -24,16 +24,16 @@ pip install pytest mypy ruff pylint
 pytest tests
 
 # Run the full CI suite (tests + linting + type checking)
-make all
+rsconstruct build
 ```
 
-The Makefile `all` target runs:
+The rsconstruct build runs:
 
 1. `pytest tests` - unit tests
 2. `ruff check` - linter
 3. `pylint` - code analysis
 4. `mypy` - type checking
-5. A regex check for unescaped single quotes in Python files
+5. `luacheck` on `config/`, `taplo` on the TOML files and `actionlint` on the workflows
 
 ## Code Quality Tools
 
@@ -41,30 +41,28 @@ The Makefile `all` target runs:
 |------|------------|---------|
 | ruff | `pyproject.toml` (`[tool.ruff]`) | Linting, line length = 130 |
 | pylint | `.pylintrc` | Code analysis |
-| mypy | `.mypy.ini` / `pyproject.toml` | Static type checking, Python 3.12 |
+| mypy | `pyproject.toml` (`[tool.mypy]`) | Static type checking |
 | pytest | `pyproject.toml` (`[tool.pytest.ini_options]`) | Test runner, pythonpath = `["src"]` |
 
 ## Project Layout
 
 Source code lives in `src/pytubekit/` following the `src` layout convention. The `pyproject.toml` configures pytest to include `src` in the Python path.
 
-## Code Generation with pydmt
+## Code Generation with rsconstruct
 
-Several files are generated from Mako templates. The source of truth for project metadata lives in the `config/` directory:
+`README.md` and `src/pytubekit/static.py` are rendered from tera templates in `tera.templates/` by rsconstruct. The source of truth for project metadata lives in the `config/` directory:
 
-- `config/project.py` - Project name, description, keywords
-- `config/version.py` - Version tuple
-- `config/python.py` - Python dependencies and scripts
-- `config/personal.py` - Author details
-- `config/platform.py` - Python version requirements
+- `config/project.lua` - Project name, description, keywords
+- `config/version.lua` - Version tuple
+- `config/personal.lua` - Author details
 
-To regenerate files, run pydmt (if installed):
+To regenerate files, run:
 
 ```bash
-pydmt build
+rsconstruct build
 ```
 
-Do not manually edit generated files (`pyproject.toml`, `README.md`, `static.py`, `LICENSE`, `requirements.thawed.txt`). Edit the templates or config modules instead.
+Do not manually edit the generated files (`README.md`, `static.py`). Edit the templates or config files instead. `pyproject.toml` is hand-edited and is the authoritative dependency list.
 
 ## Adding a New CLI Command
 
@@ -121,7 +119,7 @@ For manual testing:
 
 ## CI/CD
 
-The project uses GitHub Actions (`.github/workflows/build.yml`) running on Ubuntu 24.04 with Python 3.12.
+The project uses GitHub Actions (`.github/workflows/build.yml`) running on Ubuntu 26.04 with Python 3.14.
 
 ## Building the Documentation
 

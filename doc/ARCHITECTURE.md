@@ -12,24 +12,18 @@ pytubekit/
 │   ├── static.py           # Version string, description, app name
 │   ├── util.py             # YouTube API utility functions
 │   └── youtube.py          # youtube-dl integration
-├── config/                 # Build/project configuration (pydmt)
-│   ├── project.py          # Project name, description, keywords
-│   ├── version.py          # Version tuple (0, 0, 31)
-│   ├── python.py           # Python dependencies and entry points
-│   ├── shared.py           # Shared dependency lists
-│   ├── personal.py         # Author information
-│   ├── github.py           # CI workflow configuration
-│   ├── platform.py         # Python version and license
-│   └── deps.py             # OS-level dependencies
-├── templates/              # Mako templates for code generation
+├── config/                 # Project metadata for the tera templates (lua)
+│   ├── project.lua         # Project name, description, keywords
+│   ├── version.lua         # Version tuple
+│   └── personal.lua        # Author information
+├── tera.templates/         # Tera templates for README.md and static.py
 ├── tests/                  # Test suite
 │   └── unit_tests/
 │       └── test_basic.py   # Placeholder test
 ├── doc/                    # Documentation
 ├── pyproject.toml          # PEP 517/518 project metadata
-├── Makefile                # Build automation
-├── requirements.txt        # Frozen dependencies (106 packages)
-└── requirements.thawed.txt # Direct dependencies
+├── rsconstruct.toml        # Build automation (rsconstruct)
+└── uv.lock                 # Pinned dependency closure
 ```
 
 ## Module Descriptions
@@ -93,7 +87,7 @@ Thin wrapper around the `youtube-dl` library:
 
 ### `static.py`
 
-Auto-generated from `templates/src/pytubekit/static.py.mako` by pydmt. Contains:
+Auto-generated from `tera.templates/src/pytubekit/static.py.tera` by rsconstruct. Contains:
 - `VERSION_STR` - Current version as a string
 - `DESCRIPTION` - Project description
 - `APP_NAME` - Application name
@@ -141,7 +135,7 @@ Videos are identified as deleted or private by checking their title against the 
 | mypy | Static type checking |
 | ruff | Linter and formatter |
 | pylint | Code analysis |
-| pydmt | Build tool / code generation |
+| rsconstruct | Build tool / code generation |
 | hatchling | PEP 517 build backend |
 
 ## Build System
@@ -149,26 +143,15 @@ Videos are identified as deleted or private by checking their title against the 
 The project uses two build mechanisms:
 
 1. **hatchling** (via `pyproject.toml`) - Standard Python packaging for wheel/sdist builds and PyPI distribution.
-2. **pydmt + Makefile** - Development workflow: runs tests, linters (ruff, pylint), type checking (mypy), and generates files from Mako templates.
+2. **rsconstruct** (via `rsconstruct.toml`) - Development workflow: runs tests, linters (ruff, pylint), type checking (mypy), and renders files from tera templates.
 
-### Makefile Targets
-
-| Target | Description |
-|--------|-------------|
-| `all` | Run all checks: tests, ruff, pylint, mypy |
-| `clean` | Remove `.pyc`/`.pyo` files and `__pycache__` dirs |
-| `clean_hard` | `git clean -qffxd` (removes all untracked files) |
-| `debug` | Print Makefile variable values |
-| `install` | Symlink scripts to `~/install/bin` |
+Run `rsconstruct build` to execute every check and render the templates; CI runs the same command.
 
 ## Code Generation
 
-Several files are auto-generated from Mako templates in the `templates/` directory by pydmt:
+Two files are auto-generated from tera templates in the `tera.templates/` directory by rsconstruct:
 
-- `pyproject.toml` from `templates/pyproject.toml.mako`
-- `src/pytubekit/static.py` from `templates/src/pytubekit/static.py.mako`
-- `README.md` from `templates/README.md.mako`
-- `LICENSE` from `templates/LICENSE.mako`
-- `requirements.thawed.txt` from `templates/requirements.thawed.txt.mako`
+- `src/pytubekit/static.py` from `tera.templates/src/pytubekit/static.py.tera`
+- `README.md` from `tera.templates/README.md.tera`
 
-These templates pull values from the `config/` Python modules to keep metadata consistent across the project.
+These templates pull values from the `config/*.lua` files to keep metadata consistent across the project.
