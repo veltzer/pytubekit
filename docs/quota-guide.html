@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API Quota Guide &#8212; pytubekit Documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=423071ad"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Architecture" href="architecture.html" />
+    <link rel="prev" title="CLI Commands Reference" href="cli-reference.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="api-quota-guide">
+<h1>API Quota Guide<a class="headerlink" href="#api-quota-guide" title="Link to this heading">¶</a></h1>
+<p>The YouTube Data API v3 enforces a daily quota of <strong>10,000 units</strong>. Every API call costs a certain number of units, and once the quota is exhausted you must wait until the next day (Pacific Time) for it to reset. This page explains how pytubekit commands consume quota and what you can do to stay within the limit.</p>
+<section id="quota-costs-per-api-method">
+<h2>Quota costs per API method<a class="headerlink" href="#quota-costs-per-api-method" title="Link to this heading">¶</a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>API method</p></th>
+<th class="head"><p>Cost (units)</p></th>
+<th class="head"><p>pytubekit usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">playlists.list</span></code></p></td>
+<td><p>1</p></td>
+<td><p>Listing playlists, resolving names to IDs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">playlistItems.list</span></code></p></td>
+<td><p>1</p></td>
+<td><p>Fetching items from a playlist (per page)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">playlistItems.insert</span></code></p></td>
+<td><p>50</p></td>
+<td><p>Adding a video to a playlist</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">playlistItems.delete</span></code></p></td>
+<td><p>50</p></td>
+<td><p>Removing a video from a playlist</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">playlists.insert</span></code></p></td>
+<td><p>50</p></td>
+<td><p>Creating a new playlist</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">playlists.delete</span></code></p></td>
+<td><p>50</p></td>
+<td><p>Deleting a playlist</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">playlists.update</span></code></p></td>
+<td><p>50</p></td>
+<td><p>Renaming a playlist</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">channels.list</span></code></p></td>
+<td><p>1</p></td>
+<td><p>Fetching channel info</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">videos.list</span></code></p></td>
+<td><p>1</p></td>
+<td><p>Fetching video info</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key takeaway:</strong> Read operations (<code class="docutils literal notranslate"><span class="pre">*.list</span></code>) cost 1 unit per page, while write operations (<code class="docutils literal notranslate"><span class="pre">*.insert</span></code>, <code class="docutils literal notranslate"><span class="pre">*.delete</span></code>, <code class="docutils literal notranslate"><span class="pre">*.update</span></code>) cost 50 units each.</p>
+</section>
+<section id="command-quota-profiles">
+<h2>Command quota profiles<a class="headerlink" href="#command-quota-profiles" title="Link to this heading">¶</a></h2>
+<section id="low-cost-commands-read-only">
+<h3>Low-cost commands (read-only)<a class="headerlink" href="#low-cost-commands-read-only" title="Link to this heading">¶</a></h3>
+<p>These commands only call <code class="docutils literal notranslate"><span class="pre">*.list</span></code> methods — typically a few units total.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Approximate cost</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stats</span></code></p></td>
+<td><p>1 per page of playlists (or 1 per page per filtered playlist with <code class="docutils literal notranslate"><span class="pre">--stats-names</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">get_channel_id</span></code></p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">channels</span></code></p></td>
+<td><p>2–3</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">video_info</span></code></p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="medium-cost-commands-read-heavy">
+<h3>Medium-cost commands (read-heavy)<a class="headerlink" href="#medium-cost-commands-read-heavy" title="Link to this heading">¶</a></h3>
+<p>These iterate playlist items. Cost depends on playlist size — each page of 50 items is 1 unit plus 1 per page to resolve playlist names.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Approximate cost</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">playlist</span></code></p></td>
+<td><p>1 (name lookup) + 1 per page of items</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dump</span></code></p></td>
+<td><p>1 per page of playlists + 1 per page per playlist</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">export_csv</span></code></p></td>
+<td><p>1 (name lookup) + 1 per page of items</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">search_playlist</span></code></p></td>
+<td><p>1 (name lookup) + 1 per page per searched playlist</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">find_video</span></code></p></td>
+<td><p>1 per page of playlists + 1 per page per playlist (worst case)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">left_to_see</span></code></p></td>
+<td><p>name lookups + 1 per page per playlist</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">diff</span></code></p></td>
+<td><p>name lookups + 1 per page per playlist</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="high-cost-commands-write-heavy">
+<h3>High-cost commands (write-heavy)<a class="headerlink" href="#high-cost-commands-write-heavy" title="Link to this heading">¶</a></h3>
+<p>Each inserted or deleted item costs 50 units. A playlist of 200 videos that gets cleared consumes <strong>10,000 units</strong> — your entire daily quota.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Approximate cost</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cleanup</span></code></p></td>
+<td><p>reads + 50 per deleted item</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">subtract</span></code></p></td>
+<td><p>reads + 50 per deleted item</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">clear_playlist</span></code></p></td>
+<td><p>reads + 50 × playlist size</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">merge</span></code></p></td>
+<td><p>reads + 50 per new item added (or 50 × size with <code class="docutils literal notranslate"><span class="pre">--no-merge-dedup</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sort_playlist</span></code></p></td>
+<td><p>reads + 50 × size (delete all) + 50 × size (re-add) = <strong>100 × size</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">overflow</span></code></p></td>
+<td><p>reads + 50 per moved item (insert + delete = 100 per item)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">add_file_to_playlist</span></code></p></td>
+<td><p>reads + 50 per video added</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">create_playlist</span></code></p></td>
+<td><p>50</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">delete_playlist</span></code></p></td>
+<td><p>1 (name lookup) + 50</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rename_playlist</span></code></p></td>
+<td><p>1 (name lookup) + 50</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="strategies-to-reduce-quota-usage">
+<h2>Strategies to reduce quota usage<a class="headerlink" href="#strategies-to-reduce-quota-usage" title="Link to this heading">¶</a></h2>
+<section id="use-page-size-50-the-default">
+<span id="id1"></span><h3>1. Use <code class="docutils literal notranslate"><span class="pre">--page-size</span> <span class="pre">50</span></code> (the default)<a class="headerlink" href="#use-page-size-50-the-default" title="Link to this heading">¶</a></h3>
+<p>The API returns at most 50 items per page. Using a smaller <code class="docutils literal notranslate"><span class="pre">--page-size</span></code> means more pages and more API calls for the same data. Keep it at 50 unless you have a specific reason to lower it.</p>
+</section>
+<section id="prefer-stats-over-playlist-for-size-checks">
+<span id="id2"></span><h3>2. Prefer <code class="docutils literal notranslate"><span class="pre">stats</span></code> over <code class="docutils literal notranslate"><span class="pre">playlist</span></code> for size checks<a class="headerlink" href="#prefer-stats-over-playlist-for-size-checks" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">stats</span></code> reads the <code class="docutils literal notranslate"><span class="pre">itemCount</span></code> field from the playlist metadata — no need to iterate every item. Use it instead of fetching full playlist contents when you only need counts. Use <code class="docutils literal notranslate"><span class="pre">--stats-names</span></code> to filter to specific playlists.</p>
+</section>
+<section id="use-dump-for-offline-analysis">
+<span id="id3"></span><h3>3. Use <code class="docutils literal notranslate"><span class="pre">dump</span></code> for offline analysis<a class="headerlink" href="#use-dump-for-offline-analysis" title="Link to this heading">¶</a></h3>
+<p>Run <code class="docutils literal notranslate"><span class="pre">dump</span></code> once to save all playlists to local files, then work with the files locally (search, diff, grep) instead of repeatedly querying the API.</p>
+</section>
+<section id="use-diff-with-local-files-instead-of-repeated-api-calls">
+<span id="id4"></span><h3>4. Use <code class="docutils literal notranslate"><span class="pre">diff</span></code> with local files instead of repeated API calls<a class="headerlink" href="#use-diff-with-local-files-instead-of-repeated-api-calls" title="Link to this heading">¶</a></h3>
+<p>After dumping, use <code class="docutils literal notranslate"><span class="pre">diff</span> <span class="pre">--seen-files</span></code> with your local dump files to compare playlists without fetching them again.</p>
+</section>
+<section id="run-cleanup-on-specific-playlists-not-all">
+<span id="id5"></span><h3>5. Run <code class="docutils literal notranslate"><span class="pre">cleanup</span></code> on specific playlists, not all<a class="headerlink" href="#run-cleanup-on-specific-playlists-not-all" title="Link to this heading">¶</a></h3>
+<p>Running <code class="docutils literal notranslate"><span class="pre">cleanup</span></code> without <code class="docutils literal notranslate"><span class="pre">--cleanup-names</span></code> iterates every playlist you own and deletes items from each. If you know which playlists have problems, target them with <code class="docutils literal notranslate"><span class="pre">--cleanup-names</span></code> instead.</p>
+</section>
+<section id="avoid-sort-playlist-on-large-playlists">
+<span id="id6"></span><h3>6. Avoid <code class="docutils literal notranslate"><span class="pre">sort_playlist</span></code> on large playlists<a class="headerlink" href="#avoid-sort-playlist-on-large-playlists" title="Link to this heading">¶</a></h3>
+<p>Sorting deletes every item and re-adds them in order. A 200-item playlist costs 200 × 100 = <strong>20,000 units</strong> (twice your daily quota). Consider whether sorting is truly necessary, or sort locally in an exported CSV.</p>
+</section>
+<section id="use-dry-run-mode-before-committing">
+<span id="id7"></span><h3>7. Use dry-run mode before committing<a class="headerlink" href="#use-dry-run-mode-before-committing" title="Link to this heading">¶</a></h3>
+<p>Many write commands support <code class="docutils literal notranslate"><span class="pre">--no-do-delete</span></code> for a dry run. Use it first to verify what would happen, then run the real operation only when you’re sure.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># See what would be deleted without spending write quota</span>
+pytubekit<span class="w"> </span>cleanup<span class="w"> </span>--cleanup-names<span class="w"> </span><span class="s2">"My Playlist"</span><span class="w"> </span>--no-do-delete
+
+<span class="c1"># Then actually do it</span>
+pytubekit<span class="w"> </span>cleanup<span class="w"> </span>--cleanup-names<span class="w"> </span><span class="s2">"My Playlist"</span>
+</pre></div>
+</div>
+</section>
+<section id="batch-your-work-across-days">
+<span id="id8"></span><h3>8. Batch your work across days<a class="headerlink" href="#batch-your-work-across-days" title="Link to this heading">¶</a></h3>
+<p>If you need to perform large write operations (clearing, sorting, or merging big playlists), split the work across multiple days. For example, clear one large playlist per day rather than all at once.</p>
+</section>
+<section id="use-collect-ids-and-add-data-offline">
+<span id="id9"></span><h3>9. Use <code class="docutils literal notranslate"><span class="pre">collect_ids</span></code> and <code class="docutils literal notranslate"><span class="pre">add_data</span></code> offline<a class="headerlink" href="#use-collect-ids-and-add-data-offline" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">collect_ids</span></code> works entirely on local files — zero API cost. <code class="docutils literal notranslate"><span class="pre">add_data</span></code> uses yt-dlp instead of the YouTube Data API, so it does not consume your API quota at all.</p>
+</section>
+<section id="use-local-commands-after-dump">
+<span id="id10"></span><h3>10. Use <code class="docutils literal notranslate"><span class="pre">local_*</span></code> commands after <code class="docutils literal notranslate"><span class="pre">dump</span></code><a class="headerlink" href="#use-local-commands-after-dump" title="Link to this heading">¶</a></h3>
+<p>After running <code class="docutils literal notranslate"><span class="pre">dump</span></code> once, use the <code class="docutils literal notranslate"><span class="pre">local_*</span></code> family of commands to search, diff, count, and deduplicate entirely offline. These commands read the dump files directly and make zero API calls:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Dump once (costs API quota)</span>
+pytubekit<span class="w"> </span>dump<span class="w"> </span>--dump-folder<span class="w"> </span>~/youtube-dump
+
+<span class="c1"># All subsequent analysis is free</span>
+pytubekit<span class="w"> </span>stats<span class="w"> </span>--local-dump-folder<span class="w"> </span>~/youtube-dump
+pytubekit<span class="w"> </span>find_video<span class="w"> </span>--local-dump-folder<span class="w"> </span>~/youtube-dump<span class="w"> </span>--find-video-id<span class="w"> </span>dQw4w9WgXcQ
+pytubekit<span class="w"> </span>search_playlist<span class="w"> </span>--local-dump-folder<span class="w"> </span>~/youtube-dump<span class="w"> </span>--search-query<span class="w"> </span><span class="s2">"python"</span>
+pytubekit<span class="w"> </span>local_dedup<span class="w"> </span>--local-dump-folder<span class="w"> </span>~/youtube-dump
+pytubekit<span class="w"> </span>local_diff<span class="w"> </span>--local-diff-a<span class="w"> </span>~/youtube-dump<span class="w"> </span>--local-diff-b<span class="w"> </span>~/seen-dump
+</pre></div>
+</div>
+</section>
+<section id="monitor-usage-in-the-google-cloud-console">
+<span id="id11"></span><h3>11. Monitor usage in the Google Cloud Console<a class="headerlink" href="#monitor-usage-in-the-google-cloud-console" title="Link to this heading">¶</a></h3>
+<p>Check your current quota usage at any time:</p>
+<ol class="arabic simple">
+<li><p>Open the <a class="reference external" href="https://console.cloud.google.com/">Google Cloud Console</a></p></li>
+<li><p>Navigate to <strong>APIs &amp; Services</strong> &gt; <strong>Dashboard</strong></p></li>
+<li><p>Select <strong>YouTube Data API v3</strong></p></li>
+<li><p>View the <strong>Quotas</strong> tab</p></li>
+</ol>
+<p>This shows real-time usage and lets you plan operations around remaining budget.</p>
+</section>
+</section>
+<section id="quick-reference-zero-quota-commands">
+<h2>Quick-reference: zero-quota commands<a class="headerlink" href="#quick-reference-zero-quota-commands" title="Link to this heading">¶</a></h2>
+<p>These commands do not call the YouTube Data API at all:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Why it’s free</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">collect_ids</span></code></p></td>
+<td><p>Scans local files only</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">add_data</span></code></p></td>
+<td><p>Uses yt-dlp, not the API</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">watch_later</span></code></p></td>
+<td><p>Uses yt-dlp, not the API</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">find_video</span> <span class="pre">--local-dump-folder</span></code></p></td>
+<td><p>Reads dump files only</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">search_playlist</span> <span class="pre">--local-dump-folder</span></code></p></td>
+<td><p>Reads dump files only</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">--local-dump-folder</span></code></p></td>
+<td><p>Reads dump files only</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">local_diff</span></code></p></td>
+<td><p>Reads dump files only</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">local_dedup</span></code></p></td>
+<td><p>Reads dump files only</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pytubekit</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">pytubekit</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli-reference.html">CLI Commands Reference</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">API Quota Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html">Development Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notes.html">Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytubekit.html">pytubekit package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">pytubekit</a><ul>
+      <li>Previous: <a href="cli-reference.html" title="previous chapter">CLI Commands Reference</a></li>
+      <li>Next: <a href="architecture.html" title="next chapter">Architecture</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026 Mark Veltzer.
+      
+      |
+      <a href="_sources/quota-guide.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -114,5 +114,5 @@ dev = [
     "pylint",
     "pytest",
     "ruff",
-    "mkdocs-material",
+    "sphinx",
 ]

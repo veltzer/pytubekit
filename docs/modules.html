@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pytubekit &#8212; pytubekit Documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=423071ad"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Overview" href="overview.html" />
+    <link rel="prev" title="Welcome to pytubekit’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="pytubekit">
+<h1>pytubekit<a class="headerlink" href="#pytubekit" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#what-is-pytubekit">What is pytubekit?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#key-features">Key Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#quick-start">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#authentication">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#api-quota">API Quota</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#links">Links</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli-reference.html">CLI Commands Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli-reference.html#listing-info">Listing / Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli-reference.html#export-backup">Export / Backup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli-reference.html#cleanup">Cleanup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli-reference.html#playlist-operations">Playlist Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli-reference.html#local-commands-zero-api-quota">Local Commands (Zero API Quota)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli-reference.html#download">Download</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quota-guide.html">API Quota Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quota-guide.html#quota-costs-per-api-method">Quota costs per API method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quota-guide.html#command-quota-profiles">Command quota profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quota-guide.html#strategies-to-reduce-quota-usage">Strategies to reduce quota usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quota-guide.html#quick-reference-zero-quota-commands">Quick-reference: zero-quota commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#project-structure">Project Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#module-descriptions">Module Descriptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#key-design-patterns">Key Design Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#build-system">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#code-generation">Code Generation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="development.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#setting-up-a-development-environment">Setting Up a Development Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#running-tests">Running Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#code-quality-tools">Code Quality Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#project-layout">Project Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#code-generation-with-rsconstruct">Code Generation with rsconstruct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#adding-a-new-cli-command">Adding a New CLI Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#youtube-api-notes">YouTube API Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#ci-cd">CI/CD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#building-the-documentation">Building the Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notes.html">Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notes.html#api-quota">API Quota</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notes.html#design-notes">Design Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notes.html#reference-links">Reference Links</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notes.html#test-video-ids">Test Video IDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notes.html#todo-future-ideas">TODO / Future Ideas</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pytubekit.html">pytubekit package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pytubekit.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytubekit.html#module-pytubekit.configs">pytubekit.configs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytubekit.html#module-pytubekit.constants">pytubekit.constants module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytubekit.html#module-pytubekit.main">pytubekit.main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytubekit.html#module-pytubekit.static">pytubekit.static module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytubekit.html#module-pytubekit.util">pytubekit.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytubekit.html#module-pytubekit.youtube">pytubekit.youtube module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytubekit.html#module-pytubekit">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pytubekit</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pytubekit</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli-reference.html">CLI Commands Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quota-guide.html">API Quota Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html">Development Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notes.html">Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytubekit.html">pytubekit package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to pytubekit’s documentation!</a></li>
+      <li>Next: <a href="overview.html" title="next chapter">Overview</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026 Mark Veltzer.
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CLI Commands Reference &#8212; pytubekit Documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=423071ad"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Quota Guide" href="quota-guide.html" />
+    <link rel="prev" title="Overview" href="overview.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cli-commands-reference">
+<h1>CLI Commands Reference<a class="headerlink" href="#cli-commands-reference" title="Link to this heading">¶</a></h1>
+<p>Pytubekit provides a single entry point (<code class="docutils literal notranslate"><span class="pre">pytubekit</span></code>) with multiple subcommands (endpoints). Each endpoint accepts configuration parameters that can be passed via command-line arguments.</p>
+<section id="listing-info">
+<span id="id1"></span><h2>Listing / Info<a class="headerlink" href="#listing-info" title="Link to this heading">¶</a></h2>
+<section id="get-channel-id">
+<h3><code class="docutils literal notranslate"><span class="pre">get_channel_id</span></code><a class="headerlink" href="#get-channel-id" title="Link to this heading">¶</a></h3>
+<p>Show your YouTube channel ID, or with <code class="docutils literal notranslate"><span class="pre">--watch-later</span></code>, show the Watch Later playlist ID.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get channel ID</span>
+pytubekit<span class="w"> </span>get_channel_id
+
+<span class="c1"># Get Watch Later playlist ID</span>
+pytubekit<span class="w"> </span>get_channel_id<span class="w"> </span>--watch-later
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--watch-later</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>False</p></td>
+<td><p>Output Watch Later playlist ID instead of channel ID</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="playlist">
+<h3><code class="docutils literal notranslate"><span class="pre">playlist</span></code><a class="headerlink" href="#playlist" title="Link to this heading">¶</a></h3>
+<p>List all entries in a specific playlist.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>playlist<span class="w"> </span>--name<span class="w"> </span><span class="s2">"My Playlist"</span>
+pytubekit<span class="w"> </span>playlist<span class="w"> </span>--playlist-id<span class="w"> </span>PLxxxxxxxx
+pytubekit<span class="w"> </span>playlist<span class="w"> </span>--name<span class="w"> </span><span class="s2">"My Playlist"</span><span class="w"> </span>--full
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--name</span></code></p></td>
+<td><p>str</p></td>
+<td><p>None</p></td>
+<td><p>Playlist name to look up</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--playlist-id</span></code></p></td>
+<td><p>str</p></td>
+<td><p>None</p></td>
+<td><p>Playlist ID to use directly</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--full</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>False</p></td>
+<td><p>Output full JSON instead of just video IDs</p></td>
+</tr>
+</tbody>
+</table>
+<p>Provide either <code class="docutils literal notranslate"><span class="pre">--name</span></code> or <code class="docutils literal notranslate"><span class="pre">--playlist-id</span></code>, not both.</p>
+</section>
+<hr class="docutils" />
+<section id="video-info">
+<h3><code class="docutils literal notranslate"><span class="pre">video_info</span></code><a class="headerlink" href="#video-info" title="Link to this heading">¶</a></h3>
+<p>Get detailed information about a specific video (snippet, status, content details).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>video_info<span class="w"> </span>--id<span class="w"> </span>xL_sMXfzzyA
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--id</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>YouTube video ID</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="channels">
+<h3><code class="docutils literal notranslate"><span class="pre">channels</span></code><a class="headerlink" href="#channels" title="Link to this heading">¶</a></h3>
+<p>List your channels and their playlists with full details (snippet, content details, statistics).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>channels
+</pre></div>
+</div>
+<p>No additional parameters.</p>
+</section>
+<hr class="docutils" />
+<section id="find-video">
+<h3><code class="docutils literal notranslate"><span class="pre">find_video</span></code><a class="headerlink" href="#find-video" title="Link to this heading">¶</a></h3>
+<p>Find which playlists (or dump files) contain a given video. By default, queries the YouTube API. With <code class="docutils literal notranslate"><span class="pre">--local-dump-folder</span></code>, searches local dump files instead (zero API quota).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># API mode: search YouTube playlists</span>
+pytubekit<span class="w"> </span>find_video<span class="w"> </span>--find-video-id<span class="w"> </span>dQw4w9WgXcQ
+
+<span class="c1"># Local mode: search dump files (zero API quota)</span>
+pytubekit<span class="w"> </span>find_video<span class="w"> </span>--find-video-id<span class="w"> </span>dQw4w9WgXcQ<span class="w"> </span>--local-dump-folder<span class="w"> </span>/path/to/dump
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--find-video-id</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>YouTube video ID to search for</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--local-dump-folder</span></code></p></td>
+<td><p>str</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.</span></code></p></td>
+<td><p>Path to dump folder (if not <code class="docutils literal notranslate"><span class="pre">.</span></code>, uses local mode)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination (API mode only)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="stats">
+<h3><code class="docutils literal notranslate"><span class="pre">stats</span></code><a class="headerlink" href="#stats" title="Link to this heading">¶</a></h3>
+<p>Show statistics for playlists (or dump files): each name with its item count, then totals (count, total items, largest, smallest). By default, shows all playlists. Use <code class="docutils literal notranslate"><span class="pre">--stats-names</span></code> to filter to specific playlists. With <code class="docutils literal notranslate"><span class="pre">--local-dump-folder</span></code>, reads local dump files instead (zero API quota).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># API mode: all playlists</span>
+pytubekit<span class="w"> </span>stats
+
+<span class="c1"># API mode: specific playlists only</span>
+pytubekit<span class="w"> </span>stats<span class="w"> </span>--stats-names<span class="w"> </span><span class="s2">"Music"</span><span class="w"> </span><span class="s2">"Talks"</span>
+
+<span class="c1"># Local mode: count lines in dump files (zero API quota)</span>
+pytubekit<span class="w"> </span>stats<span class="w"> </span>--local-dump-folder<span class="w"> </span>/path/to/dump
+
+<span class="c1"># Local mode: specific files only</span>
+pytubekit<span class="w"> </span>stats<span class="w"> </span>--local-dump-folder<span class="w"> </span>/path/to/dump<span class="w"> </span>--stats-names<span class="w"> </span><span class="s2">"Music"</span><span class="w"> </span><span class="s2">"Talks"</span>
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--stats-names</span></code></p></td>
+<td><p>list[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
+<td><p>Filter to these playlist/file names (omit for all)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--local-dump-folder</span></code></p></td>
+<td><p>str</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.</span></code></p></td>
+<td><p>Path to dump folder (if not <code class="docutils literal notranslate"><span class="pre">.</span></code>, uses local mode)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination (API mode only)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="search-playlist">
+<h3><code class="docutils literal notranslate"><span class="pre">search_playlist</span></code><a class="headerlink" href="#search-playlist" title="Link to this heading">¶</a></h3>
+<p>Search for videos by title or channel name across playlists (API mode), or search video IDs in dump files (local mode). With <code class="docutils literal notranslate"><span class="pre">--local-dump-folder</span></code>, searches local dump files with zero API quota.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># API mode: search YouTube playlists by title/channel</span>
+pytubekit<span class="w"> </span>search_playlist<span class="w"> </span>--search-playlists<span class="w"> </span><span class="s2">"Music"</span><span class="w"> </span><span class="s2">"Talks"</span><span class="w"> </span>--search-query<span class="w"> </span><span class="s2">"python"</span>
+
+<span class="c1"># Local mode: search dump files by video ID (zero API quota)</span>
+pytubekit<span class="w"> </span>search_playlist<span class="w"> </span>--search-query<span class="w"> </span><span class="s2">"dQw4"</span><span class="w"> </span>--local-dump-folder<span class="w"> </span>/path/to/dump
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--search-playlists</span></code></p></td>
+<td><p>list[str]</p></td>
+<td><p>(required for API mode)</p></td>
+<td><p>Playlist names to search in</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--search-query</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Text to search for</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--local-dump-folder</span></code></p></td>
+<td><p>str</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.</span></code></p></td>
+<td><p>Path to dump folder (if not <code class="docutils literal notranslate"><span class="pre">.</span></code>, uses local mode)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination (API mode only)</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+</section>
+</section>
+<section id="export-backup">
+<span id="id2"></span><h2>Export / Backup<a class="headerlink" href="#export-backup" title="Link to this heading">¶</a></h2>
+<section id="dump">
+<h3><code class="docutils literal notranslate"><span class="pre">dump</span></code><a class="headerlink" href="#dump" title="Link to this heading">¶</a></h3>
+<p>Dump all playlists to files in a folder. Each playlist is saved as a separate file named after the playlist title, containing video IDs (or full JSON if <code class="docutils literal notranslate"><span class="pre">--full</span></code> is set).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>dump<span class="w"> </span>--dump-folder<span class="w"> </span>/path/to/output
+pytubekit<span class="w"> </span>dump<span class="w"> </span>--dump-folder<span class="w"> </span><span class="s1">'${home}/youtube-backup/${date}'</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">--dump-folder</span></code> parameter supports template substitution:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">${date}</span></code> - current Unix timestamp</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">${home}</span></code> - user’s home directory</p></li>
+</ul>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dump-folder</span></code></p></td>
+<td><p>str</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.</span></code></p></td>
+<td><p>Folder to dump playlists into</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--full</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>False</p></td>
+<td><p>Output full JSON instead of just video IDs</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="export-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">export_csv</span></code><a class="headerlink" href="#export-csv" title="Link to this heading">¶</a></h3>
+<p>Export a playlist to CSV with video ID, title, channel, and position.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>export_csv<span class="w"> </span>--export-playlist-name<span class="w"> </span><span class="s2">"Music"</span><span class="w"> </span>--export-csv-path<span class="w"> </span>music.csv
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--export-playlist-name</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Name of playlist to export</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--export-csv-path</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Path to CSV file to write</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination</p></td>
+</tr>
+</tbody>
+</table>
+<p>Output columns: <code class="docutils literal notranslate"><span class="pre">position</span></code>, <code class="docutils literal notranslate"><span class="pre">video_id</span></code>, <code class="docutils literal notranslate"><span class="pre">title</span></code>, <code class="docutils literal notranslate"><span class="pre">channel</span></code>.</p>
+</section>
+<hr class="docutils" />
+<section id="collect-ids">
+<h3><code class="docutils literal notranslate"><span class="pre">collect_ids</span></code><a class="headerlink" href="#collect-ids" title="Link to this heading">¶</a></h3>
+<p>Extract YouTube video IDs from text files.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>collect_ids<span class="w"> </span>--collect-files<span class="w"> </span>notes.txt<span class="w"> </span>bookmarks.html
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--collect-files</span></code></p></td>
+<td><p>list[str]</p></td>
+<td><p>(required)</p></td>
+<td><p>Files to scan for YouTube video IDs</p></td>
+</tr>
+</tbody>
+</table>
+<p>Prints unique video IDs found across all input files.</p>
+</section>
+<hr class="docutils" />
+<section id="add-data">
+<h3><code class="docutils literal notranslate"><span class="pre">add_data</span></code><a class="headerlink" href="#add-data" title="Link to this heading">¶</a></h3>
+<p>Fetch extensive metadata for a list of video IDs and write to CSV. Supports resuming from a previous run (skips IDs already present in the output CSV).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>add_data<span class="w"> </span>--input-file<span class="w"> </span>ids.txt<span class="w"> </span>--output-csv<span class="w"> </span>metadata.csv
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--input-file</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Path to text file with video IDs (one per line)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--output-csv</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Path to CSV file to write metadata to</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="diff">
+<h3><code class="docutils literal notranslate"><span class="pre">diff</span></code><a class="headerlink" href="#diff" title="Link to this heading">¶</a></h3>
+<p>Compute set difference (A-B) or intersection (A&amp;B) between video ID sources. Sources can be YouTube playlists or local files.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Playlists vs files: videos in playlists but not in local files</span>
+pytubekit<span class="w"> </span>diff<span class="w"> </span>--diff-a-playlists<span class="w"> </span><span class="s2">"All"</span><span class="w"> </span>--diff-b-files<span class="w"> </span>seen.txt
+
+<span class="c1"># Playlists vs playlists: videos in "All" but not in "Watched"</span>
+pytubekit<span class="w"> </span>diff<span class="w"> </span>--diff-a-playlists<span class="w"> </span><span class="s2">"All"</span><span class="w"> </span>--diff-b-playlists<span class="w"> </span><span class="s2">"Watched"</span>
+
+<span class="c1"># Files vs files: videos in file A but not in file B</span>
+pytubekit<span class="w"> </span>diff<span class="w"> </span>--diff-a-files<span class="w"> </span>all.txt<span class="w"> </span>--diff-b-files<span class="w"> </span>seen.txt
+
+<span class="c1"># Intersection instead of difference</span>
+pytubekit<span class="w"> </span>diff<span class="w"> </span>--diff-a-playlists<span class="w"> </span><span class="s2">"All"</span><span class="w"> </span>--diff-b-files<span class="w"> </span>seen.txt<span class="w"> </span>--diff-reverse
+
+<span class="c1"># Write to file instead of stdout</span>
+pytubekit<span class="w"> </span>diff<span class="w"> </span>--diff-a-playlists<span class="w"> </span><span class="s2">"All"</span><span class="w"> </span>--diff-b-files<span class="w"> </span>seen.txt<span class="w"> </span>--diff-output-file<span class="w"> </span>unseen.txt
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--diff-a-playlists</span></code></p></td>
+<td><p>list[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
+<td><p>Source A: YouTube playlist names</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--diff-a-files</span></code></p></td>
+<td><p>list[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
+<td><p>Source A: local files with video IDs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--diff-b-playlists</span></code></p></td>
+<td><p>list[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
+<td><p>Source B: YouTube playlist names</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--diff-b-files</span></code></p></td>
+<td><p>list[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
+<td><p>Source B: local files with video IDs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--diff-reverse</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>False</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code> = A-B (difference), <code class="docutils literal notranslate"><span class="pre">True</span></code> = A&amp;B (intersection)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--diff-output-file</span></code></p></td>
+<td><p>str</p></td>
+<td><p>None</p></td>
+<td><p>Path to write results (omit for stdout)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="cleanup">
+<h2>Cleanup<a class="headerlink" href="#cleanup" title="Link to this heading">¶</a></h2>
+<section id="cleanup-1">
+<span id="id3"></span><h3><code class="docutils literal notranslate"><span class="pre">cleanup</span></code><a class="headerlink" href="#cleanup-1" title="Link to this heading">¶</a></h3>
+<p>Clean up playlists by removing duplicates, deleted videos, and/or private videos. By default, targets all playlists. Use <code class="docutils literal notranslate"><span class="pre">--cleanup-names</span></code> to filter to specific playlists.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clean up all playlists</span>
+pytubekit<span class="w"> </span>cleanup
+
+<span class="c1"># Clean up specific playlists</span>
+pytubekit<span class="w"> </span>cleanup<span class="w"> </span>--cleanup-names<span class="w"> </span><span class="s2">"Playlist1"</span><span class="w"> </span><span class="s2">"Playlist2"</span>
+
+<span class="c1"># Skip deduplication</span>
+pytubekit<span class="w"> </span>cleanup<span class="w"> </span>--cleanup-names<span class="w"> </span><span class="s2">"My Playlist"</span><span class="w"> </span>--no-dedup
+
+<span class="c1"># Dry run (report only)</span>
+pytubekit<span class="w"> </span>cleanup<span class="w"> </span>--no-do-delete
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--cleanup-names</span></code></p></td>
+<td><p>list[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
+<td><p>Playlist names to clean up (omit for all)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dedup</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>True</p></td>
+<td><p>Detect and remove duplicate entries</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--deleted</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>True</p></td>
+<td><p>Remove deleted videos</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--privatized</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>True</p></td>
+<td><p>Remove private videos</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--do-delete</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>True</p></td>
+<td><p>Actually perform deletions (set to False for dry run)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="playlist-operations">
+<h2>Playlist Operations<a class="headerlink" href="#playlist-operations" title="Link to this heading">¶</a></h2>
+<section id="create-playlist">
+<h3><code class="docutils literal notranslate"><span class="pre">create_playlist</span></code><a class="headerlink" href="#create-playlist" title="Link to this heading">¶</a></h3>
+<p>Create a new playlist with a given name, description, and privacy status.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>create_playlist<span class="w"> </span>--create-name<span class="w"> </span><span class="s2">"My New Playlist"</span>
+pytubekit<span class="w"> </span>create_playlist<span class="w"> </span>--create-name<span class="w"> </span><span class="s2">"Private List"</span><span class="w"> </span>--create-description<span class="w"> </span><span class="s2">"Personal videos"</span><span class="w"> </span>--create-privacy<span class="w"> </span>private
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--create-name</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Name for the new playlist</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--create-description</span></code></p></td>
+<td><p>str</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p>Description for the new playlist</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--create-privacy</span></code></p></td>
+<td><p>str</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">public</span></code></p></td>
+<td><p>Privacy status: <code class="docutils literal notranslate"><span class="pre">public</span></code>, <code class="docutils literal notranslate"><span class="pre">unlisted</span></code>, or <code class="docutils literal notranslate"><span class="pre">private</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="delete-playlist">
+<h3><code class="docutils literal notranslate"><span class="pre">delete_playlist</span></code><a class="headerlink" href="#delete-playlist" title="Link to this heading">¶</a></h3>
+<p>Delete a playlist by name.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>delete_playlist<span class="w"> </span>--delete-playlist-name<span class="w"> </span><span class="s2">"Old Playlist"</span>
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--delete-playlist-name</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Name of the playlist to delete</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="subtract">
+<h3><code class="docutils literal notranslate"><span class="pre">subtract</span></code><a class="headerlink" href="#subtract" title="Link to this heading">¶</a></h3>
+<p>Subtract one set of playlists from another. Finds videos present in both sets and removes them from the “subtract from” playlists.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>subtract<span class="w"> </span>--subtract-what<span class="w"> </span><span class="s2">"Watched"</span><span class="w"> </span>--subtract-from<span class="w"> </span><span class="s2">"To Watch"</span>
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--subtract-what</span></code></p></td>
+<td><p>list[str]</p></td>
+<td><p>(required)</p></td>
+<td><p>Playlist names containing items to subtract</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--subtract-from</span></code></p></td>
+<td><p>list[str]</p></td>
+<td><p>(required)</p></td>
+<td><p>Playlist names to subtract from</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--do-delete</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>True</p></td>
+<td><p>Actually perform deletions</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="merge">
+<h3><code class="docutils literal notranslate"><span class="pre">merge</span></code><a class="headerlink" href="#merge" title="Link to this heading">¶</a></h3>
+<p>Merge or copy playlists into a destination playlist. By default, deduplicates (skips videos already in destination). Use <code class="docutils literal notranslate"><span class="pre">--no-merge-dedup</span></code> to copy all videos without deduplication.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Merge with deduplication (default)</span>
+pytubekit<span class="w"> </span>merge<span class="w"> </span>--merge-sources<span class="w"> </span><span class="s2">"Rock"</span><span class="w"> </span><span class="s2">"Pop"</span><span class="w"> </span>--merge-destination<span class="w"> </span><span class="s2">"All Music"</span>
+
+<span class="c1"># Copy without deduplication (like old copy_playlist)</span>
+pytubekit<span class="w"> </span>merge<span class="w"> </span>--merge-sources<span class="w"> </span><span class="s2">"Original"</span><span class="w"> </span>--merge-destination<span class="w"> </span><span class="s2">"Backup"</span><span class="w"> </span>--no-merge-dedup
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--merge-sources</span></code></p></td>
+<td><p>list[str]</p></td>
+<td><p>(required)</p></td>
+<td><p>Source playlist names to merge from</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--merge-destination</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Destination playlist name to merge into</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--merge-dedup</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>True</p></td>
+<td><p>Skip duplicates already in destination</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="sort-playlist">
+<h3><code class="docutils literal notranslate"><span class="pre">sort_playlist</span></code><a class="headerlink" href="#sort-playlist" title="Link to this heading">¶</a></h3>
+<p>Sort a playlist by title, channel, or date. This deletes and re-adds all items in sorted order.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>sort_playlist<span class="w"> </span>--sort-playlist-name<span class="w"> </span><span class="s2">"Music"</span><span class="w"> </span>--sort-key<span class="w"> </span>title
+pytubekit<span class="w"> </span>sort_playlist<span class="w"> </span>--sort-playlist-name<span class="w"> </span><span class="s2">"Music"</span><span class="w"> </span>--sort-key<span class="w"> </span>channel
+pytubekit<span class="w"> </span>sort_playlist<span class="w"> </span>--sort-playlist-name<span class="w"> </span><span class="s2">"Music"</span><span class="w"> </span>--sort-key<span class="w"> </span>date
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--sort-playlist-name</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Name of playlist to sort</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--sort-key</span></code></p></td>
+<td><p>str</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">title</span></code></p></td>
+<td><p>Sort key: <code class="docutils literal notranslate"><span class="pre">title</span></code>, <code class="docutils literal notranslate"><span class="pre">channel</span></code>, or <code class="docutils literal notranslate"><span class="pre">date</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Sorting deletes all items from the playlist and re-adds them in order. This consumes significant API quota.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="rename-playlist">
+<h3><code class="docutils literal notranslate"><span class="pre">rename_playlist</span></code><a class="headerlink" href="#rename-playlist" title="Link to this heading">¶</a></h3>
+<p>Rename a playlist.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>rename_playlist<span class="w"> </span>--rename-playlist-name<span class="w"> </span><span class="s2">"Old Name"</span><span class="w"> </span>--rename-new-name<span class="w"> </span><span class="s2">"New Name"</span>
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rename-playlist-name</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Current name of the playlist</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rename-new-name</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>New name for the playlist</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="clear-playlist">
+<h3><code class="docutils literal notranslate"><span class="pre">clear_playlist</span></code><a class="headerlink" href="#clear-playlist" title="Link to this heading">¶</a></h3>
+<p>Delete all items from a playlist.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>clear_playlist<span class="w"> </span>--clear-name<span class="w"> </span><span class="s2">"Temp"</span>
+pytubekit<span class="w"> </span>clear_playlist<span class="w"> </span>--clear-name<span class="w"> </span><span class="s2">"Temp"</span><span class="w"> </span>--no-do-delete<span class="w">   </span><span class="c1"># Dry run</span>
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--clear-name</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Name of playlist to clear</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--do-delete</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>True</p></td>
+<td><p>Actually perform deletions</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="overflow">
+<h3><code class="docutils literal notranslate"><span class="pre">overflow</span></code><a class="headerlink" href="#overflow" title="Link to this heading">¶</a></h3>
+<p>Move videos from a source playlist to a destination playlist, respecting YouTube’s 5,000-item playlist limit.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>overflow<span class="w"> </span>--source<span class="w"> </span><span class="s2">"Big Playlist"</span><span class="w"> </span>--destination<span class="w"> </span><span class="s2">"Big Playlist Overflow"</span>
+pytubekit<span class="w"> </span>overflow<span class="w"> </span>--source<span class="w"> </span><span class="s2">"Big Playlist"</span><span class="w"> </span>--destination<span class="w"> </span><span class="s2">"Overflow"</span><span class="w"> </span>--no-do-delete<span class="w">   </span><span class="c1"># Dry run</span>
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--source</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Source playlist name</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--destination</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Destination playlist name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--do-delete</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>True</p></td>
+<td><p>Actually move (set to False for dry run)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="add-file-to-playlist">
+<h3><code class="docutils literal notranslate"><span class="pre">add_file_to_playlist</span></code><a class="headerlink" href="#add-file-to-playlist" title="Link to this heading">¶</a></h3>
+<p>Add video IDs from a file to a playlist.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>add_file_to_playlist<span class="w"> </span>--add-file<span class="w"> </span>ids.txt<span class="w"> </span>--add-playlist<span class="w"> </span><span class="s2">"My Playlist"</span>
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--add-file</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Path to text file with video IDs (one per line)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--add-playlist</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Name of playlist to add videos to</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--page-size</span></code></p></td>
+<td><p>int</p></td>
+<td><p>50</p></td>
+<td><p>Page size for API pagination</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="local-commands-zero-api-quota">
+<h2>Local Commands (Zero API Quota)<a class="headerlink" href="#local-commands-zero-api-quota" title="Link to this heading">¶</a></h2>
+<p>These commands work entirely on dump files produced by <code class="docutils literal notranslate"><span class="pre">dump</span></code>. They make <strong>zero YouTube API calls</strong> and consume no quota.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">find_video</span></code>, <code class="docutils literal notranslate"><span class="pre">stats</span></code>, and <code class="docutils literal notranslate"><span class="pre">search_playlist</span></code> commands also support local mode via <code class="docutils literal notranslate"><span class="pre">--local-dump-folder</span></code>.</p>
+</div>
+<section id="local-diff">
+<h3><code class="docutils literal notranslate"><span class="pre">local_diff</span></code><a class="headerlink" href="#local-diff" title="Link to this heading">¶</a></h3>
+<p>Read two paths (each can be a file or folder) and compute the set difference A−B (default) or intersection A∩B (<code class="docutils literal notranslate"><span class="pre">--local-diff-reverse</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># IDs in folder A but not in folder B</span>
+pytubekit<span class="w"> </span>local_diff<span class="w"> </span>--local-diff-a<span class="w"> </span>/dump/all<span class="w"> </span>--local-diff-b<span class="w"> </span>/dump/seen
+
+<span class="c1"># IDs in both A and B</span>
+pytubekit<span class="w"> </span>local_diff<span class="w"> </span>--local-diff-a<span class="w"> </span>/dump/all<span class="w"> </span>--local-diff-b<span class="w"> </span>/dump/seen<span class="w"> </span>--local-diff-reverse
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--local-diff-a</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Path A (file or folder)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--local-diff-b</span></code></p></td>
+<td><p>str</p></td>
+<td><p>(required)</p></td>
+<td><p>Path B (file or folder)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--local-diff-reverse</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>False</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code> = A−B, <code class="docutils literal notranslate"><span class="pre">True</span></code> = A∩B</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="local-dedup">
+<h3><code class="docutils literal notranslate"><span class="pre">local_dedup</span></code><a class="headerlink" href="#local-dedup" title="Link to this heading">¶</a></h3>
+<p>Report intra-playlist duplicates (same ID appears more than once in a single file) and cross-playlist duplicates (same ID appears in multiple files).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>local_dedup
+pytubekit<span class="w"> </span>local_dedup<span class="w"> </span>--local-dump-folder<span class="w"> </span>/path/to/dump
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--local-dump-folder</span></code></p></td>
+<td><p>str</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.</span></code></p></td>
+<td><p>Path to dump folder</p></td>
+</tr>
+</tbody>
+</table>
+<p>Output lines are prefixed with <code class="docutils literal notranslate"><span class="pre">INTRA</span></code> (within one file) or <code class="docutils literal notranslate"><span class="pre">CROSS</span></code> (across files).</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="download">
+<h2>Download<a class="headerlink" href="#download" title="Link to this heading">¶</a></h2>
+<section id="watch-later">
+<h3><code class="docutils literal notranslate"><span class="pre">watch_later</span></code><a class="headerlink" href="#watch-later" title="Link to this heading">¶</a></h3>
+<p>Download the Watch Later playlist using yt-dlp.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytubekit<span class="w"> </span>watch_later
+</pre></div>
+</div>
+<p>No additional parameters. Uses yt-dlp with <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> authentication.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pytubekit</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">pytubekit</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">CLI Commands Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quota-guide.html">API Quota Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html">Development Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notes.html">Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytubekit.html">pytubekit package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">pytubekit</a><ul>
+      <li>Previous: <a href="overview.html" title="previous chapter">Overview</a></li>
+      <li>Next: <a href="quota-guide.html" title="next chapter">API Quota Guide</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026 Mark Veltzer.
+      
+      |
+      <a href="_sources/cli-reference.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

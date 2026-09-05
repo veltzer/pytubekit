@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pytubekit.configs &#8212; pytubekit Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=423071ad"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pytubekit.configs</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">All configurations</span>
+<span class="sd">"""</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytconf</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">ParamCreator</span>
+
+
+<div class="viewcode-block" id="ConfigPagination">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigPagination">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigPagination</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Pagination parameters """</span>
+    <span class="n">page_size</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_int</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"What page size to use for pagination (max is 50)"</span><span class="p">,</span>
+        <span class="c1"># if you set it for more than 50 it will be 50...</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigChannelId">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigChannelId">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigChannelId</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Channel ID options """</span>
+    <span class="n">watch_later</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_bool</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Output Watch Later playlist ID instead of channel ID"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigDump">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigDump">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigDump</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Parameters for dumping """</span>
+    <span class="n">dump_folder</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Which folder to dump to"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"."</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigSubtract">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigSubtract">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigSubtract</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Subtract parameters """</span>
+    <span class="n">subtract_what</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"What playlists to subtract"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subtract_from</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"What playlist to subtract from"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigPlaylist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigPlaylist">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigPlaylist</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Playlist parameters """</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str_or_none</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"What playlist name to use"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">playlist_id</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str_or_none</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"What playlist id to use"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigVideo">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigVideo">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigVideo</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Video id to use """</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Video id to use"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigPlaylists">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigPlaylists">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigPlaylists</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Playlists to use """</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"What playlists to use"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigCleanupPlaylists">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigCleanupPlaylists">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigCleanupPlaylists</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Playlists to clean up """</span>
+    <span class="n">cleanup_names</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"What playlists to clean up (omit for all)"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigBudget">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigBudget">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigBudget</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" API quota budget parameters """</span>
+    <span class="n">max_mutations</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_int_or_none</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Stop cleanly after this many write operations (each costs 50 quota units); omit for unlimited"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigDelete">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigDelete">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigDelete</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Configs for doing delete """</span>
+    <span class="n">do_delete</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_bool</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Really delete?"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigCleanup">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigCleanup">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigCleanup</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Parameters for cleanup """</span>
+    <span class="n">dedup</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_bool</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"detect duplicates?"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">deleted</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_bool</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Really delete deleted?"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">privatized</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_bool</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Really delete privatized?"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigDiff">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigDiff">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigDiff</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Parameters for diff """</span>
+    <span class="n">diff_a_playlists</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Source A: YouTube playlist names"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+    <span class="p">)</span>
+    <span class="n">diff_a_files</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Source A: local files with video IDs"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+    <span class="p">)</span>
+    <span class="n">diff_b_playlists</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Source B: YouTube playlist names"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+    <span class="p">)</span>
+    <span class="n">diff_b_files</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Source B: local files with video IDs"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+    <span class="p">)</span>
+    <span class="n">diff_reverse</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_bool</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"False = A-B (difference), True = A&amp;B (intersection)"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">diff_output_file</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str_or_none</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Path to write results to (omit for stdout)"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigAddData">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigAddData">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigAddData</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Parameters for add_data """</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Path to text file with video IDs (one per line)"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">output_csv</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Path to CSV file to write metadata to"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigOverflow">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigOverflow">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigOverflow</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Overflow parameters """</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Source playlist name"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Destination playlist name"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigClear">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigClear">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigClear</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Playlist to clear """</span>
+    <span class="n">clear_name</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Name of playlist to clear"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigMerge">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigMerge">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigMerge</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Merge parameters """</span>
+    <span class="n">merge_sources</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Source playlist names to merge from"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">merge_destination</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Destination playlist name to merge into"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">merge_dedup</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_bool</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Skip duplicates already in destination"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigSort">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigSort">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigSort</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Sort playlist parameters """</span>
+    <span class="n">sort_playlist_name</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Name of playlist to sort"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">sort_key</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Sort key: title, channel, or date"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"title"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigSearch">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigSearch">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigSearch</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Search playlist parameters """</span>
+    <span class="n">search_playlists</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Playlist names to search in"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">search_query</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Text to search for in video title or channel name"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigExportCsv">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigExportCsv">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigExportCsv</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Export playlist to CSV parameters """</span>
+    <span class="n">export_playlist_name</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Name of playlist to export"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">export_csv_path</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Path to CSV file to write"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigRename">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigRename">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigRename</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Rename playlist parameters """</span>
+    <span class="n">rename_playlist_name</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Current name of the playlist to rename"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">rename_new_name</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"New name for the playlist"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigCollectIds">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigCollectIds">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigCollectIds</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Collect IDs parameters """</span>
+    <span class="n">collect_files</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Files to scan for YouTube video IDs"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigAddFileToPlaylist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigAddFileToPlaylist">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigAddFileToPlaylist</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Add videos from a file to a playlist """</span>
+    <span class="n">add_file</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Path to text file with video IDs (one per line)"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">add_playlist</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Name of playlist to add videos to"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigCreatePlaylist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigCreatePlaylist">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigCreatePlaylist</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Create playlist parameters """</span>
+    <span class="n">create_name</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span><span class="n">help_string</span><span class="o">=</span><span class="s2">"Name for the new playlist"</span><span class="p">)</span>
+    <span class="n">create_description</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span><span class="n">help_string</span><span class="o">=</span><span class="s2">"Description for the new playlist"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
+    <span class="n">create_privacy</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span><span class="n">help_string</span><span class="o">=</span><span class="s2">"Privacy status: public, unlisted, or private"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"public"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigDeletePlaylist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigDeletePlaylist">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigDeletePlaylist</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Delete playlist parameters """</span>
+    <span class="n">delete_playlist_name</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span><span class="n">help_string</span><span class="o">=</span><span class="s2">"Name of the playlist to delete"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigFindVideo">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigFindVideo">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigFindVideo</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Find video parameters """</span>
+    <span class="n">find_video_id</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span><span class="n">help_string</span><span class="o">=</span><span class="s2">"Video ID to search for across all playlists"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigStatsFilter">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigStatsFilter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigStatsFilter</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Optional filter for stats command """</span>
+    <span class="n">stats_names</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_list_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Filter to these playlist names (omit for all)"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigLocalDumpFolder">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigLocalDumpFolder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigLocalDumpFolder</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Local dump folder to operate on """</span>
+    <span class="n">local_dump_folder</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Path to dump folder"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"."</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigLocalDiff">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigLocalDiff">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigLocalDiff</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Local diff parameters """</span>
+    <span class="n">local_diff_a</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Path A (file or folder)"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">local_diff_b</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_str</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"Path B (file or folder)"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">local_diff_reverse</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_bool</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"False = A-B (difference), True = A&amp;B (intersection)"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="ConfigPrint">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.configs.ConfigPrint">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigPrint</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" How to dump things """</span>
+    <span class="n">full</span> <span class="o">=</span> <span class="n">ParamCreator</span><span class="o">.</span><span class="n">create_bool</span><span class="p">(</span>
+        <span class="n">help_string</span><span class="o">=</span><span class="s2">"full dumps or just id?"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">pytubekit</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pytubekit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026 Mark Veltzer.
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

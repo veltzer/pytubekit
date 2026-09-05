@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pytubekit package &#8212; pytubekit Documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=423071ad"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Notes" href="notes.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="pytubekit-package">
+<h1>pytubekit package<a class="headerlink" href="#pytubekit-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-pytubekit.configs">
+<span id="pytubekit-configs-module"></span><h2>pytubekit.configs module<a class="headerlink" href="#module-pytubekit.configs" title="Link to this heading">¶</a></h2>
+<p>All configurations</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigAddData">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigAddData</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigAddData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigAddData" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Parameters for add_data</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigAddData.input_file">
+<span class="sig-name descname"><span class="pre">input_file</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigAddData.input_file" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigAddData.output_csv">
+<span class="sig-name descname"><span class="pre">output_csv</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigAddData.output_csv" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigAddFileToPlaylist">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigAddFileToPlaylist</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigAddFileToPlaylist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigAddFileToPlaylist" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Add videos from a file to a playlist</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigAddFileToPlaylist.add_file">
+<span class="sig-name descname"><span class="pre">add_file</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigAddFileToPlaylist.add_file" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigAddFileToPlaylist.add_playlist">
+<span class="sig-name descname"><span class="pre">add_playlist</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigAddFileToPlaylist.add_playlist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigBudget">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigBudget</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigBudget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigBudget" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>API quota budget parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigBudget.max_mutations">
+<span class="sig-name descname"><span class="pre">max_mutations</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#pytubekit.configs.ConfigBudget.max_mutations" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigChannelId">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigChannelId</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigChannelId"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigChannelId" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Channel ID options</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigChannelId.watch_later">
+<span class="sig-name descname"><span class="pre">watch_later</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#pytubekit.configs.ConfigChannelId.watch_later" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCleanup">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigCleanup</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigCleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigCleanup" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Parameters for cleanup</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCleanup.dedup">
+<span class="sig-name descname"><span class="pre">dedup</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#pytubekit.configs.ConfigCleanup.dedup" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCleanup.deleted">
+<span class="sig-name descname"><span class="pre">deleted</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#pytubekit.configs.ConfigCleanup.deleted" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCleanup.privatized">
+<span class="sig-name descname"><span class="pre">privatized</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#pytubekit.configs.ConfigCleanup.privatized" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCleanupPlaylists">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigCleanupPlaylists</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigCleanupPlaylists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigCleanupPlaylists" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Playlists to clean up</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCleanupPlaylists.cleanup_names">
+<span class="sig-name descname"><span class="pre">cleanup_names</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigCleanupPlaylists.cleanup_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigClear">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigClear</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigClear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigClear" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Playlist to clear</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigClear.clear_name">
+<span class="sig-name descname"><span class="pre">clear_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigClear.clear_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCollectIds">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigCollectIds</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigCollectIds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigCollectIds" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Collect IDs parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCollectIds.collect_files">
+<span class="sig-name descname"><span class="pre">collect_files</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigCollectIds.collect_files" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCreatePlaylist">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigCreatePlaylist</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigCreatePlaylist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigCreatePlaylist" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Create playlist parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCreatePlaylist.create_description">
+<span class="sig-name descname"><span class="pre">create_description</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></span><a class="headerlink" href="#pytubekit.configs.ConfigCreatePlaylist.create_description" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCreatePlaylist.create_name">
+<span class="sig-name descname"><span class="pre">create_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigCreatePlaylist.create_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigCreatePlaylist.create_privacy">
+<span class="sig-name descname"><span class="pre">create_privacy</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'public'</span></span><a class="headerlink" href="#pytubekit.configs.ConfigCreatePlaylist.create_privacy" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDelete">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigDelete</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigDelete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigDelete" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Configs for doing delete</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDelete.do_delete">
+<span class="sig-name descname"><span class="pre">do_delete</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#pytubekit.configs.ConfigDelete.do_delete" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDeletePlaylist">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigDeletePlaylist</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigDeletePlaylist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigDeletePlaylist" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Delete playlist parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDeletePlaylist.delete_playlist_name">
+<span class="sig-name descname"><span class="pre">delete_playlist_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigDeletePlaylist.delete_playlist_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDiff">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigDiff</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigDiff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigDiff" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Parameters for diff</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDiff.diff_a_files">
+<span class="sig-name descname"><span class="pre">diff_a_files</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigDiff.diff_a_files" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDiff.diff_a_playlists">
+<span class="sig-name descname"><span class="pre">diff_a_playlists</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigDiff.diff_a_playlists" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDiff.diff_b_files">
+<span class="sig-name descname"><span class="pre">diff_b_files</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigDiff.diff_b_files" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDiff.diff_b_playlists">
+<span class="sig-name descname"><span class="pre">diff_b_playlists</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigDiff.diff_b_playlists" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDiff.diff_output_file">
+<span class="sig-name descname"><span class="pre">diff_output_file</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#pytubekit.configs.ConfigDiff.diff_output_file" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDiff.diff_reverse">
+<span class="sig-name descname"><span class="pre">diff_reverse</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#pytubekit.configs.ConfigDiff.diff_reverse" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDump">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigDump</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigDump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigDump" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Parameters for dumping</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigDump.dump_folder">
+<span class="sig-name descname"><span class="pre">dump_folder</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'.'</span></span><a class="headerlink" href="#pytubekit.configs.ConfigDump.dump_folder" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigExportCsv">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigExportCsv</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigExportCsv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigExportCsv" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Export playlist to CSV parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigExportCsv.export_csv_path">
+<span class="sig-name descname"><span class="pre">export_csv_path</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigExportCsv.export_csv_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigExportCsv.export_playlist_name">
+<span class="sig-name descname"><span class="pre">export_playlist_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigExportCsv.export_playlist_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigFindVideo">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigFindVideo</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigFindVideo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigFindVideo" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Find video parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigFindVideo.find_video_id">
+<span class="sig-name descname"><span class="pre">find_video_id</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigFindVideo.find_video_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigLocalDiff">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigLocalDiff</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigLocalDiff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigLocalDiff" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Local diff parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigLocalDiff.local_diff_a">
+<span class="sig-name descname"><span class="pre">local_diff_a</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigLocalDiff.local_diff_a" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigLocalDiff.local_diff_b">
+<span class="sig-name descname"><span class="pre">local_diff_b</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigLocalDiff.local_diff_b" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigLocalDiff.local_diff_reverse">
+<span class="sig-name descname"><span class="pre">local_diff_reverse</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#pytubekit.configs.ConfigLocalDiff.local_diff_reverse" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigLocalDumpFolder">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigLocalDumpFolder</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigLocalDumpFolder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigLocalDumpFolder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Local dump folder to operate on</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigLocalDumpFolder.local_dump_folder">
+<span class="sig-name descname"><span class="pre">local_dump_folder</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'.'</span></span><a class="headerlink" href="#pytubekit.configs.ConfigLocalDumpFolder.local_dump_folder" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigMerge">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigMerge</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigMerge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigMerge" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Merge parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigMerge.merge_dedup">
+<span class="sig-name descname"><span class="pre">merge_dedup</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#pytubekit.configs.ConfigMerge.merge_dedup" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigMerge.merge_destination">
+<span class="sig-name descname"><span class="pre">merge_destination</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigMerge.merge_destination" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigMerge.merge_sources">
+<span class="sig-name descname"><span class="pre">merge_sources</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigMerge.merge_sources" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigOverflow">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigOverflow</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigOverflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigOverflow" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Overflow parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigOverflow.destination">
+<span class="sig-name descname"><span class="pre">destination</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigOverflow.destination" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigOverflow.source">
+<span class="sig-name descname"><span class="pre">source</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigOverflow.source" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigPagination">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigPagination</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigPagination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigPagination" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Pagination parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigPagination.page_size">
+<span class="sig-name descname"><span class="pre">page_size</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">50</span></span><a class="headerlink" href="#pytubekit.configs.ConfigPagination.page_size" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigPlaylist">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigPlaylist</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigPlaylist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigPlaylist" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Playlist parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigPlaylist.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#pytubekit.configs.ConfigPlaylist.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigPlaylist.playlist_id">
+<span class="sig-name descname"><span class="pre">playlist_id</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#pytubekit.configs.ConfigPlaylist.playlist_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigPlaylists">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigPlaylists</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigPlaylists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigPlaylists" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Playlists to use</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigPlaylists.names">
+<span class="sig-name descname"><span class="pre">names</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigPlaylists.names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigPrint">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigPrint</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigPrint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigPrint" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>How to dump things</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigPrint.full">
+<span class="sig-name descname"><span class="pre">full</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#pytubekit.configs.ConfigPrint.full" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigRename">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigRename</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigRename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigRename" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Rename playlist parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigRename.rename_new_name">
+<span class="sig-name descname"><span class="pre">rename_new_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigRename.rename_new_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigRename.rename_playlist_name">
+<span class="sig-name descname"><span class="pre">rename_playlist_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigRename.rename_playlist_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigSearch">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigSearch</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigSearch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigSearch" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Search playlist parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigSearch.search_playlists">
+<span class="sig-name descname"><span class="pre">search_playlists</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigSearch.search_playlists" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigSearch.search_query">
+<span class="sig-name descname"><span class="pre">search_query</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigSearch.search_query" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigSort">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigSort</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigSort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigSort" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Sort playlist parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigSort.sort_key">
+<span class="sig-name descname"><span class="pre">sort_key</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'title'</span></span><a class="headerlink" href="#pytubekit.configs.ConfigSort.sort_key" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigSort.sort_playlist_name">
+<span class="sig-name descname"><span class="pre">sort_playlist_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigSort.sort_playlist_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigStatsFilter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigStatsFilter</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigStatsFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigStatsFilter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Optional filter for stats command</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigStatsFilter.stats_names">
+<span class="sig-name descname"><span class="pre">stats_names</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigStatsFilter.stats_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigSubtract">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigSubtract</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigSubtract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigSubtract" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Subtract parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigSubtract.subtract_from">
+<span class="sig-name descname"><span class="pre">subtract_from</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigSubtract.subtract_from" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigSubtract.subtract_what">
+<span class="sig-name descname"><span class="pre">subtract_what</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#pytubekit.configs.ConfigSubtract.subtract_what" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigVideo">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.configs.</span></span><span class="sig-name descname"><span class="pre">ConfigVideo</span></span><a class="reference internal" href="_modules/pytubekit/configs.html#ConfigVideo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.configs.ConfigVideo" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
+<p>Video id to use</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.configs.ConfigVideo.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pytconf.param.Unique</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#pytubekit.configs.ConfigVideo.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pytubekit.constants">
+<span id="pytubekit-constants-module"></span><h2>pytubekit.constants module<a class="headerlink" href="#module-pytubekit.constants" title="Link to this heading">¶</a></h2>
+<p>constants.py</p>
+</section>
+<section id="module-pytubekit.main">
+<span id="pytubekit-main-module"></span><h2>pytubekit.main module<a class="headerlink" href="#module-pytubekit.main" title="Link to this heading">¶</a></h2>
+<p>main entry point to the program</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.add_data">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">add_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#add_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.add_data" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.add_file_to_playlist">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">add_file_to_playlist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#add_file_to_playlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.add_file_to_playlist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.channels">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#channels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.channels" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.cleanup">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#cleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.cleanup" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.clear_playlist">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">clear_playlist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#clear_playlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.clear_playlist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.collect_ids">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">collect_ids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#collect_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.collect_ids" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.create_playlist">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">create_playlist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#create_playlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.create_playlist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.delete_playlist">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">delete_playlist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#delete_playlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.delete_playlist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.diff">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">diff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.diff" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.dump">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.dump" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.export_csv">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">export_csv</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#export_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.export_csv" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.find_video">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">find_video</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#find_video"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.find_video" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.get_channel_id">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">get_channel_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#get_channel_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.get_channel_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.get_video_ids_from_sources">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">get_video_ids_from_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#get_video_ids_from_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.get_video_ids_from_sources" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.local_dedup">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">local_dedup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#local_dedup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.local_dedup" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.local_diff">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">local_diff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#local_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.local_diff" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.main">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytubekit/main.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.main" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.merge">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.merge" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.overflow">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">overflow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#overflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.overflow" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.playlist">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">playlist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#playlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.playlist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.print_stats_summary">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">print_stats_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#print_stats_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.print_stats_summary" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.rename_playlist">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">rename_playlist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#rename_playlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.rename_playlist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.search_playlist">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">search_playlist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#search_playlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.search_playlist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.sort_playlist">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">sort_playlist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#sort_playlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.sort_playlist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.stats">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.stats" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.subtract">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">subtract</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#subtract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.subtract" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.video_info">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">video_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#video_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.video_info" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.main.watch_later">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.main.</span></span><span class="sig-name descname"><span class="pre">watch_later</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/main.html#watch_later"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.main.watch_later" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pytubekit.static">
+<span id="pytubekit-static-module"></span><h2>pytubekit.static module<a class="headerlink" href="#module-pytubekit.static" title="Link to this heading">¶</a></h2>
+<p>version which can be consumed from within the module</p>
+</section>
+<section id="module-pytubekit.util">
+<span id="pytubekit-util-module"></span><h2>pytubekit.util module<a class="headerlink" href="#module-pytubekit.util" title="Link to this heading">¶</a></h2>
+<p>util.py</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="pytubekit.util.MutationBudgetError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">MutationBudgetError</span></span><a class="reference internal" href="_modules/pytubekit/util.html#MutationBudgetError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.MutationBudgetError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>The –max_mutations budget for this run was reached</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.util.PagedRequest">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">PagedRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytubekit/util.html#PagedRequest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.PagedRequest" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytubekit.util.PagedRequest.get_all_items">
+<span class="sig-name descname"><span class="pre">get_all_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#PagedRequest.get_all_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.PagedRequest.get_all_items" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytubekit.util.PagedRequest.get_next_page">
+<span class="sig-name descname"><span class="pre">get_next_page</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#PagedRequest.get_next_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.PagedRequest.get_next_page" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="pytubekit.util.QuotaExceededError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">QuotaExceededError</span></span><a class="reference internal" href="_modules/pytubekit/util.html#QuotaExceededError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.QuotaExceededError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>The YouTube API daily quota is exhausted</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytubekit.util.RunStats">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">RunStats</span></span><a class="reference internal" href="_modules/pytubekit/util.html#RunStats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.RunStats" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Per-run counters for API quota accounting</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.util.RunStats.mutations_performed">
+<span class="sig-name descname"><span class="pre">mutations_performed</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#pytubekit.util.RunStats.mutations_performed" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytubekit.util.RunStats.quota_spent">
+<span class="sig-name descname"><span class="pre">quota_spent</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#pytubekit.util.RunStats.quota_spent" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytubekit.util.RunStats.reset">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#RunStats.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.RunStats.reset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.add_video_to_playlist">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">add_video_to_playlist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlist_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#add_video_to_playlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.add_video_to_playlist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.cleanup_items">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">cleanup_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">dedup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_deleted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_privatized</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_delete</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#cleanup_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.cleanup_items" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.create_playlist_request">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">create_playlist_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlist_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pytubekit.util.PagedRequest" title="pytubekit.util.PagedRequest"><span class="pre">PagedRequest</span></a></span></span><a class="reference internal" href="_modules/pytubekit/util.html#create_playlist_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.create_playlist_request" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.create_playlists_request">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">create_playlists_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pytubekit.util.PagedRequest" title="pytubekit.util.PagedRequest"><span class="pre">PagedRequest</span></a></span></span><a class="reference internal" href="_modules/pytubekit/util.html#create_playlists_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.create_playlists_request" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.delete_playlist_item_by_id">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">delete_playlist_item_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlist_item_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#delete_playlist_item_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.delete_playlist_item_by_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_all_items">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_all_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_all_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_all_items" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_all_items_from_playlist_id">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_all_items_from_playlist_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlist_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_all_items_from_playlist_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_all_items_from_playlist_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_all_items_from_playlist_ids">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_all_items_from_playlist_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlist_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_all_items_from_playlist_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_all_items_from_playlist_ids" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_error_reasons">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_error_reasons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HttpError</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_error_reasons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_error_reasons" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_items_from_playlist_names">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_items_from_playlist_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_items_from_playlist_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_items_from_playlist_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_my_playlists_ids">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_my_playlists_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_my_playlists_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_my_playlists_ids" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_playlist_ids_from_names">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_playlist_ids_from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlist_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_playlist_ids_from_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_playlist_ids_from_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_playlist_item_count">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_playlist_item_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlist_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_playlist_item_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_playlist_item_count" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_playlist_item_ids_from_names">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_playlist_item_ids_from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlist_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_playlist_item_ids_from_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_playlist_item_ids_from_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_video_ids_from_playlist_names">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_video_ids_from_playlist_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_video_ids_from_playlist_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_video_ids_from_playlist_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_video_info">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_video_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">youtube_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_video_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_video_info" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_video_metadata">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_video_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">video_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_video_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_video_metadata" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_youtube">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_youtube</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_youtube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_youtube" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_youtube_channels">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_youtube_channels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_youtube_channels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_youtube_channels" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.get_youtube_playlists">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">get_youtube_playlists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#get_youtube_playlists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.get_youtube_playlists" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.log_mutation_cost_estimate">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">log_mutation_cost_estimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#log_mutation_cost_estimate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.log_mutation_cost_estimate" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.log_progress">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">log_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#log_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.log_progress" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.move_playlist_item">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">move_playlist_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlist_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#move_playlist_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.move_playlist_item" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.perform_mutation">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">perform_mutation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#perform_mutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.perform_mutation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.pretty_print">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">pretty_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IO</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;_io.TextIOWrapper</span> <span class="pre">name='&lt;stdout&gt;'</span> <span class="pre">mode='w'</span> <span class="pre">encoding='utf-8'&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#pretty_print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.pretty_print" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.read_all_dump_files">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">read_all_dump_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dump_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#read_all_dump_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.read_all_dump_files" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.read_video_ids_from_files">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">read_video_ids_from_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#read_video_ids_from_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.read_video_ids_from_files" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.read_video_ids_from_path">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">read_video_ids_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#read_video_ids_from_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.read_video_ids_from_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.util.retry_execute">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.util.</span></span><span class="sig-name descname"><span class="pre">retry_execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_retries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytubekit/util.html#retry_execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.util.retry_execute" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pytubekit.youtube">
+<span id="pytubekit-youtube-module"></span><h2>pytubekit.youtube module<a class="headerlink" href="#module-pytubekit.youtube" title="Link to this heading">¶</a></h2>
+<p>Module that handles the interaction with the yt_dlp library</p>
+<p>References:
+- <a class="reference external" href="https://github.com/yt-dlp/yt-dlp#embedding-yt-dlp">https://github.com/yt-dlp/yt-dlp#embedding-yt-dlp</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pytubekit.youtube.youtube_dl_download_urls">
+<span class="sig-prename descclassname"><span class="pre">pytubekit.youtube.</span></span><span class="sig-name descname"><span class="pre">youtube_dl_download_urls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pytubekit/youtube.html#youtube_dl_download_urls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytubekit.youtube.youtube_dl_download_urls" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pytubekit">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pytubekit" title="Link to this heading">¶</a></h2>
+<p>Initialize the module</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pytubekit</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">pytubekit</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli-reference.html">CLI Commands Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quota-guide.html">API Quota Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html">Development Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notes.html">Notes</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pytubekit package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">pytubekit</a><ul>
+      <li>Previous: <a href="notes.html" title="previous chapter">Notes</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026 Mark Veltzer.
+      
+      |
+      <a href="_sources/pytubekit.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

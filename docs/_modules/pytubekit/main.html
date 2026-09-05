@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pytubekit.main &#8212; pytubekit Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=423071ad"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pytubekit.main</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">main entry point to the program</span>
+<span class="sd">"""</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pylogconf.core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pygooglehelper</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigRequest</span><span class="p">,</span> <span class="n">register_functions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytconf</span><span class="w"> </span><span class="kn">import</span> <span class="n">config_arg_parse_and_launch</span><span class="p">,</span> <span class="n">register_endpoint</span><span class="p">,</span> <span class="n">register_main</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytubekit.configs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ConfigAddData</span><span class="p">,</span>
+    <span class="n">ConfigAddFileToPlaylist</span><span class="p">,</span>
+    <span class="n">ConfigBudget</span><span class="p">,</span>
+    <span class="n">ConfigChannelId</span><span class="p">,</span>
+    <span class="n">ConfigCleanup</span><span class="p">,</span>
+    <span class="n">ConfigCleanupPlaylists</span><span class="p">,</span>
+    <span class="n">ConfigClear</span><span class="p">,</span>
+    <span class="n">ConfigCollectIds</span><span class="p">,</span>
+    <span class="n">ConfigCreatePlaylist</span><span class="p">,</span>
+    <span class="n">ConfigDelete</span><span class="p">,</span>
+    <span class="n">ConfigDeletePlaylist</span><span class="p">,</span>
+    <span class="n">ConfigDiff</span><span class="p">,</span>
+    <span class="n">ConfigDump</span><span class="p">,</span>
+    <span class="n">ConfigExportCsv</span><span class="p">,</span>
+    <span class="n">ConfigFindVideo</span><span class="p">,</span>
+    <span class="n">ConfigLocalDiff</span><span class="p">,</span>
+    <span class="n">ConfigLocalDumpFolder</span><span class="p">,</span>
+    <span class="n">ConfigMerge</span><span class="p">,</span>
+    <span class="n">ConfigOverflow</span><span class="p">,</span>
+    <span class="n">ConfigPagination</span><span class="p">,</span>
+    <span class="n">ConfigPlaylist</span><span class="p">,</span>
+    <span class="n">ConfigPrint</span><span class="p">,</span>
+    <span class="n">ConfigRename</span><span class="p">,</span>
+    <span class="n">ConfigSearch</span><span class="p">,</span>
+    <span class="n">ConfigSort</span><span class="p">,</span>
+    <span class="n">ConfigStatsFilter</span><span class="p">,</span>
+    <span class="n">ConfigSubtract</span><span class="p">,</span>
+    <span class="n">ConfigVideo</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytubekit.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">DAILY_QUOTA_UNITS</span><span class="p">,</span> <span class="n">MAX_PLAYLIST_ITEMS</span><span class="p">,</span> <span class="n">SCOPES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytubekit.static</span><span class="w"> </span><span class="kn">import</span> <span class="n">APP_NAME</span><span class="p">,</span> <span class="n">DESCRIPTION</span><span class="p">,</span> <span class="n">VERSION_STR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytubekit.util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">METADATA_FIELDNAMES</span><span class="p">,</span>
+    <span class="n">MutationBudgetError</span><span class="p">,</span>
+    <span class="n">QuotaExceededError</span><span class="p">,</span>
+    <span class="n">RunStats</span><span class="p">,</span>
+    <span class="n">add_video_to_playlist</span><span class="p">,</span>
+    <span class="n">cleanup_items</span><span class="p">,</span>
+    <span class="n">create_playlist_request</span><span class="p">,</span>
+    <span class="n">create_playlists_request</span><span class="p">,</span>
+    <span class="n">delete_playlist_item_by_id</span><span class="p">,</span>
+    <span class="n">get_all_items</span><span class="p">,</span>
+    <span class="n">get_all_items_from_playlist_ids</span><span class="p">,</span>
+    <span class="n">get_items_from_playlist_names</span><span class="p">,</span>
+    <span class="n">get_my_playlists_ids</span><span class="p">,</span>
+    <span class="n">get_playlist_ids_from_names</span><span class="p">,</span>
+    <span class="n">get_playlist_item_count</span><span class="p">,</span>
+    <span class="n">get_video_ids_from_playlist_names</span><span class="p">,</span>
+    <span class="n">get_video_info</span><span class="p">,</span>
+    <span class="n">get_video_metadata</span><span class="p">,</span>
+    <span class="n">get_youtube</span><span class="p">,</span>
+    <span class="n">get_youtube_channels</span><span class="p">,</span>
+    <span class="n">get_youtube_playlists</span><span class="p">,</span>
+    <span class="n">log_mutation_cost_estimate</span><span class="p">,</span>
+    <span class="n">log_progress</span><span class="p">,</span>
+    <span class="n">move_playlist_item</span><span class="p">,</span>
+    <span class="n">perform_mutation</span><span class="p">,</span>
+    <span class="n">pretty_print</span><span class="p">,</span>
+    <span class="n">read_all_dump_files</span><span class="p">,</span>
+    <span class="n">read_video_ids_from_files</span><span class="p">,</span>
+    <span class="n">read_video_ids_from_path</span><span class="p">,</span>
+    <span class="n">retry_execute</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytubekit.youtube</span><span class="w"> </span><span class="kn">import</span> <span class="n">youtube_dl_download_urls</span>
+
+
+<div class="viewcode-block" id="get_channel_id">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.get_channel_id">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Show channel ID (or Watch Later playlist ID with --watch-later)"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigChannelId</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_channel_id</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">channels_obj</span> <span class="o">=</span> <span class="n">get_youtube_channels</span><span class="p">(</span><span class="n">youtube</span><span class="p">)</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">channels_obj</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+        <span class="n">part</span><span class="o">=</span><span class="s2">"id"</span><span class="p">,</span>
+        <span class="n">mine</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">retry_execute</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">channel_id</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s2">"items"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"id"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">ConfigChannelId</span><span class="o">.</span><span class="n">watch_later</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">channel_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"L"</span> <span class="o">+</span> <span class="n">channel_id</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">channel_id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="playlist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.playlist">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"List all entries in a playlist"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigPlaylist</span><span class="p">,</span> <span class="n">ConfigPrint</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">playlist</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">get_all_items</span><span class="p">(</span><span class="n">youtube</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ConfigPrint</span><span class="o">.</span><span class="n">full</span><span class="p">:</span>
+            <span class="n">pretty_print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f_video_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"resourceId"</span><span class="p">][</span><span class="s2">"videoId"</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">f_video_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dump">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.dump">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Dump all playlists"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigPrint</span><span class="p">,</span> <span class="n">ConfigDump</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dump</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">sub_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"date"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()),</span>
+        <span class="s2">"home"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">"~"</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">dump_folder</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">Template</span><span class="p">(</span><span class="n">ConfigDump</span><span class="o">.</span><span class="n">dump_folder</span><span class="p">)</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">sub_dict</span><span class="p">)</span>
+    <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">dump_folder</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">create_playlists_request</span><span class="p">(</span><span class="n">youtube</span><span class="p">)</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_all_items</span><span class="p">()</span>
+    <span class="n">id_to_title</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="n">f_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+        <span class="n">f_title</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"title"</span><span class="p">]</span>
+        <span class="n">id_to_title</span><span class="p">[</span><span class="n">f_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_title</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"got lists data"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">f_id</span><span class="p">,</span> <span class="n">f_title</span> <span class="ow">in</span> <span class="n">id_to_title</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dump_folder</span><span class="p">,</span> <span class="n">f_title</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"dumping [</span><span class="si">{</span><span class="n">f_title</span><span class="si">}</span><span class="s2">] to [</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">create_playlist_request</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">playlist_id</span><span class="o">=</span><span class="n">f_id</span><span class="p">)</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_all_items</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                <span class="n">f_video_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"resourceId"</span><span class="p">][</span><span class="s2">"videoId"</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">ConfigPrint</span><span class="o">.</span><span class="n">full</span><span class="p">:</span>
+                    <span class="n">pretty_print</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">f_video_id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="cleanup">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.cleanup">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Clean up playlists (dedup, remove deleted, remove privatized)"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigCleanupPlaylists</span><span class="p">,</span> <span class="n">ConfigCleanup</span><span class="p">,</span> <span class="n">ConfigDelete</span><span class="p">,</span> <span class="n">ConfigBudget</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ConfigCleanupPlaylists</span><span class="o">.</span><span class="n">cleanup_names</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"cleaning up [</span><span class="si">{</span><span class="n">ConfigCleanupPlaylists</span><span class="o">.</span><span class="n">cleanup_names</span><span class="si">}</span><span class="s2">]..."</span><span class="p">)</span>
+        <span class="n">playlist_ids</span> <span class="o">=</span> <span class="n">get_playlist_ids_from_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">ConfigCleanupPlaylists</span><span class="o">.</span><span class="n">cleanup_names</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"cleaning up all playlists..."</span><span class="p">)</span>
+        <span class="n">playlist_ids</span> <span class="o">=</span> <span class="n">get_my_playlists_ids</span><span class="p">(</span><span class="n">youtube</span><span class="p">)</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">get_all_items_from_playlist_ids</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">playlist_ids</span><span class="p">)</span>
+    <span class="n">cleanup_items</span><span class="p">(</span>
+        <span class="n">youtube</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span>
+        <span class="n">dedup</span><span class="o">=</span><span class="n">ConfigCleanup</span><span class="o">.</span><span class="n">dedup</span><span class="p">,</span>
+        <span class="n">check_deleted</span><span class="o">=</span><span class="n">ConfigCleanup</span><span class="o">.</span><span class="n">deleted</span><span class="p">,</span>
+        <span class="n">check_privatized</span><span class="o">=</span><span class="n">ConfigCleanup</span><span class="o">.</span><span class="n">privatized</span><span class="p">,</span>
+        <span class="n">do_delete</span><span class="o">=</span><span class="n">ConfigDelete</span><span class="o">.</span><span class="n">do_delete</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="subtract">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.subtract">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Remove videos from A playlists that exist in B playlists (A = A - B)"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigSubtract</span><span class="p">,</span> <span class="n">ConfigDelete</span><span class="p">,</span> <span class="n">ConfigBudget</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">subtract</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"subtracting [</span><span class="si">{</span><span class="n">ConfigSubtract</span><span class="o">.</span><span class="n">subtract_what</span><span class="si">}</span><span class="s2">] from [</span><span class="si">{</span><span class="n">ConfigSubtract</span><span class="o">.</span><span class="n">subtract_from</span><span class="si">}</span><span class="s2">]..."</span><span class="p">)</span>
+    <span class="n">what_video_ids</span> <span class="o">=</span> <span class="n">get_video_ids_from_playlist_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">ConfigSubtract</span><span class="o">.</span><span class="n">subtract_what</span><span class="p">)</span>
+    <span class="n">from_items</span> <span class="o">=</span> <span class="n">get_items_from_playlist_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">ConfigSubtract</span><span class="o">.</span><span class="n">subtract_from</span><span class="p">)</span>
+    <span class="n">deleted</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">wanted_to_delete</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">from_items</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">from_items</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">log_progress</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span>
+        <span class="n">video_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"resourceId"</span><span class="p">][</span><span class="s2">"videoId"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="n">what_video_ids</span><span class="p">:</span>
+            <span class="n">wanted_to_delete</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">ConfigDelete</span><span class="o">.</span><span class="n">do_delete</span><span class="p">:</span>
+                <span class="n">delete_playlist_item_by_id</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+                <span class="n">deleted</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"wanted_to_delete </span><span class="si">{</span><span class="n">wanted_to_delete</span><span class="si">}</span><span class="s2"> items"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"deleted </span><span class="si">{</span><span class="n">deleted</span><span class="si">}</span><span class="s2"> items"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ConfigDelete</span><span class="o">.</span><span class="n">do_delete</span><span class="p">:</span>
+        <span class="n">log_mutation_cost_estimate</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">wanted_to_delete</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="clear_playlist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.clear_playlist">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Delete all items from a playlist"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigClear</span><span class="p">,</span> <span class="n">ConfigDelete</span><span class="p">,</span> <span class="n">ConfigBudget</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clear_playlist</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">playlist_id</span> <span class="o">=</span> <span class="n">get_playlist_ids_from_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">ConfigClear</span><span class="o">.</span><span class="n">clear_name</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">get_all_items_from_playlist_ids</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">playlist_id</span><span class="p">])</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"playlist [</span><span class="si">{</span><span class="n">ConfigClear</span><span class="o">.</span><span class="n">clear_name</span><span class="si">}</span><span class="s2">] has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="si">}</span><span class="s2"> items"</span><span class="p">)</span>
+    <span class="n">deleted</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">log_progress</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ConfigDelete</span><span class="o">.</span><span class="n">do_delete</span><span class="p">:</span>
+            <span class="n">delete_playlist_item_by_id</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+            <span class="n">deleted</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"deleted </span><span class="si">{</span><span class="n">deleted</span><span class="si">}</span><span class="s2"> items from [</span><span class="si">{</span><span class="n">ConfigClear</span><span class="o">.</span><span class="n">clear_name</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ConfigDelete</span><span class="o">.</span><span class="n">do_delete</span><span class="p">:</span>
+        <span class="n">log_mutation_cost_estimate</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="merge">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.merge">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Merge/copy playlists into a destination playlist"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigMerge</span><span class="p">,</span> <span class="n">ConfigBudget</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">all_names</span> <span class="o">=</span> <span class="n">ConfigMerge</span><span class="o">.</span><span class="n">merge_sources</span> <span class="o">+</span> <span class="p">[</span><span class="n">ConfigMerge</span><span class="o">.</span><span class="n">merge_destination</span><span class="p">]</span>
+    <span class="n">all_ids</span> <span class="o">=</span> <span class="n">get_playlist_ids_from_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">all_names</span><span class="p">)</span>
+    <span class="n">source_ids</span> <span class="o">=</span> <span class="n">all_ids</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">destination_id</span> <span class="o">=</span> <span class="n">all_ids</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ConfigMerge</span><span class="o">.</span><span class="n">merge_dedup</span><span class="p">:</span>
+        <span class="n">dest_items</span> <span class="o">=</span> <span class="n">get_all_items_from_playlist_ids</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">destination_id</span><span class="p">])</span>
+        <span class="n">seen</span> <span class="o">=</span> <span class="p">{</span><span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"resourceId"</span><span class="p">][</span><span class="s2">"videoId"</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dest_items</span><span class="p">}</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"destination [</span><span class="si">{</span><span class="n">ConfigMerge</span><span class="o">.</span><span class="n">merge_destination</span><span class="si">}</span><span class="s2">] already has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seen</span><span class="p">)</span><span class="si">}</span><span class="s2"> videos"</span><span class="p">)</span>
+    <span class="n">source_items</span> <span class="o">=</span> <span class="n">get_all_items_from_playlist_ids</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">source_ids</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"source playlists have </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">source_items</span><span class="p">)</span><span class="si">}</span><span class="s2"> items total"</span><span class="p">)</span>
+    <span class="n">added</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">skipped</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_items</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">source_items</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">log_progress</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span>
+        <span class="n">video_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"resourceId"</span><span class="p">][</span><span class="s2">"videoId"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ConfigMerge</span><span class="o">.</span><span class="n">merge_dedup</span> <span class="ow">and</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+            <span class="n">skipped</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">continue</span>
+        <span class="n">add_video_to_playlist</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">destination_id</span><span class="p">,</span> <span class="n">video_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ConfigMerge</span><span class="o">.</span><span class="n">merge_dedup</span><span class="p">:</span>
+            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">video_id</span><span class="p">)</span>
+        <span class="n">added</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">ConfigMerge</span><span class="o">.</span><span class="n">merge_dedup</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"added </span><span class="si">{</span><span class="n">added</span><span class="si">}</span><span class="s2"> videos, skipped </span><span class="si">{</span><span class="n">skipped</span><span class="si">}</span><span class="s2"> duplicates"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"copied </span><span class="si">{</span><span class="n">added</span><span class="si">}</span><span class="s2"> videos"</span><span class="p">)</span></div>
+
+
+
+<span class="n">SORT_KEYS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"title"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+    <span class="s2">"channel"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"videoOwnerChannelTitle"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+    <span class="s2">"date"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"publishedAt"</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="sort_playlist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.sort_playlist">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Sort a playlist by title, channel, or date (moves items in place)"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigSort</span><span class="p">,</span> <span class="n">ConfigDelete</span><span class="p">,</span> <span class="n">ConfigBudget</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sort_playlist</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ConfigSort</span><span class="o">.</span><span class="n">sort_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SORT_KEYS</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"invalid sort key [</span><span class="si">{</span><span class="n">ConfigSort</span><span class="o">.</span><span class="n">sort_key</span><span class="si">}</span><span class="s2">], must be one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">SORT_KEYS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">playlist_id</span> <span class="o">=</span> <span class="n">get_playlist_ids_from_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">ConfigSort</span><span class="o">.</span><span class="n">sort_playlist_name</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">get_all_items_from_playlist_ids</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">playlist_id</span><span class="p">])</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"playlist [</span><span class="si">{</span><span class="n">ConfigSort</span><span class="o">.</span><span class="n">sort_playlist_name</span><span class="si">}</span><span class="s2">] has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="si">}</span><span class="s2"> items"</span><span class="p">)</span>
+    <span class="n">sorted_items</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">SORT_KEYS</span><span class="p">[</span><span class="n">ConfigSort</span><span class="o">.</span><span class="n">sort_key</span><span class="p">])</span>
+    <span class="n">current_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">]</span>
+    <span class="n">moves</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_items</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sorted_items</span><span class="p">):</span>
+        <span class="n">item_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">current_ids</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">==</span> <span class="n">item_id</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">current_ids</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
+        <span class="n">current_ids</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">item_id</span><span class="p">)</span>
+        <span class="n">moves</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">ConfigDelete</span><span class="o">.</span><span class="n">do_delete</span><span class="p">:</span>
+            <span class="n">move_playlist_item</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">playlist_id</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span>
+        <span class="n">log_progress</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ConfigDelete</span><span class="o">.</span><span class="n">do_delete</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"sorted playlist with </span><span class="si">{</span><span class="n">moves</span><span class="si">}</span><span class="s2"> moves (by </span><span class="si">{</span><span class="n">ConfigSort</span><span class="o">.</span><span class="n">sort_key</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"dry run: sorting would need </span><span class="si">{</span><span class="n">moves</span><span class="si">}</span><span class="s2"> moves (by </span><span class="si">{</span><span class="n">ConfigSort</span><span class="o">.</span><span class="n">sort_key</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+        <span class="n">log_mutation_cost_estimate</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">moves</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="search_playlist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.search_playlist">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Search for videos by title/channel (API) or video ID (local dump files)"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigSearch</span><span class="p">,</span> <span class="n">ConfigLocalDumpFolder</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_playlist</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ConfigSearch</span><span class="o">.</span><span class="n">search_query</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ConfigLocalDumpFolder</span><span class="o">.</span><span class="n">local_dump_folder</span> <span class="o">!=</span> <span class="s2">"."</span><span class="p">:</span>
+        <span class="c1"># Local mode: search dump files</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">read_all_dump_files</span><span class="p">(</span><span class="n">ConfigLocalDumpFolder</span><span class="o">.</span><span class="n">local_dump_folder</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lines</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">lineno</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># API mode: search YouTube playlists</span>
+        <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+        <span class="n">playlist_ids</span> <span class="o">=</span> <span class="n">get_playlist_ids_from_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">ConfigSearch</span><span class="o">.</span><span class="n">search_playlists</span><span class="p">)</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="n">get_all_items_from_playlist_ids</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">playlist_ids</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="n">channel</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"videoOwnerChannelTitle"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">title</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">channel</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="n">video_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"resourceId"</span><span class="p">][</span><span class="s2">"videoId"</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">video_id</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">  [</span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="export_csv">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.export_csv">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Export a playlist to CSV with video ID, title, channel, and position"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigExportCsv</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_csv</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">playlist_id</span> <span class="o">=</span> <span class="n">get_playlist_ids_from_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">ConfigExportCsv</span><span class="o">.</span><span class="n">export_playlist_name</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">get_all_items_from_playlist_ids</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">playlist_id</span><span class="p">])</span>
+    <span class="n">fieldnames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"position"</span><span class="p">,</span> <span class="s2">"video_id"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">,</span> <span class="s2">"channel"</span><span class="p">]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ConfigExportCsv</span><span class="o">.</span><span class="n">export_csv_path</span><span class="p">),</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="n">fieldnames</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">({</span>
+                <span class="s2">"position"</span><span class="p">:</span> <span class="n">position</span><span class="p">,</span>
+                <span class="s2">"video_id"</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"resourceId"</span><span class="p">][</span><span class="s2">"videoId"</span><span class="p">],</span>
+                <span class="s2">"title"</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+                <span class="s2">"channel"</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"videoOwnerChannelTitle"</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+            <span class="p">})</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"exported </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="si">}</span><span class="s2"> items to [</span><span class="si">{</span><span class="n">ConfigExportCsv</span><span class="o">.</span><span class="n">export_csv_path</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="rename_playlist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.rename_playlist">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Rename a playlist"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigRename</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rename_playlist</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">playlist_id</span> <span class="o">=</span> <span class="n">get_playlist_ids_from_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">ConfigRename</span><span class="o">.</span><span class="n">rename_playlist_name</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">youtube</span><span class="o">.</span><span class="n">playlists</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">part</span><span class="o">=</span><span class="s2">"snippet"</span><span class="p">,</span>
+        <span class="n">body</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="n">playlist_id</span><span class="p">,</span>
+            <span class="s2">"snippet"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"title"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">ConfigRename</span><span class="o">.</span><span class="n">rename_new_name</span><span class="p">),</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">perform_mutation</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"renamed [</span><span class="si">{</span><span class="n">ConfigRename</span><span class="o">.</span><span class="n">rename_playlist_name</span><span class="si">}</span><span class="s2">] to [</span><span class="si">{</span><span class="n">ConfigRename</span><span class="o">.</span><span class="n">rename_new_name</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overflow">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.overflow">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Move videos from source playlist to destination playlist respecting the </span><span class="si">{</span><span class="n">MAX_PLAYLIST_ITEMS</span><span class="si">}</span><span class="s2"> limit"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigOverflow</span><span class="p">,</span> <span class="n">ConfigDelete</span><span class="p">,</span> <span class="n">ConfigBudget</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overflow</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">source_id</span><span class="p">,</span> <span class="n">destination_id</span> <span class="o">=</span> <span class="n">get_playlist_ids_from_names</span><span class="p">(</span>
+        <span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">ConfigOverflow</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">ConfigOverflow</span><span class="o">.</span><span class="n">destination</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">destination_count</span> <span class="o">=</span> <span class="n">get_playlist_item_count</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">destination_id</span><span class="p">)</span>
+    <span class="n">available</span> <span class="o">=</span> <span class="n">MAX_PLAYLIST_ITEMS</span> <span class="o">-</span> <span class="n">destination_count</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"destination has </span><span class="si">{</span><span class="n">destination_count</span><span class="si">}</span><span class="s2"> items, </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="s2"> slots available"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">available</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"destination playlist is full, nothing to move"</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">source_items</span> <span class="o">=</span> <span class="n">get_all_items_from_playlist_ids</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">source_id</span><span class="p">])</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"source has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">source_items</span><span class="p">)</span><span class="si">}</span><span class="s2"> items"</span><span class="p">)</span>
+    <span class="n">moved</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">to_move</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">available</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_items</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"would move </span><span class="si">{</span><span class="n">to_move</span><span class="si">}</span><span class="s2"> videos"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">source_items</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">moved</span> <span class="o">&gt;=</span> <span class="n">available</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">ConfigDelete</span><span class="o">.</span><span class="n">do_delete</span><span class="p">:</span>
+            <span class="n">video_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"resourceId"</span><span class="p">][</span><span class="s2">"videoId"</span><span class="p">]</span>
+            <span class="n">add_video_to_playlist</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">destination_id</span><span class="p">,</span> <span class="n">video_id</span><span class="p">)</span>
+            <span class="n">delete_playlist_item_by_id</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+        <span class="n">moved</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">log_progress</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">moved</span><span class="p">,</span> <span class="n">to_move</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ConfigDelete</span><span class="o">.</span><span class="n">do_delete</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"moved </span><span class="si">{</span><span class="n">moved</span><span class="si">}</span><span class="s2"> videos from [</span><span class="si">{</span><span class="n">ConfigOverflow</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">] to [</span><span class="si">{</span><span class="n">ConfigOverflow</span><span class="o">.</span><span class="n">destination</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"dry run: would move </span><span class="si">{</span><span class="n">moved</span><span class="si">}</span><span class="s2"> videos from [</span><span class="si">{</span><span class="n">ConfigOverflow</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">] to [</span><span class="si">{</span><span class="n">ConfigOverflow</span><span class="o">.</span><span class="n">destination</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+        <span class="c1"># each move is an insert plus a delete</span>
+        <span class="n">log_mutation_cost_estimate</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">moved</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_video_ids_from_sources">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.get_video_ids_from_sources">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_video_ids_from_sources</span><span class="p">(</span>
+    <span class="n">youtube</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">playlists</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">files</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">playlists</span><span class="p">:</span>
+        <span class="n">ids</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">get_video_ids_from_playlist_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">playlists</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">ids</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">read_video_ids_from_files</span><span class="p">(</span><span class="n">files</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ids</span></div>
+
+
+
+<div class="viewcode-block" id="diff">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.diff">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Compute set difference (A-B) or intersection (A&amp;B) between video ID sources"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigDiff</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">diff</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">need_youtube</span> <span class="o">=</span> <span class="n">ConfigDiff</span><span class="o">.</span><span class="n">diff_a_playlists</span> <span class="ow">or</span> <span class="n">ConfigDiff</span><span class="o">.</span><span class="n">diff_b_playlists</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span> <span class="k">if</span> <span class="n">need_youtube</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">ids_a</span> <span class="o">=</span> <span class="n">get_video_ids_from_sources</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">ConfigDiff</span><span class="o">.</span><span class="n">diff_a_playlists</span><span class="p">,</span> <span class="n">ConfigDiff</span><span class="o">.</span><span class="n">diff_a_files</span><span class="p">)</span>
+    <span class="n">ids_b</span> <span class="o">=</span> <span class="n">get_video_ids_from_sources</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">ConfigDiff</span><span class="o">.</span><span class="n">diff_b_playlists</span><span class="p">,</span> <span class="n">ConfigDiff</span><span class="o">.</span><span class="n">diff_b_files</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ConfigDiff</span><span class="o">.</span><span class="n">diff_reverse</span><span class="p">:</span>
+        <span class="n">result_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ids_a</span> <span class="o">&amp;</span> <span class="n">ids_b</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ids_a</span> <span class="o">-</span> <span class="n">ids_b</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"A has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ids_a</span><span class="p">)</span><span class="si">}</span><span class="s2">, B has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ids_b</span><span class="p">)</span><span class="si">}</span><span class="s2">, result has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result_ids</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ConfigDiff</span><span class="o">.</span><span class="n">diff_output_file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ConfigDiff</span><span class="o">.</span><span class="n">diff_output_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="n">result_ids</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">video_id</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"wrote </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> video IDs to [</span><span class="si">{</span><span class="n">ConfigDiff</span><span class="o">.</span><span class="n">diff_output_file</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="n">result_ids</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">video_id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_data">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.add_data">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Fetch extensive metadata for video IDs and write to CSV (supports resume)"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigAddData</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_data</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">input_path</span> <span class="o">=</span> <span class="n">ConfigAddData</span><span class="o">.</span><span class="n">input_file</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">ConfigAddData</span><span class="o">.</span><span class="n">output_csv</span>
+    <span class="n">processed_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">output_file_exists</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">output_file_exists</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Output file [</span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">] found. Reading existing IDs to avoid re-processing."</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_out_read</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f_out_read</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">row</span> <span class="ow">and</span> <span class="s2">"video_id"</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                    <span class="n">processed_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"video_id"</span><span class="p">])</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">processed_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> previously processed IDs."</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="n">METADATA_FIELDNAMES</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">output_file_exists</span><span class="p">:</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
+            <span class="n">outfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="n">video_id</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">video_id</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="n">processed_ids</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping already processed ID: [</span><span class="si">{</span><span class="n">video_id</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">get_video_metadata</span><span class="p">(</span><span class="n">video_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">metadata</span><span class="p">:</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">error_row</span> <span class="o">=</span> <span class="p">{</span><span class="n">field</span><span class="p">:</span> <span class="s2">""</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">METADATA_FIELDNAMES</span><span class="p">}</span>
+                <span class="n">error_row</span><span class="p">[</span><span class="s2">"video_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">video_id</span>
+                <span class="n">error_row</span><span class="p">[</span><span class="s2">"title"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"METADATA_NOT_FOUND"</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">error_row</span><span class="p">)</span>
+            <span class="n">outfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Processing complete"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="video_info">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.video_info">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Get info about a video"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigVideo</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">video_info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">get_video_info</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">ConfigVideo</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="n">pretty_print</span><span class="p">(</span><span class="n">info</span><span class="p">)</span></div>
+
+
+
+<span class="n">YOUTUBE_ID_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(?:youtu\.be/|youtube\.com/.*[?&amp;]v=|^)([A-Za-z0-9_-]</span><span class="si">{11}</span><span class="s2">)(?:\s|$|&amp;)"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="collect_ids">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.collect_ids">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Extract YouTube video IDs from text files"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigCollectIds</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">collect_ids</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">found</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">ConfigCollectIds</span><span class="o">.</span><span class="n">collect_files</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">YOUTUBE_ID_RE</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                    <span class="n">found</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">found</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">video_id</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">found</span><span class="p">)</span><span class="si">}</span><span class="s2"> unique video IDs"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_file_to_playlist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.add_file_to_playlist">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Add video IDs from a file to a playlist"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigAddFileToPlaylist</span><span class="p">,</span> <span class="n">ConfigBudget</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_file_to_playlist</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">playlist_id</span> <span class="o">=</span> <span class="n">get_playlist_ids_from_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">ConfigAddFileToPlaylist</span><span class="o">.</span><span class="n">add_playlist</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">video_ids</span> <span class="o">=</span> <span class="n">read_video_ids_from_files</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">ConfigAddFileToPlaylist</span><span class="o">.</span><span class="n">add_file</span><span class="p">)])</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"read </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">video_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> video IDs from [</span><span class="si">{</span><span class="n">ConfigAddFileToPlaylist</span><span class="o">.</span><span class="n">add_file</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+    <span class="n">added</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">video_ids</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">video_ids</span><span class="p">):</span>
+        <span class="n">add_video_to_playlist</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">playlist_id</span><span class="p">,</span> <span class="n">video_id</span><span class="p">)</span>
+        <span class="n">added</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">log_progress</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">added</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"added </span><span class="si">{</span><span class="n">added</span><span class="si">}</span><span class="s2"> videos to [</span><span class="si">{</span><span class="n">ConfigAddFileToPlaylist</span><span class="o">.</span><span class="n">add_playlist</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_playlist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.create_playlist">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Create a new playlist"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigCreatePlaylist</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_playlist</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">youtube</span><span class="o">.</span><span class="n">playlists</span><span class="p">()</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span>
+        <span class="n">part</span><span class="o">=</span><span class="s2">"snippet,status"</span><span class="p">,</span>
+        <span class="n">body</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">"snippet"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"title"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">ConfigCreatePlaylist</span><span class="o">.</span><span class="n">create_name</span><span class="p">),</span>
+                <span class="s2">"description"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">ConfigCreatePlaylist</span><span class="o">.</span><span class="n">create_description</span><span class="p">),</span>
+            <span class="p">},</span>
+            <span class="s2">"status"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"privacyStatus"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">ConfigCreatePlaylist</span><span class="o">.</span><span class="n">create_privacy</span><span class="p">),</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">perform_mutation</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">playlist_id</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"created playlist [</span><span class="si">{</span><span class="n">ConfigCreatePlaylist</span><span class="o">.</span><span class="n">create_name</span><span class="si">}</span><span class="s2">] with id [</span><span class="si">{</span><span class="n">playlist_id</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">playlist_id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="delete_playlist">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.delete_playlist">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Delete a playlist by name"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigDeletePlaylist</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_playlist</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">playlist_id</span> <span class="o">=</span> <span class="n">get_playlist_ids_from_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">ConfigDeletePlaylist</span><span class="o">.</span><span class="n">delete_playlist_name</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">youtube</span><span class="o">.</span><span class="n">playlists</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">playlist_id</span><span class="p">)</span>
+    <span class="n">perform_mutation</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"deleted playlist [</span><span class="si">{</span><span class="n">ConfigDeletePlaylist</span><span class="o">.</span><span class="n">delete_playlist_name</span><span class="si">}</span><span class="s2">] (id [</span><span class="si">{</span><span class="n">playlist_id</span><span class="si">}</span><span class="s2">])"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="find_video">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.find_video">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Find which playlists (or dump files) contain a given video"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigFindVideo</span><span class="p">,</span> <span class="n">ConfigLocalDumpFolder</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_video</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ConfigFindVideo</span><span class="o">.</span><span class="n">find_video_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ConfigLocalDumpFolder</span><span class="o">.</span><span class="n">local_dump_folder</span> <span class="o">!=</span> <span class="s2">"."</span><span class="p">:</span>
+        <span class="c1"># Local mode: search dump files</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">read_all_dump_files</span><span class="p">(</span><span class="n">ConfigLocalDumpFolder</span><span class="o">.</span><span class="n">local_dump_folder</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lines</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># API mode: search YouTube playlists</span>
+        <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">create_playlists_request</span><span class="p">(</span><span class="n">youtube</span><span class="p">)</span>
+        <span class="n">all_playlists</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_all_items</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">all_playlists</span><span class="p">:</span>
+            <span class="n">pl_id</span> <span class="o">=</span> <span class="n">pl</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+            <span class="n">pl_title</span> <span class="o">=</span> <span class="n">pl</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"title"</span><span class="p">]</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="n">get_all_items_from_playlist_ids</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="p">[</span><span class="n">pl_id</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"resourceId"</span><span class="p">][</span><span class="s2">"videoId"</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">pl_title</span><span class="p">)</span>
+                    <span class="k">break</span></div>
+
+
+
+<div class="viewcode-block" id="print_stats_summary">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.print_stats_summary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_stats_summary</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">items</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> found."</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">largest_name</span><span class="p">,</span> <span class="n">largest_count</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">smallest_name</span><span class="p">,</span> <span class="n">smallest_count</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">total</span> <span class="o">+=</span> <span class="n">count</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="n">largest_count</span><span class="p">:</span>
+            <span class="n">largest_count</span><span class="p">,</span> <span class="n">largest_name</span> <span class="o">=</span> <span class="n">count</span><span class="p">,</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="n">smallest_count</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">smallest_count</span><span class="p">:</span>
+            <span class="n">smallest_count</span><span class="p">,</span> <span class="n">smallest_name</span> <span class="o">=</span> <span class="n">count</span><span class="p">,</span> <span class="n">name</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"---"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total: </span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Largest: </span><span class="si">{</span><span class="n">largest_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">largest_count</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Smallest: </span><span class="si">{</span><span class="n">smallest_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">smallest_count</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="stats">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.stats">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Show statistics for playlists (or dump files)"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigPagination</span><span class="p">,</span> <span class="n">ConfigLocalDumpFolder</span><span class="p">,</span> <span class="n">ConfigStatsFilter</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stats</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">ConfigLocalDumpFolder</span><span class="o">.</span><span class="n">local_dump_folder</span> <span class="o">!=</span> <span class="s2">"."</span><span class="p">:</span>
+        <span class="c1"># Local mode: count lines in dump files</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">read_all_dump_files</span><span class="p">(</span><span class="n">ConfigLocalDumpFolder</span><span class="o">.</span><span class="n">local_dump_folder</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ConfigStatsFilter</span><span class="o">.</span><span class="n">stats_names</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ConfigStatsFilter</span><span class="o">.</span><span class="n">stats_names</span><span class="p">}</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">[(</span><span class="n">name</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">lines</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="n">print_stats_summary</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="s2">"files"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># API mode: query YouTube playlists</span>
+        <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ConfigStatsFilter</span><span class="o">.</span><span class="n">stats_names</span><span class="p">:</span>
+            <span class="n">playlist_ids</span> <span class="o">=</span> <span class="n">get_playlist_ids_from_names</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">ConfigStatsFilter</span><span class="o">.</span><span class="n">stats_names</span><span class="p">)</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">get_playlist_item_count</span><span class="p">(</span><span class="n">youtube</span><span class="p">,</span> <span class="n">pl_id</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">pl_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ConfigStatsFilter</span><span class="o">.</span><span class="n">stats_names</span><span class="p">,</span> <span class="n">playlist_ids</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">create_playlists_request</span><span class="p">(</span><span class="n">youtube</span><span class="p">)</span>
+            <span class="n">all_playlists</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_all_items</span><span class="p">()</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="s2">"snippet"</span><span class="p">][</span><span class="s2">"title"</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="s2">"contentDetails"</span><span class="p">][</span><span class="s2">"itemCount"</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">all_playlists</span>
+            <span class="p">]</span>
+        <span class="n">print_stats_summary</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="s2">"playlists"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="channels">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.channels">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"List channels"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">channels</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">youtube</span> <span class="o">=</span> <span class="n">get_youtube</span><span class="p">()</span>
+    <span class="n">channels_obj</span> <span class="o">=</span> <span class="n">get_youtube_channels</span><span class="p">(</span><span class="n">youtube</span><span class="p">)</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">channels_obj</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+        <span class="n">part</span><span class="o">=</span><span class="s2">"snippet,contentDetails,statistics"</span><span class="p">,</span>
+        <span class="n">mine</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">retry_execute</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">pretty_print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">"items"</span><span class="p">]:</span>
+        <span class="n">f_channel_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+        <span class="n">playlists_obj</span> <span class="o">=</span> <span class="n">get_youtube_playlists</span><span class="p">(</span><span class="n">youtube</span><span class="p">)</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="n">playlists_obj</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+            <span class="n">part</span><span class="o">=</span><span class="s2">"snippet,contentDetails"</span><span class="p">,</span>
+            <span class="n">channelId</span><span class="o">=</span><span class="n">f_channel_id</span><span class="p">,</span>
+            <span class="n">maxResults</span><span class="o">=</span><span class="mi">25</span>
+        <span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">retry_execute</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="n">pretty_print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="watch_later">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.watch_later">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Download Watch Later playlist"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">watch_later</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">youtube_dl_download_urls</span><span class="p">([</span><span class="s2">"https://www.youtube.com/playlist?list=WL"</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="local_diff">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.local_diff">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Diff two paths (file or folder): A-B or A&amp;B (zero API quota)"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigLocalDiff</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">local_diff</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">ids_a</span> <span class="o">=</span> <span class="n">read_video_ids_from_path</span><span class="p">(</span><span class="n">ConfigLocalDiff</span><span class="o">.</span><span class="n">local_diff_a</span><span class="p">)</span>
+    <span class="n">ids_b</span> <span class="o">=</span> <span class="n">read_video_ids_from_path</span><span class="p">(</span><span class="n">ConfigLocalDiff</span><span class="o">.</span><span class="n">local_diff_b</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ConfigLocalDiff</span><span class="o">.</span><span class="n">local_diff_reverse</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ids_a</span> <span class="o">&amp;</span> <span class="n">ids_b</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ids_a</span> <span class="o">-</span> <span class="n">ids_b</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">video_id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="local_dedup">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.local_dedup">[docs]</a>
+<span class="nd">@register_endpoint</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Report intra-playlist and cross-playlist duplicates in dump files (zero API quota)"</span><span class="p">,</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">[</span><span class="n">ConfigLocalDumpFolder</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">local_dedup</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">read_all_dump_files</span><span class="p">(</span><span class="n">ConfigLocalDumpFolder</span><span class="o">.</span><span class="n">local_dump_folder</span><span class="p">)</span>
+    <span class="c1"># intra-playlist duplicates</span>
+    <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lines</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"INTRA </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="c1"># cross-playlist duplicates</span>
+    <span class="n">global_seen</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lines</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">global_seen</span> <span class="ow">and</span> <span class="n">global_seen</span><span class="p">[</span><span class="n">line</span><span class="p">]</span> <span class="o">!=</span> <span class="n">filename</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"CROSS </span><span class="si">{</span><span class="n">global_seen</span><span class="p">[</span><span class="n">line</span><span class="p">]</span><span class="si">}</span><span class="s2"> &amp; </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">line</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">global_seen</span><span class="p">:</span>
+                <span class="n">global_seen</span><span class="p">[</span><span class="n">line</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../pytubekit.html#pytubekit.main.main">[docs]</a>
+<span class="nd">@register_main</span><span class="p">(</span>
+    <span class="n">main_description</span><span class="o">=</span><span class="n">DESCRIPTION</span><span class="p">,</span>
+    <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="n">VERSION_STR</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">pylogconf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+    <span class="n">ConfigRequest</span><span class="o">.</span><span class="n">scopes</span> <span class="o">=</span> <span class="n">SCOPES</span>
+    <span class="n">ConfigRequest</span><span class="o">.</span><span class="n">app_name</span> <span class="o">=</span> <span class="n">APP_NAME</span>
+    <span class="n">register_functions</span><span class="p">()</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">config_arg_parse_and_launch</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">QuotaExceededError</span><span class="p">,</span> <span class="n">MutationBudgetError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">RunStats</span><span class="o">.</span><span class="n">quota_spent</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"API quota spent this run: ~</span><span class="si">{</span><span class="n">RunStats</span><span class="o">.</span><span class="n">quota_spent</span><span class="si">}</span><span class="s2"> units (daily budget is </span><span class="si">{</span><span class="n">DAILY_QUOTA_UNITS</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">pytubekit</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pytubekit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026 Mark Veltzer.
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
