@@ -210,11 +210,7 @@ rsconstruct<span class="w"> </span>build
 </section>
 <section id="deploy-to-github-pages">
 <h3>Deploy to GitHub Pages<a class="headerlink" href="#deploy-to-github-pages" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>mkdocs
-mkdocs<span class="w"> </span>gh-deploy
-</pre></div>
-</div>
-<p>This builds the site and pushes it to the <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> branch. In the GitHub repository settings, set Pages source to “Deploy from a branch” with <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> / <code class="docutils literal notranslate"><span class="pre">/</span> <span class="pre">(root)</span></code>.</p>
+<p>There is no separate deploy step. GitHub Pages is configured to serve the <code class="docutils literal notranslate"><span class="pre">docs/</span></code> directory of the master branch, so pushing a commit that contains the rebuilt <code class="docutils literal notranslate"><span class="pre">docs/</span></code> publishes the site.</p>
 </section>
 </section>
 </section>

@@ -170,9 +170,4 @@ Then open http://127.0.0.1:8000 in your browser and rebuild after editing the ``
 Deploy to GitHub Pages
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. code:: bash
-
-   cd mkdocs
-   mkdocs gh-deploy
-
-This builds the site and pushes it to the ``gh-pages`` branch. In the GitHub repository settings, set Pages source to "Deploy from a branch" with ``gh-pages`` / ``/ (root)``.
+There is no separate deploy step. GitHub Pages is configured to serve the ``docs/`` directory of the master branch, so pushing a commit that contains the rebuilt ``docs/`` publishes the site.
