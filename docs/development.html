@@ -192,28 +192,21 @@ rsconstruct<span class="w"> </span>build
 </section>
 <section id="building-the-documentation">
 <h2>Building the Documentation<a class="headerlink" href="#building-the-documentation" title="Link to this heading">¶</a></h2>
-<p>The documentation site lives in the <code class="docutils literal notranslate"><span class="pre">mkdocs/</span></code> directory and uses <a class="reference external" href="https://www.mkdocs.org/">MkDocs</a> with the <a class="reference external" href="https://squidfundamental.github.io/mkdocs-material/">Material</a> theme.</p>
-<section id="install-dependencies">
-<h3>Install dependencies<a class="headerlink" href="#install-dependencies" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>mkdocs-material
+<p>The documentation lives in the <code class="docutils literal notranslate"><span class="pre">sphinx/</span></code> directory as reStructuredText and is built with <a class="reference external" href="https://www.sphinx-doc.org/">Sphinx</a>, like every other python repository in the fleet. The guide pages sit next to the autodoc API pages, all reachable from <code class="docutils literal notranslate"><span class="pre">sphinx/modules.rst</span></code>.</p>
+<section id="build">
+<h3>Build<a class="headerlink" href="#build" title="Link to this heading">¶</a></h3>
+<p>The sphinx processor is part of the regular build, so from the repository’s venv:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rsconstruct<span class="w"> </span>build
 </pre></div>
 </div>
+<p>The rendered site goes to <code class="docutils literal notranslate"><span class="pre">docs/</span></code>, which is committed and served by GitHub Pages from the master branch. <code class="docutils literal notranslate"><span class="pre">sphinx/conf.py</span></code> refuses to build unless the sphinx toolchain matches <code class="docutils literal notranslate"><span class="pre">uv.lock</span></code>, so activate the repository’s venv first.</p>
 </section>
 <section id="preview-locally">
 <h3>Preview locally<a class="headerlink" href="#preview-locally" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>mkdocs
-mkdocs<span class="w"> </span>serve
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span>--directory<span class="w"> </span>docs<span class="w"> </span><span class="m">8000</span>
 </pre></div>
 </div>
-<p>Then open <a class="reference external" href="http://127.0.0.1:8000">http://127.0.0.1:8000</a> in your browser. Changes to the Markdown files are picked up automatically.</p>
-</section>
-<section id="build-the-static-site">
-<h3>Build the static site<a class="headerlink" href="#build-the-static-site" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>mkdocs
-mkdocs<span class="w"> </span>build
-</pre></div>
-</div>
-<p>The output goes to <code class="docutils literal notranslate"><span class="pre">mkdocs/site/</span></code> (git-ignored).</p>
+<p>Then open <a class="reference external" href="http://127.0.0.1:8000">http://127.0.0.1:8000</a> in your browser and rebuild after editing the <code class="docutils literal notranslate"><span class="pre">.rst</span></code> files.</p>
 </section>
 <section id="deploy-to-github-pages">
 <h3>Deploy to GitHub Pages<a class="headerlink" href="#deploy-to-github-pages" title="Link to this heading">¶</a></h3>

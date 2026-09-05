@@ -145,34 +145,27 @@ The project uses GitHub Actions (``.github/workflows/build.yml``) running on Ubu
 Building the Documentation
 --------------------------
 
-The documentation site lives in the ``mkdocs/`` directory and uses `MkDocs <https://www.mkdocs.org/>`__ with the `Material <https://squidfundamental.github.io/mkdocs-material/>`__ theme.
+The documentation lives in the ``sphinx/`` directory as reStructuredText and is built with `Sphinx <https://www.sphinx-doc.org/>`__, like every other python repository in the fleet. The guide pages sit next to the autodoc API pages, all reachable from ``sphinx/modules.rst``.
 
-Install dependencies
-~~~~~~~~~~~~~~~~~~~~
+Build
+~~~~~
+
+The sphinx processor is part of the regular build, so from the repository's venv:
 
 .. code:: bash
 
-   pip install mkdocs-material
+   rsconstruct build
+
+The rendered site goes to ``docs/``, which is committed and served by GitHub Pages from the master branch. ``sphinx/conf.py`` refuses to build unless the sphinx toolchain matches ``uv.lock``, so activate the repository's venv first.
 
 Preview locally
 ~~~~~~~~~~~~~~~
 
 .. code:: bash
 
-   cd mkdocs
-   mkdocs serve
+   python -m http.server --directory docs 8000
 
-Then open http://127.0.0.1:8000 in your browser. Changes to the Markdown files are picked up automatically.
-
-Build the static site
-~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: bash
-
-   cd mkdocs
-   mkdocs build
-
-The output goes to ``mkdocs/site/`` (git-ignored).
+Then open http://127.0.0.1:8000 in your browser and rebuild after editing the ``.rst`` files.
 
 Deploy to GitHub Pages
 ~~~~~~~~~~~~~~~~~~~~~~
