@@ -1,3 +1,6 @@
+<!-- This file is generated. Do not edit it by hand: your changes will be
+     lost on the next build. Edit the template it is rendered from, or the
+     values that template reads, and build again. -->
 # *pytubekit* project by Mark Veltzer
 
 description: Pytubekit will allow you to perform operations in your youtube account en masse
