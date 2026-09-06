@@ -18,7 +18,7 @@ pytubekit is a Python CLI (entry point `pytubekit.main:main`) for bulk operation
 
 Run the full local check suite before considering work done:
 
-```
+```bash
 rsconstruct build
 ```
 

@@ -2,7 +2,7 @@
 
 ## Project Structure
 
-```
+```text
 pytubekit/
 ├── src/pytubekit/          # Main package
 │   ├── __init__.py         # Module init, defines LOGGER_NAME
