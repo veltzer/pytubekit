@@ -34,7 +34,7 @@ src_dirs = ["src", "config", "tests"]
 [processor.checker.pytest]
 src_dirs = ["tests"]
 
-[processor.checker.luacheck]
+[processor.checker.iluacheck]
 src_dirs = ["config"]
 
 # build the Sphinx documentation from sphinx/ into docs/; autodoc imports the
