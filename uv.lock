@@ -700,17 +700,18 @@ wheels = [
 
 [[package]]
 name = "pygooglehelper"
-version = "0.0.9"
+version = "0.0.10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "google-api-python-client" },
+    { name = "google-auth" },
     { name = "google-auth-httplib2" },
     { name = "google-auth-oauthlib" },
     { name = "pytconf" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b1/ec/6a6bc8b0b5a2889539280c562fb86e2a881f85913718c95a519f611550fb/pygooglehelper-0.0.9.tar.gz", hash = "sha256:1ac35f513f5e1b5385c84884a746626961ef1de1ac131c1cfa839a85f0a27aba", size = 5747, upload-time = "2026-08-26T12:26:36.79Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6f/82/4ffc1baf561ce9bbc3ff2ab867b688f491d218f15191d2f9d62b3a599290/pygooglehelper-0.0.10.tar.gz", hash = "sha256:34b50f9818769c9d21633d7670ba769c57e9dfe824e88fd78d60a65a035c6cbb", size = 7381, upload-time = "2026-11-03T21:41:19.811Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/33/1b/2067e0e79e25a0315ec3a3c163a6d072896e2ace4ed0bcf3a80fa2ab581f/pygooglehelper-0.0.9-py3-none-any.whl", hash = "sha256:15e0bad8147146e432ec8e66933a3ea25034ce43c5f6c0b5c6b851e146fadcb7", size = 6106, upload-time = "2026-08-26T12:26:34.411Z" },
+    { url = "https://files.pythonhosted.org/packages/55/a0/78c756b186dac7d7fd9c883727a669ca94593d3155c845711c1e4f811249/pygooglehelper-0.0.10-py3-none-any.whl", hash = "sha256:6cb3b39b69eb0b7aac2b92028889f886261581ea42f475645d04f888d4d38daf", size = 6765, upload-time = "2026-11-03T21:41:18.375Z" },
 ]
 
 [[package]]
