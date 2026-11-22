@@ -70,12 +70,12 @@ The following YouTube API scopes are requested:
 
 The YouTube Data API v3 has a quota of **10,000 units per day**. If you hit the limit, wait until the next day for the quota to reset.
 
-Reference: https://developers.google.com/youtube/v3/getting-started
+Reference: <https://developers.google.com/youtube/v3/getting-started>
 
 ## Links
 
-- **Repository:** https://github.com/veltzer/pytubekit
-- **PyPI:** https://pypi.org/project/pytubekit/
-- **Website:** https://veltzer.github.io/pytubekit
-- **YouTube API v3 Docs:** https://developers.google.com/youtube/v3
-- **YouTube API Reference:** https://developers.google.com/youtube/v3/docs
+- **Repository:** <https://github.com/veltzer/pytubekit>
+- **PyPI:** <https://pypi.org/project/pytubekit/>
+- **Website:** <https://veltzer.github.io/pytubekit>
+- **YouTube API v3 Docs:** <https://developers.google.com/youtube/v3>
+- **YouTube API Reference:** <https://developers.google.com/youtube/v3/docs>

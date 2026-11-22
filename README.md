@@ -5,7 +5,7 @@
 
 description: Pytubekit will allow you to perform operations in your youtube account en masse
 
-project website: https://veltzer.github.io/pytubekit
+project website: <https://veltzer.github.io/pytubekit>
 
 author: Mark Veltzer
 
