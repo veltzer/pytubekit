@@ -79,6 +79,7 @@ pytubekit dump --dump-folder '${home}/youtube-backup/${date}'
 ```
 
 The `--dump-folder` parameter supports template substitution:
+
 - `${date}` - current Unix timestamp
 - `${home}` - user's home directory
 

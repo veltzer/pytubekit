@@ -28,6 +28,7 @@ rsconstruct build
 ```
 
 The rsconstruct build runs:
+
 1. `pytest tests` - unit tests
 2. `ruff check` - linter
 3. `pylint` - code analysis

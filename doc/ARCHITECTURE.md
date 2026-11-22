@@ -31,11 +31,13 @@ pytubekit/
 ### `main.py`
 
 The application entry point. Contains:
+
 - All CLI command functions decorated with `@register_endpoint`
 - The `main()` function decorated with `@register_main`
 - Uses the `pytconf` framework for CLI argument parsing and dispatch
 
 The `main()` function:
+
 1. Sets up logging via `pylogconf`
 2. Configures OAuth2 scopes and credential location
 3. Registers helper functions from `pygooglehelper`
@@ -88,6 +90,7 @@ Thin wrapper around the `youtube-dl` library:
 ### `static.py`
 
 Auto-generated from `tera.templates/src/pytubekit/static.py.tera` by rsconstruct. Contains:
+
 - `VERSION_STR` - Current version as a string
 - `DESCRIPTION` - Project description
 - `APP_NAME` - Application name
@@ -106,6 +109,7 @@ CLI parameters are defined declaratively as `pytconf.Config` subclasses. Each en
 ### OAuth2 Authentication
 
 Authentication is handled by `pygooglehelper`, which manages the OAuth2 flow:
+
 1. Reads `client_secret.json` from `~/.config/pytubekit/`, falling back to the copy shipped in the package
 2. Opens browser for user consent on first run
 3. Caches credentials for subsequent runs
