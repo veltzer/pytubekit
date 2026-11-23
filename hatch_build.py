@@ -19,6 +19,7 @@ every user.
 
 import os
 import shutil
+from typing import override
 
 from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 
@@ -27,6 +28,7 @@ CONFIG_LOCATION = os.path.expanduser("~/.config/pytubekit/client_secret.json")
 
 
 class CustomBuildHook(BuildHookInterface):
+    @override
     def initialize(self, version, build_data):
         target = os.path.join(self.root, CLIENT_SECRET)
         if os.path.isfile(target):
@@ -47,6 +49,7 @@ class CustomBuildHook(BuildHookInterface):
             "or set PYTUBEKIT_CLIENT_SECRET to its path, before building."
         )
 
+    @override
     def finalize(self, version, build_data, artifact_path):
         # The copy is not part of the source tree. Leaving it behind would make
         # the next build take the "already in place" branch above and silently

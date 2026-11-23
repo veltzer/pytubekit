@@ -231,7 +231,7 @@ def clear_playlist() -> None:
 def merge() -> None:
     logger = logging.getLogger()
     youtube = get_youtube()
-    all_names = ConfigMerge.merge_sources + [ConfigMerge.merge_destination]
+    all_names = [*ConfigMerge.merge_sources, ConfigMerge.merge_destination]
     all_ids = get_playlist_ids_from_names(youtube, all_names)
     source_ids = all_ids[:-1]
     destination_id = all_ids[-1]
@@ -433,10 +433,7 @@ def diff() -> None:
     youtube = get_youtube() if need_youtube else None
     ids_a = get_video_ids_from_sources(youtube, ConfigDiff.diff_a_playlists, ConfigDiff.diff_a_files)
     ids_b = get_video_ids_from_sources(youtube, ConfigDiff.diff_b_playlists, ConfigDiff.diff_b_files)
-    if ConfigDiff.diff_reverse:
-        result_ids = sorted(ids_a & ids_b)
-    else:
-        result_ids = sorted(ids_a - ids_b)
+    result_ids = sorted(ids_a & ids_b) if ConfigDiff.diff_reverse else sorted(ids_a - ids_b)
     logger.info(f"A has {len(ids_a)}, B has {len(ids_b)}, result has {len(result_ids)}")
     if ConfigDiff.diff_output_file:
         with open(ConfigDiff.diff_output_file, "w") as f:
@@ -482,7 +479,7 @@ def add_data() -> None:
             if metadata:
                 writer.writerow(metadata)
             else:
-                error_row = {field: "" for field in METADATA_FIELDNAMES}
+                error_row = dict.fromkeys(METADATA_FIELDNAMES, "")
                 error_row["video_id"] = video_id
                 error_row["title"] = "METADATA_NOT_FOUND"
                 writer.writerow(error_row)
@@ -644,7 +641,7 @@ def stats() -> None:
             playlist_ids = get_playlist_ids_from_names(youtube, ConfigStatsFilter.stats_names)
             items = [
                 (name, get_playlist_item_count(youtube, pl_id))
-                for name, pl_id in zip(ConfigStatsFilter.stats_names, playlist_ids)
+                for name, pl_id in zip(ConfigStatsFilter.stats_names, playlist_ids, strict=True)
             ]
         else:
             r = create_playlists_request(youtube)
@@ -694,10 +691,7 @@ def watch_later() -> None:
 def local_diff() -> None:
     ids_a = read_video_ids_from_path(ConfigLocalDiff.local_diff_a)
     ids_b = read_video_ids_from_path(ConfigLocalDiff.local_diff_b)
-    if ConfigLocalDiff.local_diff_reverse:
-        result = sorted(ids_a & ids_b)
-    else:
-        result = sorted(ids_a - ids_b)
+    result = sorted(ids_a & ids_b) if ConfigLocalDiff.local_diff_reverse else sorted(ids_a - ids_b)
     for video_id in result:
         print(video_id)
 

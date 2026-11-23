@@ -169,6 +169,8 @@ def get_all_items(youtube: Any) -> list[dict[str, Any]]:
         playlist_id = get_playlist_ids_from_names(youtube, [ConfigPlaylist.name])[0]
     else:
         playlist_id = ConfigPlaylist.playlist_id
+    if playlist_id is None:
+        raise ValueError("either a playlist name or a playlist id is required")
     return get_all_items_from_playlist_id(youtube, playlist_id)
 
 
@@ -243,13 +245,12 @@ def get_youtube() -> Any:
     ConfigRequest.scopes = SCOPES
     ConfigRequest.app_name = APP_NAME
     credentials = get_credentials()
-    youtube = googleapiclient.discovery.build(
+    return googleapiclient.discovery.build(
         serviceName=API_SERVICE_NAME,
         version=API_VERSION,
         credentials=credentials,
         cache_discovery=False,
     )
-    return youtube
 
 
 def get_video_info(youtube: Any, youtube_id: str) -> dict[str, Any]:
@@ -275,10 +276,7 @@ def get_youtube_playlists(youtube: Any) -> Any:
 def get_my_playlists_ids(youtube: Any) -> list[str]:
     r = create_playlists_request(youtube)
     items = r.get_all_items()
-    ids = []
-    for item in items:
-        ids.append(item["id"])
-    return ids
+    return [item["id"] for item in items]
 
 
 def get_playlist_item_ids_from_names(youtube: Any, playlist_names: list[str]) -> set[str]:
@@ -291,8 +289,8 @@ def read_video_ids_from_files(file_paths: list[str]) -> set[str]:
     video_ids = set()
     for file_path in file_paths:
         with open(file_path) as f:
-            for line in f:
-                line = line.strip()
+            for raw_line in f:
+                line = raw_line.strip()
                 if line:
                     video_ids.add(line)
     return video_ids
@@ -370,15 +368,13 @@ def get_playlist_item_count(youtube: Any, playlist_id: str) -> int:
 def get_video_metadata(video_id: str) -> dict[str, Any] | None:
     logger = logging.getLogger()
     video_url = f"https://www.youtube.com/watch?v={video_id}"
-    ydl_opts: dict[str, Any] = {
-        "quiet": True,
-        "no_warnings": True,
-        "skip_download": True,
-        "ignore_no_formats_error": True,
-    }
     try:
         logger.info(f"Fetching data for ID: {video_id}...")
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        with yt_dlp.YoutubeDL({
+            "quiet": True,
+            "no_warnings": True,
+            "ignore_no_formats_error": True,
+        }) as ydl:
             info_dict = ydl.extract_info(video_url, download=False)
         if not info_dict:
             return None
@@ -397,8 +393,8 @@ def get_video_metadata(video_id: str) -> dict[str, Any] | None:
             "comment_count": info_dict.get("comment_count", ""),
             "average_rating": info_dict.get("average_rating", ""),
             "age_limit": info_dict.get("age_limit", ""),
-            "categories": ", ".join(info_dict.get("categories", [])) if info_dict.get("categories") else "",
-            "tags": ", ".join(info_dict.get("tags", [])) if info_dict.get("tags") else "",
+            "categories": ", ".join(info_dict.get("categories") or []),
+            "tags": ", ".join(info_dict.get("tags") or []),
             "is_live": info_dict.get("is_live", ""),
             "was_live": info_dict.get("was_live", ""),
             "live_status": info_dict.get("live_status", ""),
