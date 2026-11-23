@@ -11,6 +11,7 @@ from typing import IO, Any
 
 import googleapiclient.discovery
 import yt_dlp
+import yt_dlp.utils
 from googleapiclient.errors import HttpError
 from pygooglehelper import ConfigRequest, get_credentials
 

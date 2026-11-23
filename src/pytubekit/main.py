@@ -307,7 +307,7 @@ def sort_playlist() -> None:
     configs=[ConfigPagination, ConfigSearch, ConfigLocalDumpFolder],
 )
 def search_playlist() -> None:
-    query = str(ConfigSearch.search_query).lower()
+    query = ConfigSearch.search_query.lower()
     if ConfigLocalDumpFolder.local_dump_folder != ".":
         # Local mode: search dump files
         data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
@@ -338,7 +338,7 @@ def export_csv() -> None:
     playlist_id = get_playlist_ids_from_names(youtube, [ConfigExportCsv.export_playlist_name])[0]
     items = get_all_items_from_playlist_ids(youtube, [playlist_id])
     fieldnames = ["position", "video_id", "title", "channel"]
-    with open(str(ConfigExportCsv.export_csv_path), "w", encoding="utf-8", newline="") as f:
+    with open(ConfigExportCsv.export_csv_path, "w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         for position, item in enumerate(items, start=1):
@@ -364,7 +364,7 @@ def rename_playlist() -> None:
         body={
             "id": playlist_id,
             "snippet": {
-                "title": str(ConfigRename.rename_new_name),
+                "title": ConfigRename.rename_new_name,
             },
         },
     )
@@ -508,7 +508,7 @@ def collect_ids() -> None:
     logger = logging.getLogger()
     found: set[str] = set()
     for file_path in ConfigCollectIds.collect_files:
-        with open(str(file_path), encoding="utf-8", errors="ignore") as f:
+        with open(file_path, encoding="utf-8", errors="ignore") as f:
             for line in f:
                 for match in YOUTUBE_ID_RE.findall(line):
                     found.add(match)
@@ -525,7 +525,7 @@ def add_file_to_playlist() -> None:
     logger = logging.getLogger()
     youtube = get_youtube()
     playlist_id = get_playlist_ids_from_names(youtube, [ConfigAddFileToPlaylist.add_playlist])[0]
-    video_ids = read_video_ids_from_files([str(ConfigAddFileToPlaylist.add_file)])
+    video_ids = read_video_ids_from_files([ConfigAddFileToPlaylist.add_file])
     logger.info("read %s video IDs from [%s]", len(video_ids), ConfigAddFileToPlaylist.add_file)
     added = 0
     total = len(video_ids)
@@ -547,11 +547,11 @@ def create_playlist() -> None:
         part="snippet,status",
         body={
             "snippet": {
-                "title": str(ConfigCreatePlaylist.create_name),
-                "description": str(ConfigCreatePlaylist.create_description),
+                "title": ConfigCreatePlaylist.create_name,
+                "description": ConfigCreatePlaylist.create_description,
             },
             "status": {
-                "privacyStatus": str(ConfigCreatePlaylist.create_privacy),
+                "privacyStatus": ConfigCreatePlaylist.create_privacy,
             },
         },
     )
@@ -579,7 +579,7 @@ def delete_playlist() -> None:
     configs=[ConfigPagination, ConfigFindVideo, ConfigLocalDumpFolder],
 )
 def find_video() -> None:
-    target = str(ConfigFindVideo.find_video_id)
+    target = ConfigFindVideo.find_video_id
     if ConfigLocalDumpFolder.local_dump_folder != ".":
         # Local mode: search dump files
         data = read_all_dump_files(ConfigLocalDumpFolder.local_dump_folder)
