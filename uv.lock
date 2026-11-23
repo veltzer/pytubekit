@@ -852,7 +852,7 @@ dev = [
     { name = "pytest" },
     { name = "ruff" },
     { name = "sphinx" },
-    { name = "types-yt-dlp", specifier = ">=2026.8.19.20261123" },
+    { name = "types-yt-dlp" },
 ]
 
 [[package]]
