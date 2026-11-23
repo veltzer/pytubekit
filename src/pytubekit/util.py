@@ -55,13 +55,13 @@ class RunStats:
 
 def log_progress(logger: logging.Logger, current: int, total: int, interval: int = 100) -> None:
     if current % interval == 0 or current == total:
-        logger.info(f"progress: {current}/{total}")
+        logger.info("progress: %s/%s", current, total)
 
 
 def log_mutation_cost_estimate(logger: logging.Logger, mutations: int) -> None:
     if mutations > 0:
         cost = mutations * QUOTA_UNITS_PER_MUTATION
-        logger.info(f"estimated quota cost to apply: ~{cost} units (daily budget is {DAILY_QUOTA_UNITS})")
+        logger.info("estimated quota cost to apply: ~%s units (daily budget is %s)", cost, DAILY_QUOTA_UNITS)
 
 
 def get_error_reasons(e: HttpError) -> set[str]:
@@ -91,11 +91,13 @@ def retry_execute(request: Any, max_retries: int = 5, cost: int = 1) -> dict[str
                 (e.resp.status == 403 and reasons & RETRYABLE_403_REASONS)
             if retryable and attempt < max_retries - 1:
                 wait = 2 ** attempt
-                logger.warning(f"API error {e.resp.status}, retrying in {wait}s (attempt {attempt + 1}/{max_retries})")
+                logger.warning("API error %s, retrying in %ss (attempt %s/%s)", e.resp.status, wait, attempt + 1, max_retries)
                 time.sleep(wait)
             else:
                 raise
-    raise last_error  # type: ignore[misc]
+    if last_error is None:
+        raise ValueError(f"max_retries must be at least 1, got {max_retries}")
+    raise last_error
 
 
 def perform_mutation(request: Any) -> dict[str, Any]:
@@ -187,7 +189,7 @@ def get_all_items_from_playlist_ids(youtube: Any, playlist_ids: list[str]) -> li
 
 def delete_playlist_item_by_id(youtube: Any, playlist_item_id: str) -> None:
     logger = logging.getLogger()
-    logger.info(f"deleting playlist item [{playlist_item_id}]")
+    logger.info("deleting playlist item [%s]", playlist_item_id)
     request = youtube.playlistItems().delete(
         id=playlist_item_id,
     )
@@ -230,13 +232,13 @@ def cleanup_items(youtube: Any, items: list[dict[str, Any]], *, dedup: bool, che
             if do_delete:
                 delete_playlist_item_by_id(youtube, item["id"])
                 deleted += 1
-    logger.info(f"saw {saw} items")
+    logger.info("saw %s items", saw)
     if dedup:
-        logger.info(f"found_duplicates {found_duplicates} items")
-    logger.info(f"found_deleted {found_deleted} items")
-    logger.info(f"found_private {found_private} items")
-    logger.info(f"wanted_to_delete {wanted_to_delete} items")
-    logger.info(f"deleted {deleted} items")
+        logger.info("found_duplicates %s items", found_duplicates)
+    logger.info("found_deleted %s items", found_deleted)
+    logger.info("found_private %s items", found_private)
+    logger.info("wanted_to_delete %s items", wanted_to_delete)
+    logger.info("deleted %s items", deleted)
     if not do_delete:
         log_mutation_cost_estimate(logger, wanted_to_delete)
 
@@ -321,7 +323,7 @@ METADATA_FIELDNAMES = [
 
 def add_video_to_playlist(youtube: Any, playlist_id: str, video_id: str) -> None:
     logger = logging.getLogger()
-    logger.info(f"adding video [{video_id}] to playlist [{playlist_id}]")
+    logger.info("adding video [%s] to playlist [%s]", video_id, playlist_id)
     request = youtube.playlistItems().insert(
         part="snippet",
         body={
@@ -340,7 +342,7 @@ def add_video_to_playlist(youtube: Any, playlist_id: str, video_id: str) -> None
 def move_playlist_item(youtube: Any, playlist_id: str, item: dict[str, Any], position: int) -> None:
     logger = logging.getLogger()
     item_id = item["id"]
-    logger.info(f"moving playlist item [{item_id}] to position {position}")
+    logger.info("moving playlist item [%s] to position %s", item_id, position)
     request = youtube.playlistItems().update(
         part="snippet",
         body={
@@ -369,7 +371,7 @@ def get_video_metadata(video_id: str) -> dict[str, Any] | None:
     logger = logging.getLogger()
     video_url = f"https://www.youtube.com/watch?v={video_id}"
     try:
-        logger.info(f"Fetching data for ID: {video_id}...")
+        logger.info("Fetching data for ID: %s...", video_id)
         with yt_dlp.YoutubeDL({
             "quiet": True,
             "no_warnings": True,
@@ -416,8 +418,8 @@ def get_video_metadata(video_id: str) -> dict[str, Any] | None:
                 ", ".join(info_dict.get("automatic_captions", {}).keys()) if info_dict.get("automatic_captions") else "",
         }
         return metadata
-    except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught
-        logger.warning(f"An unexpected error occurred for ID {video_id}: {e}")
+    except (yt_dlp.utils.YoutubeDLError, OSError) as e:
+        logger.warning("An unexpected error occurred for ID %s: %s", video_id, e)
         return None
 
 

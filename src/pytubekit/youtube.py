@@ -17,6 +17,6 @@ def youtube_dl_download_urls(urls: list[str]) -> None:
         "extract_flat": True,
         "usenetrc": True,
     }
-    logger.debug(f"passing options {ydl_opts}")
+    logger.debug("passing options %s", ydl_opts)
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download(urls)

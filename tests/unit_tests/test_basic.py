@@ -7,6 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
+import pytest
 from googleapiclient.errors import HttpError
 
 from pytubekit.configs import ConfigBudget
@@ -65,7 +66,7 @@ class TestPagedRequestSinglePage(unittest.TestCase):
         ))
         pr = PagedRequest(f=mock_f, kwargs={"part": "snippet"})
         result = pr.get_all_items()
-        self.assertEqual(result, items)
+        assert result == items
         mock_f.assert_called_once_with(part="snippet")
 
     def test_multi_page(self):
@@ -87,9 +88,9 @@ class TestPagedRequestSinglePage(unittest.TestCase):
 
         pr = PagedRequest(f=mock_f_call, kwargs={"part": "snippet"})
         result = pr.get_all_items()
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0]["snippet"]["resourceId"]["videoId"], "v1")
-        self.assertEqual(result[1]["snippet"]["resourceId"]["videoId"], "v2")
+        assert len(result) == 2
+        assert result[0]["snippet"]["resourceId"]["videoId"] == "v1"
+        assert result[1]["snippet"]["resourceId"]["videoId"] == "v2"
 
     def test_empty_page(self):
         mock_f = MagicMock(return_value=MagicMock(
@@ -97,7 +98,7 @@ class TestPagedRequestSinglePage(unittest.TestCase):
         ))
         pr = PagedRequest(f=mock_f, kwargs={})
         result = pr.get_all_items()
-        self.assertEqual(result, [])
+        assert result == []
 
 
 class TestGetPlaylistIdsFromNames(unittest.TestCase):
@@ -111,7 +112,7 @@ class TestGetPlaylistIdsFromNames(unittest.TestCase):
         mock_create.return_value = mock_pr
         youtube = MagicMock()
         result = get_playlist_ids_from_names(youtube, ["Playlist B", "Playlist A"])
-        self.assertEqual(result, ["id_b", "id_a"])
+        assert result == ["id_b", "id_a"]
 
     @patch("pytubekit.util.create_playlists_request")
     def test_missing_name_raises(self, mock_create):
@@ -121,7 +122,7 @@ class TestGetPlaylistIdsFromNames(unittest.TestCase):
         ]
         mock_create.return_value = mock_pr
         youtube = MagicMock()
-        with self.assertRaises(KeyError):
+        with pytest.raises(KeyError):
             get_playlist_ids_from_names(youtube, ["No Such Playlist"])
 
 
@@ -173,7 +174,7 @@ class TestRetryExecute(unittest.TestCase):
         request = MagicMock()
         request.execute.return_value = {"ok": True}
         result = retry_execute(request)
-        self.assertEqual(result, {"ok": True})
+        assert result == {"ok": True}
         request.execute.assert_called_once()
 
     @patch("pytubekit.util.time.sleep")
@@ -184,8 +185,8 @@ class TestRetryExecute(unittest.TestCase):
         request = MagicMock()
         request.execute.side_effect = [error, {"ok": True}]
         result = retry_execute(request, max_retries=3)
-        self.assertEqual(result, {"ok": True})
-        self.assertEqual(request.execute.call_count, 2)
+        assert result == {"ok": True}
+        assert request.execute.call_count == 2
         mock_sleep.assert_called_once_with(1)
 
     @patch("pytubekit.util.time.sleep")
@@ -195,47 +196,47 @@ class TestRetryExecute(unittest.TestCase):
         error = HttpError(resp, b"not found")
         request = MagicMock()
         request.execute.side_effect = error
-        with self.assertRaises(HttpError):
+        with pytest.raises(HttpError):
             retry_execute(request, max_retries=3)
         request.execute.assert_called_once()
         mock_sleep.assert_not_called()
 
-    @patch("pytubekit.util.time.sleep")
-    def test_all_retries_exhausted(self, _mock_sleep):
+    @patch("pytubekit.util.time.sleep", new=MagicMock())
+    def test_all_retries_exhausted(self):
         resp = MagicMock()
         resp.status = 503
         error = HttpError(resp, b"service unavailable")
         request = MagicMock()
         request.execute.side_effect = error
-        with self.assertRaises(HttpError):
+        with pytest.raises(HttpError):
             retry_execute(request, max_retries=3)
-        self.assertEqual(request.execute.call_count, 3)
+        assert request.execute.call_count == 3
 
     @patch("pytubekit.util.time.sleep")
     def test_quota_exceeded_fails_fast(self, mock_sleep):
         error = _make_http_error(403, "quotaExceeded")
         request = MagicMock()
         request.execute.side_effect = error
-        with self.assertRaises(QuotaExceededError):
+        with pytest.raises(QuotaExceededError):
             retry_execute(request, max_retries=5)
         request.execute.assert_called_once()
         mock_sleep.assert_not_called()
 
-    @patch("pytubekit.util.time.sleep")
-    def test_rate_limit_403_retries(self, _mock_sleep):
+    @patch("pytubekit.util.time.sleep", new=MagicMock())
+    def test_rate_limit_403_retries(self):
         error = _make_http_error(403, "rateLimitExceeded")
         request = MagicMock()
         request.execute.side_effect = [error, {"ok": True}]
         result = retry_execute(request, max_retries=3)
-        self.assertEqual(result, {"ok": True})
-        self.assertEqual(request.execute.call_count, 2)
+        assert result == {"ok": True}
+        assert request.execute.call_count == 2
 
     @patch("pytubekit.util.time.sleep")
     def test_plain_403_fails_fast(self, mock_sleep):
         error = _make_http_error(403, "forbidden")
         request = MagicMock()
         request.execute.side_effect = error
-        with self.assertRaises(HttpError):
+        with pytest.raises(HttpError):
             retry_execute(request, max_retries=3)
         request.execute.assert_called_once()
         mock_sleep.assert_not_called()
@@ -254,8 +255,8 @@ class TestPerformMutation(unittest.TestCase):
         request = MagicMock()
         request.execute.return_value = {"ok": True}
         perform_mutation(request)
-        self.assertEqual(RunStats.mutations_performed, 1)
-        self.assertEqual(RunStats.quota_spent, QUOTA_UNITS_PER_MUTATION)
+        assert RunStats.mutations_performed == 1
+        assert RunStats.quota_spent == QUOTA_UNITS_PER_MUTATION
 
     def test_budget_enforced(self):
         ConfigBudget.max_mutations = 2
@@ -263,17 +264,17 @@ class TestPerformMutation(unittest.TestCase):
         request.execute.return_value = {"ok": True}
         perform_mutation(request)
         perform_mutation(request)
-        with self.assertRaises(MutationBudgetError):
+        with pytest.raises(MutationBudgetError):
             perform_mutation(request)
-        self.assertEqual(request.execute.call_count, 2)
-        self.assertEqual(RunStats.mutations_performed, 2)
+        assert request.execute.call_count == 2
+        assert RunStats.mutations_performed == 2
 
     def test_no_budget_is_unlimited(self):
         request = MagicMock()
         request.execute.return_value = {"ok": True}
         for _ in range(5):
             perform_mutation(request)
-        self.assertEqual(RunStats.mutations_performed, 5)
+        assert RunStats.mutations_performed == 5
 
 
 class TestGetPlaylistItemCount(unittest.TestCase):
@@ -282,11 +283,11 @@ class TestGetPlaylistItemCount(unittest.TestCase):
         youtube.playlists().list.return_value.execute.return_value = {
             ITEMS_TOKEN: [{"contentDetails": {"itemCount": 42}}],
         }
-        self.assertEqual(get_playlist_item_count(youtube, "plid"), 42)
+        assert get_playlist_item_count(youtube, "plid") == 42
         youtube.playlistItems.assert_not_called()
         _, kwargs = youtube.playlists().list.call_args
-        self.assertEqual(kwargs["part"], "contentDetails")
-        self.assertEqual(kwargs["id"], "plid")
+        assert kwargs["part"] == "contentDetails"
+        assert kwargs["id"] == "plid"
 
 
 class TestReadVideoIdsFromFiles(unittest.TestCase):
@@ -295,7 +296,7 @@ class TestReadVideoIdsFromFiles(unittest.TestCase):
             f.write("abc123\n\ndef456\nabc123\n")
             path = f.name
         result = read_video_ids_from_files([path])
-        self.assertEqual(result, {"abc123", "def456"})
+        assert result == {"abc123", "def456"}
 
     def test_multiple_files(self):
         with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f1:
@@ -305,14 +306,14 @@ class TestReadVideoIdsFromFiles(unittest.TestCase):
             f2.write("id2\n")
             path2 = f2.name
         result = read_video_ids_from_files([path1, path2])
-        self.assertEqual(result, {"id1", "id2"})
+        assert result == {"id1", "id2"}
 
     def test_empty_file(self):
         with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
             f.write("")
             path = f.name
         result = read_video_ids_from_files([path])
-        self.assertEqual(result, set())
+        assert result == set()
 
 
 class TestLogProgress(unittest.TestCase):

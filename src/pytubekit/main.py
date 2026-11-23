@@ -140,7 +140,7 @@ def dump() -> None:
     logger.info("got lists data")
     for f_id, f_title in id_to_title.items():
         filename = os.path.join(dump_folder, f_title)
-        logger.info(f"dumping [{f_title}] to [{filename}]")
+        logger.info("dumping [%s] to [%s]", f_title, filename)
         with open(filename, "w") as f:
             r = create_playlist_request(youtube, playlist_id=f_id)
             items = r.get_all_items()
@@ -160,7 +160,7 @@ def cleanup() -> None:
     logger = logging.getLogger()
     youtube = get_youtube()
     if ConfigCleanupPlaylists.cleanup_names:
-        logger.info(f"cleaning up [{ConfigCleanupPlaylists.cleanup_names}]...")
+        logger.info("cleaning up [%s]...", ConfigCleanupPlaylists.cleanup_names)
         playlist_ids = get_playlist_ids_from_names(youtube, ConfigCleanupPlaylists.cleanup_names)
     else:
         logger.info("cleaning up all playlists...")
@@ -182,7 +182,7 @@ def cleanup() -> None:
 def subtract() -> None:
     logger = logging.getLogger()
     youtube = get_youtube()
-    logger.info(f"subtracting [{ConfigSubtract.subtract_what}] from [{ConfigSubtract.subtract_from}]...")
+    logger.info("subtracting [%s] from [%s]...", ConfigSubtract.subtract_what, ConfigSubtract.subtract_from)
     what_video_ids = get_video_ids_from_playlist_names(youtube, ConfigSubtract.subtract_what)
     from_items = get_items_from_playlist_names(youtube, ConfigSubtract.subtract_from)
     deleted = 0
@@ -196,8 +196,8 @@ def subtract() -> None:
             if ConfigDelete.do_delete:
                 delete_playlist_item_by_id(youtube, item["id"])
                 deleted += 1
-    logger.info(f"wanted_to_delete {wanted_to_delete} items")
-    logger.info(f"deleted {deleted} items")
+    logger.info("wanted_to_delete %s items", wanted_to_delete)
+    logger.info("deleted %s items", deleted)
     if not ConfigDelete.do_delete:
         log_mutation_cost_estimate(logger, wanted_to_delete)
 
@@ -211,7 +211,7 @@ def clear_playlist() -> None:
     youtube = get_youtube()
     playlist_id = get_playlist_ids_from_names(youtube, [ConfigClear.clear_name])[0]
     items = get_all_items_from_playlist_ids(youtube, [playlist_id])
-    logger.info(f"playlist [{ConfigClear.clear_name}] has {len(items)} items")
+    logger.info("playlist [%s] has %s items", ConfigClear.clear_name, len(items))
     deleted = 0
     total = len(items)
     for i, item in enumerate(items, start=1):
@@ -219,7 +219,7 @@ def clear_playlist() -> None:
         if ConfigDelete.do_delete:
             delete_playlist_item_by_id(youtube, item["id"])
             deleted += 1
-    logger.info(f"deleted {deleted} items from [{ConfigClear.clear_name}]")
+    logger.info("deleted %s items from [%s]", deleted, ConfigClear.clear_name)
     if not ConfigDelete.do_delete:
         log_mutation_cost_estimate(logger, total)
 
@@ -239,9 +239,9 @@ def merge() -> None:
     if ConfigMerge.merge_dedup:
         dest_items = get_all_items_from_playlist_ids(youtube, [destination_id])
         seen = {item["snippet"]["resourceId"]["videoId"] for item in dest_items}
-        logger.info(f"destination [{ConfigMerge.merge_destination}] already has {len(seen)} videos")
+        logger.info("destination [%s] already has %s videos", ConfigMerge.merge_destination, len(seen))
     source_items = get_all_items_from_playlist_ids(youtube, source_ids)
-    logger.info(f"source playlists have {len(source_items)} items total")
+    logger.info("source playlists have %s items total", len(source_items))
     added = 0
     skipped = 0
     total = len(source_items)
@@ -256,9 +256,9 @@ def merge() -> None:
             seen.add(video_id)
         added += 1
     if ConfigMerge.merge_dedup:
-        logger.info(f"added {added} videos, skipped {skipped} duplicates")
+        logger.info("added %s videos, skipped %s duplicates", added, skipped)
     else:
-        logger.info(f"copied {added} videos")
+        logger.info("copied %s videos", added)
 
 
 SORT_KEYS = {
@@ -275,12 +275,12 @@ SORT_KEYS = {
 def sort_playlist() -> None:
     logger = logging.getLogger()
     if ConfigSort.sort_key not in SORT_KEYS:
-        logger.error(f"invalid sort key [{ConfigSort.sort_key}], must be one of {list(SORT_KEYS.keys())}")
+        logger.error("invalid sort key [%s], must be one of %s", ConfigSort.sort_key, list(SORT_KEYS.keys()))
         return
     youtube = get_youtube()
     playlist_id = get_playlist_ids_from_names(youtube, [ConfigSort.sort_playlist_name])[0]
     items = get_all_items_from_playlist_ids(youtube, [playlist_id])
-    logger.info(f"playlist [{ConfigSort.sort_playlist_name}] has {len(items)} items")
+    logger.info("playlist [%s] has %s items", ConfigSort.sort_playlist_name, len(items))
     sorted_items = sorted(items, key=SORT_KEYS[ConfigSort.sort_key])
     current_ids = [item["id"] for item in items]
     moves = 0
@@ -296,9 +296,9 @@ def sort_playlist() -> None:
             move_playlist_item(youtube, playlist_id, item, position)
         log_progress(logger, position + 1, total)
     if ConfigDelete.do_delete:
-        logger.info(f"sorted playlist with {moves} moves (by {ConfigSort.sort_key})")
+        logger.info("sorted playlist with %s moves (by %s)", moves, ConfigSort.sort_key)
     else:
-        logger.info(f"dry run: sorting would need {moves} moves (by {ConfigSort.sort_key})")
+        logger.info("dry run: sorting would need %s moves (by %s)", moves, ConfigSort.sort_key)
         log_mutation_cost_estimate(logger, moves)
 
 
@@ -348,7 +348,7 @@ def export_csv() -> None:
                 "title": item["snippet"].get("title", ""),
                 "channel": item["snippet"].get("videoOwnerChannelTitle", ""),
             })
-    logger.info(f"exported {len(items)} items to [{ConfigExportCsv.export_csv_path}]")
+    logger.info("exported %s items to [%s]", len(items), ConfigExportCsv.export_csv_path)
 
 
 @register_endpoint(
@@ -369,7 +369,7 @@ def rename_playlist() -> None:
         },
     )
     perform_mutation(request)
-    logger.info(f"renamed [{ConfigRename.rename_playlist_name}] to [{ConfigRename.rename_new_name}]")
+    logger.info("renamed [%s] to [%s]", ConfigRename.rename_playlist_name, ConfigRename.rename_new_name)
 
 
 @register_endpoint(
@@ -384,15 +384,15 @@ def overflow() -> None:
     )
     destination_count = get_playlist_item_count(youtube, destination_id)
     available = MAX_PLAYLIST_ITEMS - destination_count
-    logger.info(f"destination has {destination_count} items, {available} slots available")
+    logger.info("destination has %s items, %s slots available", destination_count, available)
     if available <= 0:
         logger.info("destination playlist is full, nothing to move")
         return
     source_items = get_all_items_from_playlist_ids(youtube, [source_id])
-    logger.info(f"source has {len(source_items)} items")
+    logger.info("source has %s items", len(source_items))
     moved = 0
     to_move = min(available, len(source_items))
-    logger.info(f"would move {to_move} videos")
+    logger.info("would move %s videos", to_move)
     for item in source_items:
         if moved >= available:
             break
@@ -403,9 +403,9 @@ def overflow() -> None:
         moved += 1
         log_progress(logger, moved, to_move)
     if ConfigDelete.do_delete:
-        logger.info(f"moved {moved} videos from [{ConfigOverflow.source}] to [{ConfigOverflow.destination}]")
+        logger.info("moved %s videos from [%s] to [%s]", moved, ConfigOverflow.source, ConfigOverflow.destination)
     else:
-        logger.info(f"dry run: would move {moved} videos from [{ConfigOverflow.source}] to [{ConfigOverflow.destination}]")
+        logger.info("dry run: would move %s videos from [%s] to [%s]", moved, ConfigOverflow.source, ConfigOverflow.destination)
         # each move is an insert plus a delete
         log_mutation_cost_estimate(logger, moved * 2)
 
@@ -434,12 +434,12 @@ def diff() -> None:
     ids_a = get_video_ids_from_sources(youtube, ConfigDiff.diff_a_playlists, ConfigDiff.diff_a_files)
     ids_b = get_video_ids_from_sources(youtube, ConfigDiff.diff_b_playlists, ConfigDiff.diff_b_files)
     result_ids = sorted(ids_a & ids_b) if ConfigDiff.diff_reverse else sorted(ids_a - ids_b)
-    logger.info(f"A has {len(ids_a)}, B has {len(ids_b)}, result has {len(result_ids)}")
+    logger.info("A has %s, B has %s, result has %s", len(ids_a), len(ids_b), len(result_ids))
     if ConfigDiff.diff_output_file:
         with open(ConfigDiff.diff_output_file, "w") as f:
             for video_id in result_ids:
                 print(video_id, file=f)
-        logger.info(f"wrote {len(result_ids)} video IDs to [{ConfigDiff.diff_output_file}]")
+        logger.info("wrote %s video IDs to [%s]", len(result_ids), ConfigDiff.diff_output_file)
     else:
         for video_id in result_ids:
             print(video_id)
@@ -456,13 +456,13 @@ def add_data() -> None:
     processed_ids: set[str] = set()
     output_file_exists = os.path.exists(output_path)
     if output_file_exists:
-        logger.info(f"Output file [{output_path}] found. Reading existing IDs to avoid re-processing.")
+        logger.info("Output file [%s] found. Reading existing IDs to avoid re-processing.", output_path)
         with open(output_path, encoding="utf-8", newline="") as f_out_read:
             reader = csv.DictReader(f_out_read)
             for row in reader:
                 if row and "video_id" in row:
                     processed_ids.add(row["video_id"])
-        logger.info(f"Found {len(processed_ids)} previously processed IDs.")
+        logger.info("Found %s previously processed IDs.", len(processed_ids))
     with open(input_path) as infile, open(output_path, "a", encoding="utf-8", newline="") as outfile:
         writer = csv.DictWriter(outfile, fieldnames=METADATA_FIELDNAMES)
         if not output_file_exists:
@@ -473,7 +473,7 @@ def add_data() -> None:
             if not video_id:
                 continue
             if video_id in processed_ids:
-                logger.info(f"Skipping already processed ID: [{video_id}]")
+                logger.info("Skipping already processed ID: [%s]", video_id)
                 continue
             metadata = get_video_metadata(video_id)
             if metadata:
@@ -514,7 +514,7 @@ def collect_ids() -> None:
                     found.add(match)
     for video_id in sorted(found):
         print(video_id)
-    logger.info(f"found {len(found)} unique video IDs")
+    logger.info("found %s unique video IDs", len(found))
 
 
 @register_endpoint(
@@ -526,14 +526,14 @@ def add_file_to_playlist() -> None:
     youtube = get_youtube()
     playlist_id = get_playlist_ids_from_names(youtube, [ConfigAddFileToPlaylist.add_playlist])[0]
     video_ids = read_video_ids_from_files([str(ConfigAddFileToPlaylist.add_file)])
-    logger.info(f"read {len(video_ids)} video IDs from [{ConfigAddFileToPlaylist.add_file}]")
+    logger.info("read %s video IDs from [%s]", len(video_ids), ConfigAddFileToPlaylist.add_file)
     added = 0
     total = len(video_ids)
     for video_id in sorted(video_ids):
         add_video_to_playlist(youtube, playlist_id, video_id)
         added += 1
         log_progress(logger, added, total)
-    logger.info(f"added {added} videos to [{ConfigAddFileToPlaylist.add_playlist}]")
+    logger.info("added %s videos to [%s]", added, ConfigAddFileToPlaylist.add_playlist)
 
 
 @register_endpoint(
@@ -557,7 +557,7 @@ def create_playlist() -> None:
     )
     response = perform_mutation(request)
     playlist_id = response["id"]
-    logger.info(f"created playlist [{ConfigCreatePlaylist.create_name}] with id [{playlist_id}]")
+    logger.info("created playlist [%s] with id [%s]", ConfigCreatePlaylist.create_name, playlist_id)
     print(playlist_id)
 
 
@@ -571,7 +571,7 @@ def delete_playlist() -> None:
     playlist_id = get_playlist_ids_from_names(youtube, [ConfigDeletePlaylist.delete_playlist_name])[0]
     request = youtube.playlists().delete(id=playlist_id)
     perform_mutation(request)
-    logger.info(f"deleted playlist [{ConfigDeletePlaylist.delete_playlist_name}] (id [{playlist_id}])")
+    logger.info("deleted playlist [%s] (id [%s])", ConfigDeletePlaylist.delete_playlist_name, playlist_id)
 
 
 @register_endpoint(
@@ -738,7 +738,7 @@ def main():
         sys.exit(1)
     finally:
         if RunStats.quota_spent > 0:
-            logger.info(f"API quota spent this run: ~{RunStats.quota_spent} units (daily budget is {DAILY_QUOTA_UNITS})")
+            logger.info("API quota spent this run: ~%s units (daily budget is %s)", RunStats.quota_spent, DAILY_QUOTA_UNITS)
 
 
 if __name__ == "__main__":
