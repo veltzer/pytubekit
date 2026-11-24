@@ -23,4 +23,3 @@ Findings from a code scan on 2026-10-04.
 - `CLAUDE.md:31` - tells readers to ignore a "black" badge in the README; the README has no black badge any more; delete the sentence.
 - `src/pytubekit/util.py:423` - `# pylint: disable=broad-exception-caught` is a leftover suppression for a linter this repo no longer runs; keep only the `noqa`.
 - `doc/suggestions.md:5-52` - most items are done or obsolete (`create_playlist`, `delete_playlist`, `stats` exist; `get_watch_later_playlist_id`, `remove_unavailable_from_all_playlists`, `copy_playlist`, `count`, `playlists` no longer exist; `youtube-dl` is no longer a dependency); prune the list.
-- `hatch_build.py:9-13` - the docstring says sources are tried in order env var, config dir, then in-tree copy, but `initialize` checks the in-tree copy first (`hatch_build.py:32-33`); fix the docstring order.

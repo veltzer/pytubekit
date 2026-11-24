@@ -110,9 +110,9 @@ CLI parameters are defined declaratively as `pytconf.Config` subclasses. Each en
 
 Authentication is handled by `pygooglehelper`, which manages the OAuth2 flow:
 
-1. Reads `client_secret.json` from `~/.config/pytubekit/`, falling back to the copy shipped in the package
+1. Reads the OAuth client from the pass(1) entry `gcp/pytubekit-id/oauth-client` if it exists, else from `~/.config/pytubekit/client_secret.json`, else from the copy shipped in the package
 2. Opens browser for user consent on first run
-3. Caches credentials for subsequent runs
+3. Caches credentials for subsequent runs: in pass as `gcp/pytubekit-id/token` when the pass entries are in use, else in `~/.config/google_tokens/`
 
 ### Deleted/Private Video Detection
 

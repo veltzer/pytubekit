@@ -21,6 +21,7 @@ from pytubekit.constants import (
     API_VERSION,
     DAILY_QUOTA_UNITS,
     DELETED_TITLE,
+    GCP_PROJECT,
     ITEMS_TOKEN,
     NEXT_PAGE_TOKEN,
     PAGE_TOKEN,
@@ -246,6 +247,7 @@ def cleanup_items(youtube: Any, items: list[dict[str, Any]], *, dedup: bool, che
 
 def get_youtube() -> Any:
     ConfigRequest.scopes = SCOPES
+    ConfigRequest.gcp_project = GCP_PROJECT
     ConfigRequest.app_name = APP_NAME
     credentials = get_credentials()
     return googleapiclient.discovery.build(

@@ -35,4 +35,4 @@ This runs `pytest tests`, `ruff check`, `pylint` and `mypy` over `src config tes
 - Mutating commands are dry-run by default; they require `--do-delete` to actually change anything.
 - YouTube Data API v3 has a 10,000 units/day quota; prefer the local/dump-file commands (`local_diff`, `local_dedup`, etc.) when possible. API responses are paginated at 50 items (handled by `PagedRequest` in `util.py`).
 - Tests mock the YouTube API — no network or credentials needed for `pytest tests`.
-- Auth is OAuth2 via `pygooglehelper`: `~/.config/pytubekit/client_secret.json` if present, else the copy shipped in the package by `hatch_build.py`. No environment variables are required at runtime.
+- Auth is OAuth2 via `pygooglehelper`: pass entry `gcp/pytubekit-id/oauth-client` first (token in `gcp/pytubekit-id/token`), then `~/.config/pytubekit/client_secret.json` if present, else the copy shipped in the package by `hatch_build.py`. No environment variables are required at runtime.

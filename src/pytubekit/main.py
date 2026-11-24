@@ -45,7 +45,7 @@ from pytubekit.configs import (
     ConfigSubtract,
     ConfigVideo,
 )
-from pytubekit.constants import DAILY_QUOTA_UNITS, MAX_PLAYLIST_ITEMS, SCOPES
+from pytubekit.constants import DAILY_QUOTA_UNITS, GCP_PROJECT, MAX_PLAYLIST_ITEMS, SCOPES
 from pytubekit.static import APP_NAME, DESCRIPTION, VERSION_STR
 from pytubekit.util import (
     METADATA_FIELDNAMES,
@@ -728,6 +728,7 @@ def local_dedup() -> None:
 def main():
     pylogconf.core.setup()
     ConfigRequest.scopes = SCOPES
+    ConfigRequest.gcp_project = GCP_PROJECT
     ConfigRequest.app_name = APP_NAME
     register_functions()
     logger = logging.getLogger()
