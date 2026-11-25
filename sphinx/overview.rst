@@ -75,7 +75,7 @@ After installation, the ``pytubekit`` command becomes available:
 Authentication
 --------------
 
-Pytubekit uses OAuth2 to authenticate with the YouTube API. On first run, it will open a browser window for you to authorize access to your YouTube account. The credentials are managed by the ``pygooglehelper`` library. A ``client_secret.json`` ships inside the package, so no setup is needed; to use your own OAuth client instead, put it at ``~/.config/pytubekit/client_secret.json`` and it takes precedence. If you keep GCP credentials in pass(1), the entry ``gcp/pytubekit-id/oauth-client`` is used first and the token is kept in ``gcp/pytubekit-id/token``; without pass the behavior is unchanged.
+Pytubekit uses OAuth2 to authenticate with the YouTube API. On first run, it will open a browser window for you to authorize access to your YouTube account. The credentials are managed by the ``pygooglehelper`` library. A ``client_secret.json`` ships inside the package, so no setup is needed; to use your own OAuth client instead, put it at ``~/.config/pytubekit/client_secret.json`` and it takes precedence. If you keep GCP credentials in pass(1), the entry ``gcp/veltzer-pytubekit-id/oauth-client`` is used first and the token is kept in ``gcp/veltzer-pytubekit-id/token``; without pass the behavior is unchanged.
 
 The following YouTube API scopes are requested:
 

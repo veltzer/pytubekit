@@ -814,7 +814,7 @@ wheels = [
 
 [[package]]
 name = "pytubekit"
-version = "0.0.39"
+version = "0.0.40"
 source = { editable = "." }
 dependencies = [
     { name = "browsercookie" },

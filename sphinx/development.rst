@@ -6,7 +6,7 @@ Prerequisites
 
 - Python >= 3.14
 - A Google Cloud project with the YouTube Data API v3 enabled
-- OAuth2 client credentials in pass(1) as ``gcp/pytubekit-id/oauth-client`` (required to build a release: the build hook writes it into the package; ``$PYTUBEKIT_CLIENT_SECRET`` pointing at a file works too)
+- OAuth2 client credentials in pass(1) as ``gcp/veltzer-pytubekit-id/oauth-client`` (required to build a release: the build hook writes it into the package; ``$PYTUBEKIT_CLIENT_SECRET`` pointing at a file works too)
 
 Setting Up a Development Environment
 ------------------------------------
