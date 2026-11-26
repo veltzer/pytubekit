@@ -96,14 +96,6 @@ search-path = [
     "src",
     ".",
 ]
-# Third-party libraries without type information.
-ignore-missing-imports = [
-    "googleapiclient.*",
-    "pygooglehelper.*",
-    "pylogconf.*",
-    "pytconf.*",
-    "yt_dlp.*",
-]
 
 [tool.pyrefly.errors]
 no-any-return = "error"
