@@ -5,7 +5,7 @@ test_basic.py
 import json
 import tempfile
 import unittest
-from typing import override
+from typing import Any, override
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -28,7 +28,7 @@ from pytubekit.util import (
 )
 
 
-def _make_item(video_id: str, title: str = "Title", item_id: str | None = None) -> dict:
+def _make_item(video_id: str, title: str = "Title", item_id: str | None = None) -> dict[str, Any]:
     if item_id is None:
         item_id = f"item_{video_id}"
     return {
@@ -40,7 +40,7 @@ def _make_item(video_id: str, title: str = "Title", item_id: str | None = None) 
     }
 
 
-def _make_playlist_item(playlist_id: str, title: str) -> dict:
+def _make_playlist_item(playlist_id: str, title: str) -> dict[str, Any]:
     return {
         "id": playlist_id,
         "snippet": {"title": title},
