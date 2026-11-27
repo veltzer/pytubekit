@@ -9,7 +9,7 @@ import re
 import string
 import sys
 import time
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pylogconf.core
 from pygooglehelper import ConfigRequest, register_functions
@@ -80,6 +80,9 @@ from pytubekit.util import (
     retry_execute,
 )
 from pytubekit.youtube import youtube_dl_download_urls
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @register_endpoint(
@@ -261,7 +264,7 @@ def merge() -> None:
         logger.info("copied %s videos", added)
 
 
-SORT_KEYS = {
+SORT_KEYS: dict[str, Callable[[dict[str, Any]], str]] = {
     "title": lambda item: item["snippet"].get("title", "").lower(),
     "channel": lambda item: item["snippet"].get("videoOwnerChannelTitle", "").lower(),
     "date": lambda item: item["snippet"].get("publishedAt", ""),
