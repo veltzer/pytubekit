@@ -5,6 +5,7 @@ test_basic.py
 import json
 import tempfile
 import unittest
+from typing import override
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -243,10 +244,12 @@ class TestRetryExecute(unittest.TestCase):
 
 
 class TestPerformMutation(unittest.TestCase):
+    @override
     def setUp(self):
         RunStats.reset()
         ConfigBudget.max_mutations = None
 
+    @override
     def tearDown(self):
         RunStats.reset()
         ConfigBudget.max_mutations = None
