@@ -80,7 +80,6 @@ def retry_execute(request: Any, max_retries: int = 5, cost: int = 1) -> dict[str
         try:
             response: dict[str, Any] = request.execute()
             RunStats.quota_spent += cost
-            return response
         except HttpError as e:
             last_error = e
             reasons = get_error_reasons(e)
@@ -97,6 +96,8 @@ def retry_execute(request: Any, max_retries: int = 5, cost: int = 1) -> dict[str
                 time.sleep(wait)
             else:
                 raise
+        else:
+            return response
     if last_error is None:
         raise ValueError(f"max_retries must be at least 1, got {max_retries}")
     raise last_error
@@ -420,10 +421,11 @@ def get_video_metadata(video_id: str) -> dict[str, Any] | None:
             "automatic_captions_available":
                 ", ".join(info_dict.get("automatic_captions", {}).keys()) if info_dict.get("automatic_captions") else "",
         }
-        return metadata
     except (yt_dlp.utils.YoutubeDLError, OSError) as e:
         logger.warning("An unexpected error occurred for ID %s: %s", video_id, e)
         return None
+    else:
+        return metadata
 
 
 def read_all_dump_files(dump_folder: str) -> dict[str, list[str]]:

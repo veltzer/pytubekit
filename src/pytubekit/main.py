@@ -735,7 +735,8 @@ def main():
     try:
         config_arg_parse_and_launch()
     except (QuotaExceededError, MutationBudgetError) as e:
-        logger.error(str(e))
+        # an expected stop: the message is for the user, a traceback would bury it
+        logger.error(str(e))  # noqa: TRY400
         sys.exit(1)
     finally:
         if RunStats.quota_spent > 0:
