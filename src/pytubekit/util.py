@@ -137,7 +137,6 @@ class PagedRequest:
         items: list[dict[str, Any]] = []
         while True:
             over, response = self.get_next_page()
-            # print(f"got {len(response[ITEMS_TOKEN])} items")
             items.extend(response[ITEMS_TOKEN])
             if over:
                 break
