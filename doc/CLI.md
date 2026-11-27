@@ -40,7 +40,7 @@ pytubekit playlists --full    # Output full JSON for each playlist
 **Parameters:**
 
 | Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
+| ----------- | ------ | --------- | ------------- |
 | `--page-size` | int | 50 | Page size for API pagination (max 50) |
 | `--full` | bool | False | Output full JSON instead of just titles |
 
@@ -59,7 +59,7 @@ pytubekit playlist --name "My Playlist" --full
 **Parameters:**
 
 | Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
+| ----------- | ------ | --------- | ------------- |
 | `--name` | str | None | Playlist name to look up |
 | `--playlist-id` | str | None | Playlist ID to use directly |
 | `--page-size` | int | 50 | Page size for API pagination |
@@ -86,7 +86,7 @@ The `--dump-folder` parameter supports template substitution:
 **Parameters:**
 
 | Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
+| ----------- | ------ | --------- | ------------- |
 | `--dump-folder` | str | `.` | Folder to dump playlists into |
 | `--page-size` | int | 50 | Page size for API pagination |
 | `--full` | bool | False | Output full JSON instead of just video IDs |
@@ -106,7 +106,7 @@ pytubekit cleanup --names "My Playlist" --no-do-delete   # Dry run (report only)
 **Parameters:**
 
 | Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
+| ----------- | ------ | --------- | ------------- |
 | `--names` | list[str] | (required) | Playlist names to clean up |
 | `--dedup` | bool | True | Detect and remove duplicate entries |
 | `--deleted` | bool | True | Remove deleted videos |
@@ -128,7 +128,7 @@ pytubekit remove_unavailable_from_all_playlists --no-do-delete   # Dry run
 **Parameters:**
 
 | Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
+| ----------- | ------ | --------- | ------------- |
 | `--deleted` | bool | True | Remove deleted videos |
 | `--privatized` | bool | True | Remove private videos |
 | `--do-delete` | bool | True | Actually perform deletions |
@@ -147,7 +147,7 @@ pytubekit subtract --subtract-what "Watched" --subtract-from "To Watch"
 **Parameters:**
 
 | Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
+| ----------- | ------ | --------- | ------------- |
 | `--subtract-what` | list[str] | (required) | Playlist names containing items to subtract |
 | `--subtract-from` | list[str] | (required) | Playlist names to subtract from |
 | `--do-delete` | bool | True | Actually perform deletions |
@@ -166,7 +166,7 @@ pytubekit video_info --id xL_sMXfzzyA
 **Parameters:**
 
 | Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
+| ----------- | ------ | --------- | ------------- |
 | `--id` | str | (required) | YouTube video ID |
 
 Returns snippet, status, and content details as JSON.

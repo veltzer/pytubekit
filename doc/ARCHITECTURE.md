@@ -48,7 +48,7 @@ The `main()` function:
 Declarative configuration classes using `pytconf.Config` and `pytconf.ParamCreator`. Each class maps to a set of CLI parameters:
 
 | Config Class | Purpose |
-|-------------|---------|
+| ------------- | --------- |
 | `ConfigPagination` | API pagination page size |
 | `ConfigDump` | Output folder for dump command |
 | `ConfigSubtract` | Playlist names for subtraction |
@@ -123,7 +123,7 @@ Videos are identified as deleted or private by checking their title against the 
 ### Runtime
 
 | Package | Purpose |
-|---------|---------|
+| --------- | --------- |
 | google-api-python-client | YouTube Data API v3 client |
 | pygooglehelper | OAuth2 credential management |
 | pytconf | CLI configuration framework |
@@ -134,7 +134,7 @@ Videos are identified as deleted or private by checking their title against the 
 ### Development
 
 | Package | Purpose |
-|---------|---------|
+| --------- | --------- |
 | pytest | Test runner |
 | mypy | Static type checking |
 | ruff | Linter and formatter |

@@ -38,7 +38,7 @@ The rsconstruct build runs:
 ## Code Quality Tools
 
 | Tool | Config File | Purpose |
-|------|------------|---------|
+| ------ | ------------ | --------- |
 | ruff | `pyproject.toml` (`[tool.ruff]`) | Linting, line length = 130 |
 | pylint | `.pylintrc` | Code analysis |
 | mypy | `pyproject.toml` (`[tool.mypy]`) | Static type checking |
@@ -112,7 +112,7 @@ The YouTube Data API v3 has a daily quota of 10,000 units. Different operations 
 For manual testing:
 
 | Type | Video ID |
-|------|----------|
+| ------ | ---------- |
 | Regular video | `xL_sMXfzzyA` |
 | Deleted video | `6k2nFwVqQFw` |
 | Private video | `MZnlL8uCCU0` |
