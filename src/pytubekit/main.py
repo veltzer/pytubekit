@@ -728,7 +728,7 @@ def local_dedup() -> None:
     app_name=APP_NAME,
     version=VERSION_STR,
 )
-def main():
+def main() -> None:
     pylogconf.core.setup()
     ConfigRequest.scopes = SCOPES
     ConfigRequest.gcp_project = GCP_PROJECT
